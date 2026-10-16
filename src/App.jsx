@@ -1,4 +1,3 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { licenseBus } from "./utils/licenseBus";
 import { useEffect, useState } from "react";
@@ -86,6 +85,7 @@ import DevelopmentUnavailable from "./screens/Development/Unavailable";
 import FeatureWorkbench from "./screens/Development/FeatureWorkbench";
 import ComplianceReports from "./screens/Compliance/ComplianceReports";
 import LocalWorkspace from "./screens/Development/LocalWorkspace";
+import DesignSystem from "./screens/Development/DesignSystem";
 
 function App() {
   const [licenseError, setLicenseError] = useState(null);
@@ -326,6 +326,7 @@ function App() {
               />
               <Route path="/development/unavailable/:module" element={<DevelopmentUnavailable />} />
               <Route path="/development/features" element={<FeatureWorkbench />} />
+              <Route path="/development/design-system" element={<DesignSystem />} />
               <Route path="/development/:tool" element={<LocalWorkspace />} />
               <Route path="/development/import/:kind" element={<LocalWorkspace />} />
               <Route path="/compliance/:form" element={<ComplianceReports />} />

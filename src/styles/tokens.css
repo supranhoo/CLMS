@@ -1,0 +1,108 @@
+/*
+ * BFCL workspace design tokens (UI redesign W0/U03).
+ *
+ * Custom properties only: loading this file restyles nothing. Components consume them through the opt-in
+ * `.bfcl-ui` scope in base.css. The palette is the plan's proposed direction, not a BFCL brand manual; every
+ * text/background pair below is checked by tests/design-tokens.test.mjs (WCAG 2.2 AA: 4.5:1 text, 3:1 non-text).
+ */
+:root {
+  /* Brand */
+  --ui-navy: #17365d;
+  --ui-action: #1d4ed8;
+  --ui-action-hover: #1e40af;
+  --ui-action-active: #1e3a8a;
+  --ui-on-action: #ffffff;
+  --ui-danger: #b91c1c;
+  --ui-danger-hover: #991b1b;
+  --ui-on-danger: #ffffff;
+
+  /* Surfaces */
+  --ui-canvas: #f5f7fb;
+  --ui-panel: #ffffff;
+  --ui-subtle: #f8fafc;
+
+  /* Text. Never lower opacity on essential values; use these instead. */
+  --ui-text-strong: #172b4d;
+  --ui-text: #334155;
+  --ui-text-muted: #526477;
+
+  /* Borders. Controls need 3:1 against their surroundings (non-text contrast); dividers are decorative only. */
+  --ui-border: #cbd5e1;
+  --ui-border-subtle: #e2e8f0;
+  --ui-border-control: #64748b;
+  --ui-border-control-hover: #475569;
+
+  /* Focus: 2px ring with a 2px offset, 6.7:1 against panel and 6.3:1 against canvas. */
+  --ui-focus: #1d4ed8;
+  --ui-focus-width: 2px;
+  --ui-focus-offset: 2px;
+
+  /* Disabled controls are exempt from contrast rules but must stay legible and visibly inert. */
+  --ui-disabled-bg: #e2e8f0;
+  --ui-disabled-text: #64748b;
+  --ui-disabled-border: #cbd5e1;
+  --ui-readonly-bg: #f8fafc;
+
+  /* Status. Each state has its own text/background/border; the label text always carries the meaning. */
+  --ui-status-success-fg: #166534;     --ui-status-success-bg: #dcfce7;     --ui-status-success-border: #86efac;
+  --ui-status-warning-fg: #854d0e;     --ui-status-warning-bg: #fef9c3;     --ui-status-warning-border: #fde047;
+  --ui-status-danger-fg: #991b1b;      --ui-status-danger-bg: #fee2e2;      --ui-status-danger-border: #fca5a5;
+  --ui-status-info-fg: #1e40af;        --ui-status-info-bg: #dbeafe;        --ui-status-info-border: #93c5fd;
+  --ui-status-neutral-fg: #334155;     --ui-status-neutral-bg: #e2e8f0;     --ui-status-neutral-border: #94a3b8;
+  --ui-status-draft-fg: #475569;       --ui-status-draft-bg: #f1f5f9;       --ui-status-draft-border: #64748b;
+  --ui-status-locked-fg: #3f3f46;      --ui-status-locked-bg: #e4e4e7;      --ui-status-locked-border: #71717a;
+  --ui-status-needs-rules-fg: #7c2d12; --ui-status-needs-rules-bg: #ffedd5; --ui-status-needs-rules-border: #fdba74;
+  --ui-status-local-only-fg: #4c1d95;  --ui-status-local-only-bg: #ede9fe;  --ui-status-local-only-border: #c4b5fd;
+
+  /* Type. Local system fonts only: the replica must not request remote resources. */
+  --ui-font: "Segoe UI", system-ui, -apple-system, Roboto, "Noto Sans", "Liberation Sans", Arial, sans-serif;
+  --ui-text-body: 1rem;          /* 16px */
+  --ui-text-label: 0.875rem;     /* 14px: labels and table text */
+  --ui-text-helper: 0.8125rem;   /* 13px: helper text and explicit compact tables */
+  --ui-title-page: 1.625rem;     /* 26px (plan range 24-28px) */
+  --ui-title-section: 1.125rem;  /* 18px */
+  --ui-line-height: 1.5;
+
+  /* Spacing scale: 4/8/12/16/20/24/32/40 */
+  --ui-space-1: 4px;
+  --ui-space-2: 8px;
+  --ui-space-3: 12px;
+  --ui-space-4: 16px;
+  --ui-space-5: 20px;
+  --ui-space-6: 24px;
+  --ui-space-8: 32px;
+  --ui-space-10: 40px;
+
+  /* Shape */
+  --ui-radius-control: 8px;
+  --ui-radius-panel: 12px;
+  --ui-shadow-panel: 0 1px 2px rgba(23, 43, 77, 0.06), 0 2px 8px rgba(23, 43, 77, 0.06);
+
+  /* Controls and targets: 40px default, 36px compact desktop, 44px touch aim. WCAG 2.2 AA floor is 24px. */
+  --ui-control-h: 40px;
+  --ui-control-h-compact: 36px;
+  --ui-target-touch: 44px;
+  --ui-target-min: 24px;
+
+  /* Layout */
+  --ui-form-max: 1040px;
+  --ui-rail-w: 240px;
+  --ui-topbar-h: 64px;
+  --ui-gutter: 24px;
+  --ui-gutter-sm: 16px;
+
+  /* Layering, low to high: sticky < topbar < banner < drawer < modal < menu portal < toast.
+     Aligned with Bootstrap's modal (1055) and backdrop (1050). The current development banner still uses
+     z-index 11000 and is moved onto this scale with the shell in W1. */
+  --ui-z-sticky: 10;
+  --ui-z-topbar: 1020;
+  --ui-z-banner: 1030;
+  --ui-z-drawer: 1045;
+  --ui-z-modal: 1055;
+  --ui-z-menu: 1060;
+  --ui-z-toast: 1090;
+
+  /* Motion: colour/opacity only, never scale on data rows or action targets. */
+  --ui-motion-fast: 120ms;
+  --ui-motion: 180ms;
+}

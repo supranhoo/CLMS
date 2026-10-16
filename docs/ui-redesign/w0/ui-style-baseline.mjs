@@ -130,7 +130,7 @@ function printVisibility() {
 }
 
 // ---------------------------------------------------------------- playwright
-async function loadPlaywright() {
+export async function loadPlaywright() {
   const tries = [() => createRequire(path.join(root, 'package.json'))('playwright'), () => process.env.PLAYWRIGHT_MODULE_PATH && createRequire(import.meta.url)(process.env.PLAYWRIGHT_MODULE_PATH), () => createRequire(import.meta.url)('playwright'), () => createRequire(import.meta.url)('/opt/node22/lib/node_modules/playwright')];
   for (const t of tries) { try { const m = t(); if (m?.chromium) return m; } catch { /* try next */ } }
   throw new Error('Playwright not found. Set PLAYWRIGHT_MODULE_PATH or install it outside the project.');

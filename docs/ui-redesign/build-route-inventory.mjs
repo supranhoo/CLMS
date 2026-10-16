@@ -45,6 +45,7 @@ const familyFor = r => {
   const name = r.component;
   if (name === 'DevelopmentUnavailable') return ['Unavailable / error state', 'W6', 'P1'];
   if (name === 'FeatureWorkbench') return ['State profiles / feature coverage', 'W4', 'P1'];
+  if (name === 'DesignSystem') return ['Design system reference (development only)', 'W0', 'P0'];
   if (name === 'ComplianceReports') return ['Compliance report working data', 'W5', 'P1'];
   if (name === 'LocalWorkspace') return [r.routePath.includes('/import/') ? 'Workbook import' : 'Local operational workspace', 'W5', 'P1'];
   if (name === 'Dashboard') return ['Dashboard / navigation', 'W1', 'P0'];
@@ -91,6 +92,7 @@ function requirementsFor(r) {
   if (/Sandwich/.test(c)) notes.push('Draft policy versus execution needs explicit distinction; verified BFCL interpretation remains required for processing.');
   if (/LeaveLedgerEntry|LeavePayrollPosting/.test(c)) notes.push('Keep source-owned rows protected, unsaved/stale preview guards, whole-filter XLSX scope and separate preview/post actions.');
   if (c === 'LeaveLedgerEntry') notes.push('Source navigation gap: close handler uses MENU_URL=/menu, which has no explicit route and reaches the wildcard. Replace with the canonical dashboard destination.');
+  if (c === 'DesignSystem') notes.push('W0 reference added after the original 73-route inventory: tokens, contrast pairs and component states. Development-only, no menu entry, no API calls; keep it in sync with src/styles as shared components land.');
   if (c === 'FeatureWorkbench') notes.push('Separate state selection, effective dates, draft versions/history, rule intake and feature status; avoid implying draft text verifies legal compliance or enables payroll.');
   if (/ProcessWages|PrintWages|WageSlip|PrintWageSlips|BankStatement|PFStatement|ESIStatement|CashStatement|PTReport|PTMonthReport|BonusReport|WageComparission/.test(c)) notes.push('Rule-dependent calculation/output: present prerequisite/status/next action before submission; retain explicit BFCL-rule blocker and no invented totals.');
   if (/WageDeductions|WageEarnings|WageArraers|ManageFixWages|ServiceCharges/.test(c)) notes.push('Recorded inputs only; align money/number controls, effective dates, import validation and locked-period feedback without deriving unsupported pay.');

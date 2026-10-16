@@ -1,0 +1,186 @@
+/*
+ * BFCL workspace base + opt-in component theme (UI redesign W0/U03).
+ *
+ * Everything here is scoped under `.bfcl-ui`, so existing screens are unchanged until the W1 shell (or a migrated
+ * screen) adds that class. Bootstrap is themed through its own variables rather than overridden rule-by-rule.
+ *
+ * `.is-hover`, `.is-focus` and `.is-active` mirror the real pseudo-classes so the reference page at
+ * /development/design-system can display every state at once. design-system-check.mjs asserts the mirrors compute
+ * to the same styles as genuine hover, focus and press.
+ */
+
+/* ---- Root: typography and Bootstrap theme variables ---- */
+.bfcl-ui {
+  font-family: var(--ui-font);
+  font-size: var(--ui-text-body);
+  line-height: var(--ui-line-height);
+  color: var(--ui-text);
+
+  --bs-body-color: var(--ui-text);
+  --bs-primary: var(--ui-action);
+  --bs-primary-rgb: 29, 78, 216;
+  --bs-link-color: var(--ui-action);
+  --bs-link-color-rgb: 29, 78, 216;
+  --bs-link-hover-color: var(--ui-action-hover);
+  --bs-link-hover-color-rgb: 30, 64, 175;
+  --bs-border-radius: var(--ui-radius-control);
+}
+.bfcl-ui h1 { font-size: var(--ui-title-page); font-weight: 650; color: var(--ui-text-strong); line-height: 1.25; }
+.bfcl-ui h2 { font-size: var(--ui-title-section); font-weight: 650; color: var(--ui-text-strong); line-height: 1.3; }
+.bfcl-ui a { text-decoration-thickness: 0.08em; text-underline-offset: 0.15em; }
+
+/* ---- Focus: one visible treatment for every interactive element ---- */
+.bfcl-ui :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible,
+.bfcl-ui .is-focus {
+  outline: var(--ui-focus-width) solid var(--ui-focus);
+  outline-offset: var(--ui-focus-offset);
+}
+
+/* ---- Buttons ---- */
+.bfcl-ui .btn {
+  --bs-btn-border-radius: var(--ui-radius-control);
+  --bs-btn-font-size: var(--ui-text-label);
+  --bs-btn-font-weight: 600;
+  --bs-btn-padding-x: var(--ui-space-4);
+  --bs-btn-padding-y: var(--ui-space-2);
+  --bs-btn-disabled-opacity: 1;
+  --bs-btn-focus-box-shadow: none;
+  min-height: var(--ui-control-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ui-space-2);
+  transition: background-color var(--ui-motion-fast), border-color var(--ui-motion-fast), color var(--ui-motion-fast);
+}
+.bfcl-ui .btn-sm { --bs-btn-padding-y: var(--ui-space-1); --bs-btn-font-size: var(--ui-text-label); min-height: var(--ui-control-h-compact); }
+
+.bfcl-ui .btn-primary {
+  --bs-btn-color: var(--ui-on-action);
+  --bs-btn-bg: var(--ui-action);
+  --bs-btn-border-color: var(--ui-action);
+  --bs-btn-hover-color: var(--ui-on-action);
+  --bs-btn-hover-bg: var(--ui-action-hover);
+  --bs-btn-hover-border-color: var(--ui-action-hover);
+  --bs-btn-active-color: var(--ui-on-action);
+  --bs-btn-active-bg: var(--ui-action-active);
+  --bs-btn-active-border-color: var(--ui-action-active);
+  --bs-btn-disabled-color: var(--ui-disabled-text);
+  --bs-btn-disabled-bg: var(--ui-disabled-bg);
+  --bs-btn-disabled-border-color: var(--ui-disabled-border);
+}
+.bfcl-ui .btn-secondary {
+  --bs-btn-color: var(--ui-navy);
+  --bs-btn-bg: var(--ui-panel);
+  --bs-btn-border-color: var(--ui-border-control);
+  --bs-btn-hover-color: var(--ui-navy);
+  --bs-btn-hover-bg: var(--ui-canvas);
+  --bs-btn-hover-border-color: var(--ui-border-control-hover);
+  --bs-btn-active-color: var(--ui-navy);
+  --bs-btn-active-bg: var(--ui-border-subtle);
+  --bs-btn-active-border-color: var(--ui-border-control-hover);
+  --bs-btn-disabled-color: var(--ui-disabled-text);
+  --bs-btn-disabled-bg: var(--ui-disabled-bg);
+  --bs-btn-disabled-border-color: var(--ui-disabled-border);
+}
+.bfcl-ui .btn-danger {
+  --bs-btn-color: var(--ui-on-danger);
+  --bs-btn-bg: var(--ui-danger);
+  --bs-btn-border-color: var(--ui-danger);
+  --bs-btn-hover-color: var(--ui-on-danger);
+  --bs-btn-hover-bg: var(--ui-danger-hover);
+  --bs-btn-hover-border-color: var(--ui-danger-hover);
+  --bs-btn-active-color: var(--ui-on-danger);
+  --bs-btn-active-bg: var(--ui-danger-hover);
+  --bs-btn-active-border-color: var(--ui-danger-hover);
+  --bs-btn-disabled-color: var(--ui-disabled-text);
+  --bs-btn-disabled-bg: var(--ui-disabled-bg);
+  --bs-btn-disabled-border-color: var(--ui-disabled-border);
+}
+.bfcl-ui .btn-outline-primary {
+  --bs-btn-color: var(--ui-action);
+  --bs-btn-border-color: var(--ui-action);
+  --bs-btn-hover-color: var(--ui-on-action);
+  --bs-btn-hover-bg: var(--ui-action-hover);
+  --bs-btn-hover-border-color: var(--ui-action-hover);
+  --bs-btn-active-color: var(--ui-on-action);
+  --bs-btn-active-bg: var(--ui-action-active);
+  --bs-btn-active-border-color: var(--ui-action-active);
+  --bs-btn-disabled-color: var(--ui-disabled-text);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--ui-disabled-border);
+}
+/* Bootstrap paints :focus-visible with the hover colours, which makes keyboard focus and pointer hover
+   indistinguishable. Focus is a ring only; hover and active are re-asserted after it (higher specificity, via the
+   :not() guards) so they still win when combined with focus. Disabled buttons never take hover or active. */
+.bfcl-ui .btn:focus-visible { color: var(--bs-btn-color); background-color: var(--bs-btn-bg); border-color: var(--bs-btn-border-color); box-shadow: none; }
+.bfcl-ui .btn:not(:disabled):not(.disabled):hover,
+.bfcl-ui .btn.is-hover { color: var(--bs-btn-hover-color); background-color: var(--bs-btn-hover-bg); border-color: var(--bs-btn-hover-border-color); }
+.bfcl-ui .btn:not(:disabled):not(.disabled):active,
+.bfcl-ui .btn.is-active { color: var(--bs-btn-active-color); background-color: var(--bs-btn-active-bg); border-color: var(--bs-btn-active-border-color); }
+/* Busy: still focusable and announced via aria-busy; the spinner is supplied by the caller. */
+.bfcl-ui .btn[aria-busy="true"] { cursor: progress; }
+
+/* ---- Fields ---- */
+.bfcl-ui .form-label { font-size: var(--ui-text-label); font-weight: 600; color: var(--ui-text-strong); margin-bottom: var(--ui-space-1); }
+.bfcl-ui .form-text { font-size: var(--ui-text-helper); color: var(--ui-text-muted); }
+.bfcl-ui .form-control,
+.bfcl-ui .form-select {
+  min-height: var(--ui-control-h);
+  font-size: var(--ui-text-body);
+  color: var(--ui-text-strong);
+  background-color: var(--ui-panel);
+  border: 1px solid var(--ui-border-control);
+  border-radius: var(--ui-radius-control);
+  transition: border-color var(--ui-motion-fast);
+}
+.bfcl-ui .form-control::placeholder { color: var(--ui-text-muted); opacity: 1; }
+.bfcl-ui .form-control:hover:not(:disabled):not([readonly]),
+.bfcl-ui .form-select:hover:not(:disabled),
+.bfcl-ui .form-control.is-hover,
+.bfcl-ui .form-select.is-hover { border-color: var(--ui-border-control-hover); }
+.bfcl-ui .form-control:focus,
+.bfcl-ui .form-select:focus,
+.bfcl-ui .form-control.is-focus,
+.bfcl-ui .form-select.is-focus { border-color: var(--ui-focus); box-shadow: none; color: var(--ui-text-strong); background-color: var(--ui-panel); }
+/* Read-only stays focusable and legible; disabled is visibly inert. They must never look the same. */
+.bfcl-ui .form-control[readonly] { background-color: var(--ui-readonly-bg); border-style: dashed; }
+.bfcl-ui .form-control:disabled,
+.bfcl-ui .form-select:disabled { background-color: var(--ui-disabled-bg); color: var(--ui-disabled-text); border-color: var(--ui-disabled-border); cursor: not-allowed; }
+.bfcl-ui .form-control.is-invalid,
+.bfcl-ui .form-select.is-invalid { border-color: var(--ui-danger); }
+.bfcl-ui .invalid-feedback { font-size: var(--ui-text-helper); color: var(--ui-danger); font-weight: 600; }
+.bfcl-ui .form-check-input { border-color: var(--ui-border-control); }
+.bfcl-ui .form-check-input:checked { background-color: var(--ui-action); border-color: var(--ui-action); }
+
+/* ---- Status badge: text always carries the meaning; colour and border style are reinforcement ---- */
+.bfcl-ui .ui-status {
+  --_fg: var(--ui-status-neutral-fg);
+  --_bg: var(--ui-status-neutral-bg);
+  --_bd: var(--ui-status-neutral-border);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ui-space-1);
+  padding: 2px var(--ui-space-2);
+  font-size: var(--ui-text-helper);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--_fg);
+  background: var(--_bg);
+  border: 1px solid var(--_bd);
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.bfcl-ui .ui-status--success    { --_fg: var(--ui-status-success-fg);     --_bg: var(--ui-status-success-bg);     --_bd: var(--ui-status-success-border); }
+.bfcl-ui .ui-status--warning    { --_fg: var(--ui-status-warning-fg);     --_bg: var(--ui-status-warning-bg);     --_bd: var(--ui-status-warning-border); }
+.bfcl-ui .ui-status--danger     { --_fg: var(--ui-status-danger-fg);      --_bg: var(--ui-status-danger-bg);      --_bd: var(--ui-status-danger-border); }
+.bfcl-ui .ui-status--info       { --_fg: var(--ui-status-info-fg);        --_bg: var(--ui-status-info-bg);        --_bd: var(--ui-status-info-border); }
+.bfcl-ui .ui-status--neutral    { --_fg: var(--ui-status-neutral-fg);     --_bg: var(--ui-status-neutral-bg);     --_bd: var(--ui-status-neutral-border); }
+.bfcl-ui .ui-status--draft      { --_fg: var(--ui-status-draft-fg);       --_bg: var(--ui-status-draft-bg);       --_bd: var(--ui-status-draft-border); border-style: dashed; }
+.bfcl-ui .ui-status--locked     { --_fg: var(--ui-status-locked-fg);      --_bg: var(--ui-status-locked-bg);      --_bd: var(--ui-status-locked-border); }
+.bfcl-ui .ui-status--needs-rules { --_fg: var(--ui-status-needs-rules-fg); --_bg: var(--ui-status-needs-rules-bg); --_bd: var(--ui-status-needs-rules-border); }
+.bfcl-ui .ui-status--local-only { --_fg: var(--ui-status-local-only-fg);  --_bg: var(--ui-status-local-only-bg);  --_bd: var(--ui-status-local-only-border); }
+
+/* ---- Motion preference ---- */
+@media (prefers-reduced-motion: reduce) {
+  .bfcl-ui, .bfcl-ui * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}

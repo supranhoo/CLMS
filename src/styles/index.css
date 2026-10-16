@@ -1,0 +1,11 @@
+/*
+ * The single place global CSS order is defined (UI redesign W0/U03): vendor, then tokens, then base.
+ * Screen and component CSS is imported by the components that own it and always comes after this file.
+ *
+ * Bootstrap is deliberately imported *after* src/index.css (see src/index.jsx). That is the order the app has always
+ * shipped in, and it matters: index.css declares a body font-family that Bootstrap's reboot currently overrides.
+ * Reversing the two would silently change the base font on every screen.
+ */
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "./tokens.css";
+@import "./base.css";

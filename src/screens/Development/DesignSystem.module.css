@@ -1,0 +1,24 @@
+.page { max-width: 1180px; margin: var(--ui-space-6) auto; padding: 0 var(--ui-space-3); }
+.lede { color: var(--ui-text-muted); max-width: 70ch; }
+.section { margin-top: var(--ui-space-8); padding: var(--ui-space-5); background: var(--ui-panel); border: 1px solid var(--ui-border-subtle); border-radius: var(--ui-radius-panel); box-shadow: var(--ui-shadow-panel); }
+.section h2 { margin: 0 0 var(--ui-space-1); }
+.note { margin: 0 0 var(--ui-space-4); color: var(--ui-text-muted); font-size: var(--ui-text-label); }
+.scroll { overflow-x: auto; }
+.matrix { width: 100%; border-collapse: collapse; }
+.matrix th { padding: var(--ui-space-2) var(--ui-space-3); text-align: left; font-size: var(--ui-text-label); color: var(--ui-text-strong); border-bottom: 1px solid var(--ui-border); white-space: nowrap; }
+.matrix td { padding: var(--ui-space-3); vertical-align: middle; border-bottom: 1px solid var(--ui-border-subtle); }
+.matrix tbody th { font-weight: 600; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--ui-space-3); }
+.swatch { display: flex; align-items: center; gap: var(--ui-space-3); padding: var(--ui-space-2); border: 1px solid var(--ui-border-subtle); border-radius: var(--ui-radius-control); }
+.chip { flex: none; width: 36px; height: 36px; border-radius: 6px; border: 1px solid var(--ui-border-control); }
+.swatchText { min-width: 0; font-size: var(--ui-text-helper); line-height: 1.35; }
+.swatchText code { color: var(--ui-text-strong); overflow-wrap: anywhere; }
+.pairs td, .pairs th { font-size: var(--ui-text-label); }
+.pass { color: var(--ui-status-success-fg); font-weight: 600; }
+.fail { color: var(--ui-danger); font-weight: 700; }
+.sample { display: inline-block; padding: var(--ui-space-1) var(--ui-space-3); border-radius: 6px; font-weight: 600; }
+.fieldGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--ui-space-5); }
+.statuses { display: flex; flex-wrap: wrap; gap: var(--ui-space-3); }
+.targets { display: flex; flex-wrap: wrap; gap: var(--ui-space-4); align-items: flex-end; }
+.targetBox { display: grid; gap: var(--ui-space-1); justify-items: start; font-size: var(--ui-text-helper); color: var(--ui-text-muted); }
+.ruler { background: var(--ui-subtle); border: 1px dashed var(--ui-border-control); }
