@@ -1,0 +1,28 @@
+erDiagram
+  Employee {
+    string Employee_Code PK
+  }
+  LeaveApplication {
+    number leave_id PK
+    string employee_code FK
+    string leave_type_code FK
+  }
+  LeaveLedgerEntry {
+    number trans_id PK
+    string employee_code FK
+    string leave_type_code FK
+    string trans_type FK
+    string ref_no FK
+  }
+  LeaveType {
+    string leave_type_code PK
+  }
+  LedgerTransactionType {
+    string trans_type PK
+  }
+  Employee ||--o{ LeaveApplication : "employee_code"
+  LeaveType ||--o{ LeaveApplication : "leave_type_code"
+  Employee ||--o{ LeaveLedgerEntry : "employee_code"
+  LeaveType ||--o{ LeaveLedgerEntry : "leave_type_code"
+  LedgerTransactionType ||--o{ LeaveLedgerEntry : "trans_type"
+  LeaveApplication ||--o{ LeaveLedgerEntry : "ref_no (ref_type = LEAVE)"

@@ -1,0 +1,95 @@
+erDiagram
+  ApprovedManpower {
+    string contractor_id PK,FK
+    string dept_code PK,FK
+    string bu_code PK,FK
+    string emp_type PK,FK
+  }
+  AttendanceJob {
+    number job_id PK
+  }
+  BusinessUnit {
+    string bu_code PK
+  }
+  Contractor {
+    string Contractor_ID PK
+  }
+  Department {
+    string dept_code PK
+  }
+  Division {
+    string Div_code PK
+    string entity_code PK
+  }
+  Employee {
+    string Employee_Code PK
+  }
+  EmployeeRequest {
+    number request_id PK
+    string employee_code FK
+  }
+  EmployeeType {
+    string emp_type_code PK
+  }
+  ImportedPunch {
+    string employee_code PK,FK
+    string attendance_date_with_time PK
+  }
+  LegalEntity {
+    string entity_code PK
+  }
+  ManualMusterEntry {
+    string employee_code PK,FK
+    string attendance_date PK
+    string shift FK
+  }
+  MusterDepartment {
+    string employee_code PK,FK
+    string attendance_date PK
+    string dept_code FK
+    string bu_code FK
+    string entity_code FK
+    string div_code FK
+  }
+  ProcessedAttendance {
+    string employee_code PK,FK
+    string attendance_date PK
+  }
+  RegularisedPunch {
+    string employee_code PK,FK
+    string attendance_date PK
+    string contractor_id FK
+  }
+  SandwichRule {
+    number rule_id PK
+  }
+  Shift {
+    string sh_code PK
+    string sh_group FK
+  }
+  ShiftAllocation {
+    string employee_code PK,FK
+    string sh_group FK
+  }
+  ShiftGroup {
+    string sh_group PK
+  }
+  ShiftGroup ||--o{ Shift : "sh_group"
+  Employee ||--o{ ShiftAllocation : "employee_code"
+  ShiftGroup ||--o{ ShiftAllocation : "sh_group"
+  Contractor ||--o{ ApprovedManpower : "contractor_id"
+  Department ||--o{ ApprovedManpower : "dept_code"
+  BusinessUnit ||--o{ ApprovedManpower : "bu_code"
+  EmployeeType ||--o{ ApprovedManpower : "emp_type"
+  Employee ||--o{ ManualMusterEntry : "employee_code"
+  Shift ||--o{ ManualMusterEntry : "shift"
+  Employee ||--o{ RegularisedPunch : "employee_code"
+  Contractor ||--o{ RegularisedPunch : "contractor_id"
+  Employee ||--o{ MusterDepartment : "employee_code"
+  Department ||--o{ MusterDepartment : "dept_code"
+  BusinessUnit ||--o{ MusterDepartment : "bu_code"
+  LegalEntity ||--o{ MusterDepartment : "entity_code"
+  Division |o--o{ MusterDepartment : "div_code"
+  Employee ||--o{ ImportedPunch : "employee_code"
+  Employee ||--o{ ProcessedAttendance : "employee_code"
+  Employee ||--o{ EmployeeRequest : "employee_code"

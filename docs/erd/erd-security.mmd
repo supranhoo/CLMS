@@ -1,0 +1,26 @@
+erDiagram
+  AuditLogEntry {
+    string id PK
+    string actor FK
+  }
+  ComplianceProfile {
+    string id PK
+    string stateCode FK
+  }
+  RecoveryToken {
+    string id PK
+    string emp_id FK
+  }
+  RoleAssignment {
+    string emp_id PK,FK
+  }
+  StatutoryState {
+    string state_code PK
+  }
+  UserAccount {
+    string emp_id PK
+  }
+  UserAccount ||--o{ RoleAssignment : "emp_id"
+  UserAccount ||--o{ AuditLogEntry : "actor"
+  UserAccount ||--o{ RecoveryToken : "emp_id"
+  StatutoryState ||--o{ ComplianceProfile : "stateCode"

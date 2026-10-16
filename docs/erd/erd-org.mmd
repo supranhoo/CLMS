@@ -1,0 +1,57 @@
+erDiagram
+  Bank {
+    string bank_code PK
+  }
+  BusinessUnit {
+    string bu_code PK
+    string entity_code FK
+  }
+  City {
+    string city_code PK
+    string state_code PK,FK
+  }
+  Contractor {
+    string Contractor_ID PK
+  }
+  CostCentre {
+    string COST_CODE PK
+  }
+  Department {
+    string dept_code PK
+  }
+  Designation {
+    string design_code PK
+  }
+  Division {
+    string Div_code PK
+    string entity_code PK,FK
+  }
+  EmployeeCategory {
+    string emp_category_code PK
+  }
+  EmployeeType {
+    string emp_type_code PK
+  }
+  Holiday {
+    string hol_date PK
+    string contractor_id FK
+  }
+  LegalEntity {
+    string entity_code PK
+  }
+  Location {
+    string loc_code PK
+  }
+  Section {
+    string section_code PK
+  }
+  State {
+    string state_code PK
+  }
+  StatutoryState {
+    string state_code PK
+  }
+  LegalEntity ||--o{ BusinessUnit : "entity_code"
+  LegalEntity ||--o{ Division : "entity_code"
+  State ||--o{ City : "state_code"
+  Contractor |o--o{ Holiday : "contractor_id"

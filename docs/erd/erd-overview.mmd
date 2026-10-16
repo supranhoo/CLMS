@@ -1,0 +1,14 @@
+flowchart LR
+  org["<b>Organisation and reference data</b><br/>16 entities, 4 references inside"]
+  people["<b>People</b><br/>2 entities, 1 reference inside"]
+  attendance["<b>Attendance</b><br/>12 entities, 3 references inside"]
+  leave["<b>Leave</b><br/>4 entities, 4 references inside"]
+  wages["<b>Wages and payroll inputs</b><br/>8 entities, 5 references inside"]
+  security["<b>Users, roles and audit</b><br/>5 entities, 3 references inside"]
+  attendance -->|"9 references"| org
+  attendance -->|"7 references"| people
+  leave -->|"2 references"| people
+  people -->|"16 references"| org
+  security -->|"1 reference"| org
+  wages -->|"6 references"| org
+  wages -->|"5 references"| people

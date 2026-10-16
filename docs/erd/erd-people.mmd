@@ -1,0 +1,83 @@
+erDiagram
+  Bank {
+    string bank_code PK
+  }
+  BusinessUnit {
+    string bu_code PK
+  }
+  City {
+    string city_code PK
+    string state_code PK
+  }
+  Contractor {
+    string Contractor_ID PK
+  }
+  CostCentre {
+    string COST_CODE PK
+  }
+  Department {
+    string dept_code PK
+  }
+  Designation {
+    string design_code PK
+  }
+  Division {
+    string Div_code PK
+    string entity_code PK
+  }
+  Employee {
+    string Employee_Code PK
+    string contractor_id FK
+    string dept FK
+    string bu FK
+    string entity_code FK
+    string loc_code FK
+    string division FK
+    string cost_code FK
+    string design_code FK
+    string section FK
+    string emp_type FK
+    string emp_category_code FK
+    string bank_code FK
+    string local_city FK
+    string pmt_city FK
+    string local_state FK
+    string pmt_state FK
+  }
+  EmployeeCategory {
+    string emp_category_code PK
+  }
+  EmployeeType {
+    string emp_type_code PK
+  }
+  LegalEntity {
+    string entity_code PK
+  }
+  Location {
+    string loc_code PK
+  }
+  PendingEmployeeChange {
+    number record_id PK
+    string Employee_Code FK
+  }
+  Section {
+    string section_code PK
+  }
+  State {
+    string state_code PK
+  }
+  Contractor ||--o{ Employee : "contractor_id"
+  Department ||--o{ Employee : "dept"
+  BusinessUnit ||--o{ Employee : "bu"
+  LegalEntity ||--o{ Employee : "entity_code"
+  Location ||--o{ Employee : "loc_code"
+  Division |o--o{ Employee : "division"
+  CostCentre |o--o{ Employee : "cost_code"
+  Designation |o--o{ Employee : "design_code"
+  Section |o--o{ Employee : "section"
+  EmployeeType |o--o{ Employee : "emp_type"
+  EmployeeCategory |o--o{ Employee : "emp_category_code"
+  Bank |o--o{ Employee : "bank_code"
+  City |o--o{ Employee : "local_city, pmt_city"
+  State |o--o{ Employee : "local_state, pmt_state"
+  Employee |o--o{ PendingEmployeeChange : "Employee_Code"

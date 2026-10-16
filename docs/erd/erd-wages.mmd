@@ -1,0 +1,77 @@
+erDiagram
+  BusinessUnit {
+    string bu_code PK
+  }
+  Contractor {
+    string Contractor_ID PK
+  }
+  Designation {
+    string design_code PK
+  }
+  Employee {
+    string Employee_Code PK
+  }
+  FixedWage {
+    string EmployeeCode PK,FK
+    string BillingType PK
+    string eff_date PK
+  }
+  LegalEntity {
+    string entity_code PK
+  }
+  PayrollRun {
+    string pmonth PK
+    string billingType PK
+  }
+  ProcessMonth {
+    string pmonth PK
+    string billingType PK
+  }
+  ServiceChargeRule {
+    number RuleID PK
+    string ContractorID FK
+    string entity_code FK
+    string EmployeeCode FK
+    string DesignCode FK
+    string BuCode FK
+  }
+  WageArrear {
+    string employee_code PK,FK
+    string pmonth PK,FK
+    string billingType PK,FK
+    string arrearCode PK
+    string arrearRefPmonth PK,FK
+  }
+  WageDeduction {
+    string employee_code PK,FK
+    string pmonth PK,FK
+    string billingType PK,FK
+    string dedCode PK
+  }
+  WageEarning {
+    string employee_code PK,FK
+    string pmonth PK,FK
+    string billingType PK,FK
+    string ernCode PK
+  }
+  WageProcessLock {
+    string pmonth PK,FK
+    string billingType PK,FK
+    string entityCode PK,FK
+    string ContractorId PK,FK
+  }
+  Employee ||--o{ FixedWage : "EmployeeCode"
+  Employee ||--o{ WageEarning : "employee_code"
+  ProcessMonth ||--o{ WageEarning : "pmonth + billingType"
+  Employee ||--o{ WageDeduction : "employee_code"
+  ProcessMonth ||--o{ WageDeduction : "pmonth + billingType"
+  Employee ||--o{ WageArrear : "employee_code"
+  ProcessMonth ||--o{ WageArrear : "pmonth + billingType, arrearRefPmonth + billingType"
+  Contractor ||--o{ ServiceChargeRule : "ContractorID"
+  LegalEntity ||--o{ ServiceChargeRule : "entity_code"
+  Employee ||--o{ ServiceChargeRule : "EmployeeCode (RuleType = EmployeeCode)"
+  Designation ||--o{ ServiceChargeRule : "DesignCode (RuleType = Designation)"
+  BusinessUnit ||--o{ ServiceChargeRule : "BuCode (RuleType = BuCode)"
+  ProcessMonth ||--o{ WageProcessLock : "pmonth + billingType"
+  LegalEntity ||--o{ WageProcessLock : "entityCode"
+  Contractor ||--o{ WageProcessLock : "ContractorId"
