@@ -42,6 +42,10 @@ const exportWageComparissionToXLS = async ({ billingType, prv_pmonth, cur_pmonth
 
     const attendanceData = response.data;
 
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
+
     // Group data by contractor using "Contractor" field
     const contractors = {};
     attendanceData.forEach((item) => {
@@ -262,6 +266,7 @@ const exportWageComparissionToXLS = async ({ billingType, prv_pmonth, cur_pmonth
     document.body.removeChild(link);
   } catch (error) {
     console.error("Error exporting the wages report:", error);
+    throw error;
   }
 };
 

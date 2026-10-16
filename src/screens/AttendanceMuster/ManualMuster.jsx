@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerEmployee, selectUser } from "../../features/userSlice";
 import Select from "react-select";
 import UploadManualMuster from "../../components/UploadManualMuster";
+import { apiErrorMessage } from "../../utils/apiError";
 import moment from "moment"; // You can use the moment library for date formatting
 
 // Utility function to convert a date to DD/MM/YYYY format
@@ -35,6 +36,9 @@ const formatDateForInput = (dateString) => {
 };
 */
 const formatDateForInput = (dateString) => {
+  // A plain YYYY-MM-DD (or ISO) string already names the day: parsing it with new Date() and reading local
+  // getters shows the previous day west of UTC.
+  if (typeof dateString === "string" && /^\d{4}-\d{2}-\d{2}/.test(dateString)) return dateString.slice(0, 10);
   const date = new Date(dateString);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -151,8 +155,8 @@ const ManualMuster = () => {
   const [selectedArrearCode, setSelectedArrearCode] = useState(""); // Stores the selected contractor ID
 
   const [shiftsList, setShiftsList] = useState([]); // Stores the selected date
-  const [selectedShift, setSelectedShift] = useState([]);
-  const [selectedPunchMark, setSelectedPunchMark] = useState([]);
+  const [selectedShift, setSelectedShift] = useState(null);
+  const [selectedPunchMark, setSelectedPunchMark] = useState(null);
 
   const [arrearValue, setArrearValue] = useState(""); // Stores the selected contractor ID
   const [remarks, setRemarks] = useState(""); // Stores the selected contractor ID
@@ -177,12 +181,22 @@ const ManualMuster = () => {
   });
 
   // Static options for shift selection
-  const staticPunchMarksList = [
+  const fallbackPunchMarksList = [
     { value: "P", label: "P - Present" },
-    { value: "A", label: "A - Absent" },
-    { value: "HDP", label: "HDP - Half Day Present" },
+    { value: "AB", label: "AB - Absent" },
+    { value: "WO", label: "WO - Weekly Off" },
+    { value: "CL", label: "CL - Casual Leave" },
+    { value: "EL", label: "EL - Earned Leave" },
+    { value: "SL", label: "SL - Sick Leave" },
+    { value: "HLD", label: "HLD - Holiday" },
     { value: "OD", label: "OD - Outdoor Duty" },
+    { value: "WFH", label: "WFH - Work From Home" },
+    { value: "HD", label: "HD - Half Day" },
+    { value: "LOP", label: "LOP - Loss Of Pay" },
   ];
+  const [staticPunchMarksList, setPunchMarksList] = useState(
+    fallbackPunchMarksList
+  );
 
   const [successMessage, setSuccessMessage] = useState(""); // Tracks success message
   const [isAddDisabled, setIsAddDisabled] = useState(true); // Disable "Add" button if employee code is invalid
@@ -213,25 +227,10 @@ const ManualMuster = () => {
     fetchPmonthData();
     fetchArrearCodesData();
     fetchEmpShifts();
+    fetchPunchMarks();
     fetchPermission();
     setShowUpload(false);
   }, []);
-
-  useEffect(() => {
-    if (
-      !newArrear.employee_code ||
-      !newArrear.attendance_date ||
-      !selectedShift ||
-      !selectedPunchMark
-    ) {
-      setIsAddDisabled(true);
-    }
-  }, [
-    newArrear.employee_code,
-    newArrear.attendance_date,
-    selectedShift,
-    selectedPunchMark,
-  ]);
 
   const handleGetDeduction = async () => {
     fetchDeductionData();
@@ -364,6 +363,8 @@ const ManualMuster = () => {
         console.log("Testing---2");
 
         setArrearsData([...arrearsData, updatedArrear]);
+        setSelectedShift(null);
+        setSelectedPunchMark(null);
 
         // Reset the form fields
         setNewDeduction({
@@ -396,7 +397,7 @@ const ManualMuster = () => {
       //if (err.response.data.error.originalError.info.message) {
       //setError("Error adding deduction.3"+err.response.data.error.originalError.info.message);
       //} else {
-      setError("Error adding deduction.3" + err);
+      setError(apiErrorMessage(err));
       //}
     }
   };
@@ -461,6 +462,23 @@ const ManualMuster = () => {
       setPmonthList(formattedPmonth); // Set the correct formatted array
     } catch (error) {
       console.error("Error fetching Process Month:", error);
+    }
+  };
+
+  const fetchPunchMarks = async () => {
+    try {
+      const response = await axios.post("/api/attendance/getPunchMarks", {});
+      const options = (Array.isArray(response.data) ? response.data : [])
+        .filter((item) => item.punch_mark)
+        .map((item) => ({
+          value: item.punch_mark,
+          label: item.punch_mark_desc
+            ? `${item.punch_mark} - ${item.punch_mark_desc}`
+            : item.punch_mark,
+        }));
+      if (options.length) setPunchMarksList(options);
+    } catch (error) {
+      console.error("Error fetching punch marks:", error);
     }
   };
 
@@ -540,22 +558,11 @@ const ManualMuster = () => {
         setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
         employee_codeRef.current.focus();
       } else {
-        if (response.data.error.originalError.info.message) {
-          setError(
-            "Error updating deduction.1" +
-              response.data.error.originalError.info.message
-          );
-        } else {
-          setError("Error updating deduction at 2" + response);
-        }
+        setError("Error updating deduction. " + apiErrorMessage({ response }));
       }
     } catch (err) {
       console.error("Error updating deduction at 3:", err);
-      if (err.response.data.message) {
-        setError("Error updating deduction.3" + err.response.data.message);
-      } else {
-        setError("Error updating deduction.3" + err);
-      }
+      setError("Error updating deduction. " + apiErrorMessage(err));
     }
   };
 
@@ -840,8 +847,8 @@ const ManualMuster = () => {
                 <Select
                   options={shiftsList}
                   value={shiftsList.find(
-                    (option) => option.value === newArrear.shift
-                  )}
+                    (option) => option.value === selectedShift
+                  ) || null}
                   onChange={(selectedOption) =>
                     setSelectedShift(selectedOption.value)
                   }
@@ -861,8 +868,8 @@ const ManualMuster = () => {
                 <Select
                   options={staticPunchMarksList}
                   value={staticPunchMarksList.find(
-                    (option) => option.value === newArrear.punch_mark
-                  )}
+                    (option) => option.value === selectedPunchMark
+                  ) || null}
                   onChange={(selectedOption) =>
                     setSelectedPunchMark(selectedOption.value)
                   }
@@ -912,7 +919,7 @@ const ManualMuster = () => {
                   size="sm"
                   onClick={handleAddArrear}
                   className={styles["small-button"]}
-                  disabled={isAddDisabled} // Disable the Add button when no valid employee code
+                  disabled={isAddDisabled || !newArrear.attendance_date || !selectedShift || !selectedPunchMark} // Disable the Add button when no valid employee code
                 >
                   Add
                 </Button>

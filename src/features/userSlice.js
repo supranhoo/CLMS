@@ -135,7 +135,11 @@ export const userSlice = createSlice({
       state.loading = false;
       state.user = null;
       state.error = null;
-      localStorage.clear();
+      try {
+        localStorage.removeItem("user");
+      } catch {
+        /* storage unavailable */
+      }
     },
   },
   extraReducers: (builder) => {
@@ -147,6 +151,11 @@ export const userSlice = createSlice({
         state.loading = true;
         state.user = null;
         state.error = null;
+        try {
+          localStorage.removeItem("user");
+        } catch {
+          /* storage unavailable */
+        }
       })
 
       .addCase(loginUser.fulfilled, (state, action) => {
@@ -158,6 +167,11 @@ export const userSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.user = null;
+        try {
+          localStorage.removeItem("user");
+        } catch {
+          /* storage unavailable */
+        }
 
         /* 🔒 LICENSE ERRORS */
         if (action.payload?.code === "LICENSE_EXPIRED") {

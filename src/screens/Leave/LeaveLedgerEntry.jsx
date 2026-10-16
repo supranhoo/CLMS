@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../features/userSlice";
 import { downloadWorkbook } from "../../utils/exportWorkbook.js";
+import { apiErrorMessage } from "../../utils/apiError";
 
 const PAGE_SIZE = 10;
 const MENU_URL = "/menu"; // change if your menu route is different
@@ -22,6 +23,8 @@ const LeaveLedgerEntry = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [entryMode, setEntryMode] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
   const [searchText, setSearchText] = useState("");
   const [pageNo, setPageNo] = useState(1);
 
@@ -113,12 +116,18 @@ const LeaveLedgerEntry = () => {
           balance_effect: t.balance_effect,
         })),
       );
-    } catch {
-      setError("Failed to load masters");
+    } catch (e) {
+      setError("Failed to load masters: " + apiErrorMessage(e));
     }
   };
 
   const handleFilterSelect = (opt, name) => {
+    if (
+      rows.some((row) => row.is_new || row.is_dirty) &&
+      !window.confirm("Discard unsaved ledger changes?")
+    ) {
+      return;
+    }
     queryRevision.current += 1;
     setQuerySnapshot(null);
     setFilter({ ...filter, [name]: opt ? opt.value : "" });
@@ -144,12 +153,15 @@ const LeaveLedgerEntry = () => {
     selected: false,
   });
 
-  const queryData = async () => {
+  // Resolves true when the server answered; keepRows are unsaved rows to append after the refresh
+  const queryData = async (keepRows) => {
+    const kept = Array.isArray(keepRows) ? keepRows : [];
     setError("");
     setSuccess("");
 
     if (!filter.pmonth || !filter.leave_type_code) {
-      return setError("Process Month and Leave Type are mandatory");
+      setError("Process Month and Leave Type are mandatory");
+      return false;
     }
 
     try {
@@ -162,14 +174,16 @@ const LeaveLedgerEntry = () => {
           leave_type_code: filter.leave_type_code,
         },
       });
-      if (revision !== queryRevision.current) return;
-      setRows(res.data.data || []);
+      if (revision !== queryRevision.current) return false;
+      setRows([...(res.data.data || []), ...kept]);
       setQuerySnapshot(snapshot);
-      setEntryMode(false);
+      setEntryMode(kept.length > 0);
       setSearchText("");
       setPageNo(1);
+      return true;
     } catch (e) {
-      setError(e.response?.data?.message || "Failed to query leave ledger");
+      setError(apiErrorMessage(e, "Failed to query leave ledger"));
+      return false;
     }
   };
 
@@ -182,10 +196,10 @@ const LeaveLedgerEntry = () => {
     }
 
     if (!entryMode) {
-      setRows([makeNewRow()]);
+      setRows((prev) => [...prev, makeNewRow()]);
       setEntryMode(true);
       setSearchText("");
-      setPageNo(1);
+      setPageNo(Math.ceil((rows.length + 1) / PAGE_SIZE));
     } else {
       setRows((prev) => [...prev, makeNewRow()]);
       setPageNo(Math.ceil((rows.length + 1) / PAGE_SIZE));
@@ -216,9 +230,13 @@ const LeaveLedgerEntry = () => {
     setError("");
     setSuccess("");
 
-    const saveRows = rows.filter((r) => r.ref_type === "MANUAL" || r.is_new);
+    if (savingRef.current) return;
 
-    if (!saveRows.length) return setError("No manual rows to save");
+    const saveRows = rows.filter(
+      (r) => (r.ref_type === "MANUAL" || r.is_new) && (r.is_new || r.is_dirty),
+    );
+
+    if (!saveRows.length) return setError("No new or edited rows to save");
 
     for (const r of saveRows) {
       if (!r.employee_code || !r.trans_type || !r.leave_days) {
@@ -232,12 +250,16 @@ const LeaveLedgerEntry = () => {
       }
     }
 
+    savingRef.current = true;
+    setSaving(true);
     try {
       await axios.post("/api/leave/save-bulk", { rows: saveRows });
-      setSuccess("Leave ledger saved successfully");
-      queryData();
+      if (await queryData()) setSuccess("Leave ledger saved successfully");
     } catch (e) {
-      setError(e.response?.data?.message || "Failed to save leave ledger");
+      setError(apiErrorMessage(e, "Failed to save leave ledger"));
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
     }
   };
 
@@ -265,14 +287,15 @@ const LeaveLedgerEntry = () => {
         await axios.post("/api/leave/delete", { trans_ids: savedIds });
       }
 
-      if (hasUnsavedSelected) {
-        setRows((prev) => prev.filter((r) => !(r.selected && !r.trans_id)));
+      if (savedIds.length) {
+        // The server changed: re-query so deleted trans_ids are never re-sent, keeping other unsaved new rows
+        const keep = rows.filter((r) => r.is_new && !r.selected);
+        if (await queryData(keep)) setSuccess("Selected rows deleted successfully");
       } else {
-        setSuccess("Selected rows deleted successfully");
-        queryData();
+        setRows((prev) => prev.filter((r) => !(r.selected && !r.trans_id)));
       }
     } catch (e) {
-      setError(e.response?.data?.message || "Failed to delete rows");
+      setError(apiErrorMessage(e, "Failed to delete rows"));
     }
   };
 
@@ -352,7 +375,7 @@ const LeaveLedgerEntry = () => {
 
   const ActionButtons = () => (
     <div className="d-flex gap-2 flex-wrap">
-      <Button size="sm" variant="primary" onClick={saveChanges}>
+      <Button size="sm" variant="primary" onClick={saveChanges} disabled={saving}>
         Save
       </Button>
       <Button size="sm" variant="outline-danger" onClick={deleteSelected}>
@@ -421,7 +444,7 @@ const LeaveLedgerEntry = () => {
         </Form.Group>
 
         <Form.Group className="d-flex align-items-end gap-2">
-          <Button size="sm" onClick={queryData}>
+          <Button size="sm" onClick={() => queryData()}>
             Query
           </Button>
           <Button size="sm" variant="success" onClick={addRow}>

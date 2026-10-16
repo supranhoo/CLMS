@@ -8,6 +8,7 @@ import Loading from "../../components/Loading";
 import ErrorMessage from "../../components/ErrorMessage";
 import axios from "../../api/axios.js";
 import moment from "moment";
+import { apiErrorMessage } from "../../utils/apiError";
 import "./Paginated1.css";
 import "./Paginated2.css";
 
@@ -80,6 +81,7 @@ const ManageEmployees = () => {
       setEmployees(res.data || []);
     } catch (e) {
       console.error(e);
+      setMessage(apiErrorMessage(e));
     }
     setLoading(false);
   };
@@ -167,11 +169,13 @@ const ManageEmployees = () => {
         await axios.post("/api/attendance/addShGrpAlloc", payload);
       }
 
+      setMessage("");
       fetchEmployees();
       clearForm();
       setSelectedEmployee(null);
     } catch (err) {
       console.error(err);
+      setMessage(apiErrorMessage(err));
     }
     setLoading(false);
   };
@@ -309,6 +313,7 @@ const ManageEmployees = () => {
               value={formData.employee_code}
               onChange={handleChange}
               ref={employeeIdRef}
+              disabled={!!selectedEmployee}
               style={compactInput}
             />
           </Col>

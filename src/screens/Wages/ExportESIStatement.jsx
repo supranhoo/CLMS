@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from "../../features/userSlice";
 import Select, { components } from 'react-select';
 import axios from '../../api/axios.js';
+import { apiErrorMessage } from "../../utils/apiError";
 import exportESIStatementToXLS from '../../components/ExportESIStatementToXLS';
 import styles from './PrintWages.module.css'; // Import CSS module
 import moment from 'moment'; // You can use the moment library for date formatting
@@ -285,7 +286,6 @@ const PrintWages = () => {
         department: selectedDepartmentValues,
         emp_type: selectedEmpTypeValues, // Employee Type
         emp_id: emp_id,
-        token: token,
       };
 
 /*      if (outputType == 'PDF'){
@@ -298,7 +298,7 @@ const PrintWages = () => {
     //  }           
     } catch (error) {
       console.error('Error printing wages:', error);
-      alert('Failed to print attendance. Please try again.');
+      alert(apiErrorMessage(error));
     }
   };
 

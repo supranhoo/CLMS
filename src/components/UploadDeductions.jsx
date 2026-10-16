@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import axios from '../api/axios.js';
+import { apiErrorMessage } from '../utils/apiError';
+import { escapeHtml } from '../utils/escapeHtml';
 
 function convertToSQLDate(dateString) {
   const [day, month, year] = dateString.split('-');
@@ -36,24 +38,39 @@ function UploadDeductions({ setShowUpload , created_by}) { // Accept the prop to
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
       // Prepare the deductions data from Excel data
-      const deductionsData = jsonData.flatMap(row => {
-      const employeeCode = row['EmployeeCode'];
+      const skippedRows = [];
+      const deductionsData = jsonData.flatMap((row, index) => {
+      const rowNo = (row.__rowNum__ ?? index + 1) + 1; // spreadsheet row (header is row 1)
+      const employeeCode = hasValue(row['EmployeeCode']) ? String(row['EmployeeCode']).trim() : '';
       const billingType = row['BillingType']
       const ProcessMonth = row['ProcessMonth'];
       const PayCode = row['PayCode'];
       const Amount = row['Amount'];
       const Remarks = row['Remarks'];
 
-        // Skip rows with missing employee_code
-        if (!employeeCode || !Amount || !PayCode || !ProcessMonth || !billingType) return [];
-
+        // Skip rows with missing required cells (Amount 0 is a valid amount)
+        const missing = [
+          ['EmployeeCode', employeeCode],
+          ['BillingType', billingType],
+          ['ProcessMonth', ProcessMonth],
+          ['PayCode', PayCode],
+          ['Amount', Amount],
+        ].filter(([, value]) => !hasValue(value)).map(([name]) => name);
+        if (missing.length) {
+          skippedRows.push(`Row ${rowNo}: missing ${missing.join(', ')}`);
+          return [];
+        }
+        const formattedProcessMonth = excelDateToJSDate(ProcessMonth);
+        if (!formattedProcessMonth) {
+          skippedRows.push(`Row ${rowNo}: ProcessMonth is not a valid date`);
+          return [];
+        }
         //const formattedProcessMonth = ProcessMonth ? convertToSQLDate(ProcessMonth) : null;
-        const formattedProcessMonth = ProcessMonth ? excelDateToJSDate(ProcessMonth) : null;
         //excelDateToJSDate(inDate)
         const dedRecords = [];
 
         // In Punch Record
-        if (formattedProcessMonth && PayCode && Amount ) {
+        if (formattedProcessMonth && hasValue(PayCode) && hasValue(Amount)) {
           const deductionRecord = {
             employee_code: employeeCode,
             pmonth: formattedProcessMonth,
@@ -71,17 +88,25 @@ function UploadDeductions({ setShowUpload , created_by}) { // Accept the prop to
 
       console.log('Processed Deductions Data:', deductionsData);
 
+      // Rows that were skipped or only partly used, shown to the user so nothing is dropped silently
+      const skippedNote = skippedRows.length
+        ? `\n\n${skippedRows.length} row(s) in the file were skipped or only partly used:\n` +
+          skippedRows.slice(0, 10).join('\n') +
+          (skippedRows.length > 10 ? '\n...' : '')
+        : '';
+
       try {
         const response = await axios.post('/api/wages/uploadDeductions', { deductions: deductionsData });
 
         if (response.data.notInsertedRecords && response.data.notInsertedRecords.length > 0) {
           openInNewWindow(response.data.notInsertedRecords);
+          if (skippedNote) alert(skippedNote.trim());
         } else {
-          alert('All records were successfully inserted.');
+          alert(`All records were successfully inserted.${skippedNote}`);
         }
       } catch (error) {
         console.error('Error uploading deductions:', error);
-        alert('Failed to upload deductions. Check the console for more details.');
+        alert(`Failed to upload deductions: ${apiErrorMessage(error)}${skippedNote}`);
       }
       setCompleted(true); // Mark the process as completed
       setShowUpload(false); // Hide the component after completion
@@ -137,13 +162,13 @@ function UploadDeductions({ setShowUpload , created_by}) { // Accept the prop to
               <tbody>
                 ${records.map(record => `
                   <tr>
-                    <td>${record.employee_code}</td>
-                    <td>${record.billingType}</td>
-                    <td>${record.pmonth}</td>
-                    <td>${record.dedCode}</td>
-                    <td>${record.dedValue}</td>
-                    <td>${record.remarks}</td>
-                    <td>${record.result}</td>
+                    <td>${escapeHtml(record.employee_code)}</td>
+                    <td>${escapeHtml(record.billingType)}</td>
+                    <td>${escapeHtml(record.pmonth)}</td>
+                    <td>${escapeHtml(record.dedCode)}</td>
+                    <td>${escapeHtml(record.dedValue)}</td>
+                    <td>${escapeHtml(record.remarks)}</td>
+                    <td>${escapeHtml(record.result)}</td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -170,16 +195,26 @@ function UploadDeductions({ setShowUpload , created_by}) { // Accept the prop to
 
 // Convert Excel serial date to a JavaScript Date in DD-MM-YYYY format
 function excelDateToJSDate(excelDate) {
-  const date = new Date((excelDate - 25569) * 86400 * 1000);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
+  const serial = Number(excelDate);
+  if (!hasValue(excelDate) || !Number.isFinite(serial)) return null;
+  const date = new Date((serial - 25569) * 86400 * 1000);
+  if (!Number.isFinite(date.getTime())) return null;
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const year = date.getUTCFullYear();
   return `${year}-${month}-${day}`;
+}
+
+// A cell value of 0 (Excel serial 0, 00:00) is a real value; only undefined, null and '' are missing
+function hasValue(value) {
+  return value !== undefined && value !== null && value !== '';
 }
 
 // Convert Excel serial time to HH:MM format
 function excelTimeToHHMM(excelTime) {
-  const totalMinutes = Math.round(excelTime * 24 * 60);
+  const value = Number(excelTime);
+  if (!hasValue(excelTime) || !Number.isFinite(value)) return null;
+  const totalMinutes = Math.round(value * 24 * 60);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;

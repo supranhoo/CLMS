@@ -11,6 +11,8 @@ import axios from "../../api/axios.js";
 import "./Paginated1.css";
 import "./Paginated2.css";
 import { downloadWorkbook } from "../../utils/exportWorkbook.js";
+import { apiErrorMessage } from "../../utils/apiError";
+import { escapeHtml } from "../../utils/escapeHtml";
 
 const ManageEmployees = () => {
   const [employees, setEmployees] = useState([]);
@@ -112,6 +114,7 @@ const ManageEmployees = () => {
   const [stateMastList, setStateMastList] = useState([]);
   const [cityMastList, setCityMastList] = useState([]);
   const [successMessage, setSuccessMessage] = useState(""); // Tracks success message
+  const [successText, setSuccessText] = useState("");
   const today = new Date(); // Current date
   const birthDate = new Date(formData.Dateof_Birth); // Date of birth from form
   const employeeIdRef = useRef(null); // Ref for Employee_Code input field
@@ -138,10 +141,14 @@ const ManageEmployees = () => {
         (Employee_Code &&
           Employee_Code.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (Adhar_No &&
-          Adhar_No.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          String(Adhar_No)
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())) ||
         (panno && panno.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (contact_no &&
-          contact_no.toLowerCase().includes(searchTerm.toLowerCase()))
+          String(contact_no)
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()))
       );
     });
 
@@ -160,10 +167,12 @@ const ManageEmployees = () => {
           const response = await axios.post("/api/employee/getByAdhar", {
             Adhar_No: adharNo,
           });
-          if (response.data) {
-            setAdharDetails(response.data[0]); // Set fetched details
-            console.log(response.data[0]);
-            console.log("Adhar Ddetails", adharDetails);
+          // Ignore the record being edited: it always matches itself.
+          const matches = (
+            Array.isArray(response.data) ? response.data : []
+          ).filter((row) => row.Employee_Code !== formData.Employee_Code);
+          if (matches.length > 0) {
+            setAdharDetails(matches[0]); // Set fetched details
             setShowAdharPopup(true); // Show the modal
           } else {
             setAdharDetails(null); // Clear any existing details
@@ -171,25 +180,31 @@ const ManageEmployees = () => {
           }
         } catch (error) {
           console.error("Error fetching Adhar details:", error);
-          alert("Failed to fetch details. Please try again.");
+          alert(apiErrorMessage(error));
         }
       } else {
         setShowAdharPopup(false);
         setAdharDetails(null); // Clear modal if the field is empty
       }
     };
+
+    fetchAdharDetails();
+  }, [formData.Adhar_No]); // Dependency on Adhar_No
+
+  useEffect(() => {
     const fetchpannoDetails = async () => {
       const panNo = formData.panno;
 
-      if (panNo && panNo.length === 12) {
+      if (panNo && panNo.length === 10) {
         try {
           const response = await axios.post("/api/employee/getByPanno", {
             panno: panNo,
           });
-          if (response.data) {
-            setAdharDetails(response.data[0]); // Set fetched details
-            console.log(response.data[0]);
-            console.log("PAN Ddetails", adharDetails);
+          const matches = (
+            Array.isArray(response.data) ? response.data : []
+          ).filter((row) => row.Employee_Code !== formData.Employee_Code);
+          if (matches.length > 0) {
+            setpannoDetails(matches[0]); // Set fetched details
             setShowPannoPopup(true); // Show the modal
           } else {
             setpannoDetails(null); // Clear any existing details
@@ -197,7 +212,7 @@ const ManageEmployees = () => {
           }
         } catch (error) {
           console.error("Error fetching PAN details:", error);
-          alert("Failed to fetch details. Please try again.");
+          alert(apiErrorMessage(error));
         }
       } else {
         setShowPannoPopup(false);
@@ -205,9 +220,8 @@ const ManageEmployees = () => {
       }
     };
 
-    fetchAdharDetails();
     fetchpannoDetails();
-  }, [formData.Adhar_No]); // Dependency on Adhar_No
+  }, [formData.panno]); // Dependency on panno
 
   const fetchEmployees = async () => {
     try {
@@ -222,7 +236,7 @@ const ManageEmployees = () => {
     } catch (error) {
       console.error("Error fetching employees:", error);
       setLoading(false);
-      // Handle error state as needed
+      setMessage(apiErrorMessage(error));
     }
   };
 
@@ -777,6 +791,7 @@ const ManageEmployees = () => {
             updatedFormData1,
           );
           if (response.status == 200) {
+            setSuccessText("Employee change saved for approval");
             setShowSuccessModal(true);
             setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
             fetchEmployees(); // Refresh the employee data
@@ -787,14 +802,7 @@ const ManageEmployees = () => {
               gridRef.current.focus();
             }
           } else {
-            if (response.data.error.originalError.info.message) {
-              setError(
-                "Error adding EMPLOYEE.1" +
-                  response.data.error.originalError.info.message,
-              );
-            } else {
-              setError("Error adding EMPLOYEE at 2" + response);
-            }
+            setError(apiErrorMessage({ response }));
             setLoading(false); // Reset loading after success
           }
           setLoading(false);
@@ -802,14 +810,7 @@ const ManageEmployees = () => {
         } catch (err) {
           console.log("Stage--6");
           console.log(err);
-          if (err.response.data.error.originalError.info.message) {
-            setError(
-              "Error adding Employee.3" +
-                err.response.data.error.originalError.info.message,
-            );
-          } else {
-            setError("Error adding Employee.4" + err);
-          }
+          setError(apiErrorMessage(err));
           setLoading(false); // Reset loading after success
           employeeIdRef.current.focus();
         }
@@ -862,6 +863,7 @@ const ManageEmployees = () => {
             updatedFormData1,
           );
           if (response.status == 200) {
+            setSuccessText("New employee saved for approval");
             setShowSuccessModal(true);
             setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
             fetchEmployees(); // Refresh the employee data
@@ -872,27 +874,13 @@ const ManageEmployees = () => {
               gridRef.current.focus();
             }
           } else {
-            if (response.data.error.originalError.info.message) {
-              setError(
-                "Error adding EMPLOYEE.1" +
-                  response.data.error.originalError.info.message,
-              );
-            } else {
-              setError("Error adding EMPLOYEE at 2" + response);
-            }
+            setError(apiErrorMessage({ response }));
             setLoading(false); // Reset loading after success
           }
           setLoading(false);
           employeeIdRef.current.focus();
         } catch (err) {
-          if (err.response.data.error.originalError.info.message) {
-            setError(
-              "Error adding Employee.3" +
-                err.response.data.error.originalError.info.message,
-            );
-          } else {
-            setError("Error adding Employee.4" + err);
-          }
+          setError(apiErrorMessage(err));
           setLoading(false); // Reset loading after success
           employeeIdRef.current.focus();
         }
@@ -900,7 +888,7 @@ const ManageEmployees = () => {
     } catch (error) {
       setShowErrorModal(true);
       console.error("Submit Error:", error);
-      setError("Error adding EMPLOYEE at 5" + error);
+      setError(apiErrorMessage(error));
       setLoading(false);
       employeeIdRef.current.focus();
     }
@@ -1030,6 +1018,9 @@ const ManageEmployees = () => {
     return date.toLocaleDateString("en-GB"); // 'en-GB' will format the date as dd/mm/yyyy
   };
   const formatDateForInput = (dateString) => {
+    if (typeof dateString === "string" && /^\d{4}-\d{2}-\d{2}/.test(dateString)) {
+      return String(dateString).slice(0, 10);
+    }
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -1079,13 +1070,13 @@ const ManageEmployees = () => {
                   .map(
                     (record) => `
                   <tr>
-                    <td>${record.employee_code}</td>
-                    <td>${record.billingType}</td>
-                    <td>${record.pmonth}</td>
-                    <td>${record.dedCode}</td>
-                    <td>${record.dedValue}</td>
-                    <td>${record.remarks}</td>
-                    <td>${record.result}</td>
+                    <td>${escapeHtml(record.employee_code)}</td>
+                    <td>${escapeHtml(record.billingType)}</td>
+                    <td>${escapeHtml(record.pmonth)}</td>
+                    <td>${escapeHtml(record.dedCode)}</td>
+                    <td>${escapeHtml(record.dedValue)}</td>
+                    <td>${escapeHtml(record.remarks)}</td>
+                    <td>${escapeHtml(record.result)}</td>
                   </tr>
                 `,
                   )
@@ -1324,6 +1315,7 @@ const ManageEmployees = () => {
                     placeholder="Enter Employee Code"
                     onChange={handleChange}
                     ref={employeeIdRef}
+                    disabled={!!selectedEmployee}
                     style={{ textTransform: "uppercase" }}
                   />
                   {errors.Employee_Code && (
@@ -1764,7 +1756,7 @@ const ManageEmployees = () => {
                     <option value="">Select Wage Cycle</option>
                     {billingTypeList.map((item) => (
                       <option
-                        key={item.billingType_code}
+                        key={item.billingtype_code}
                         value={item.billingtype_code}
                       >
                         {item.billingtype_name}
@@ -2610,7 +2602,7 @@ const ManageEmployees = () => {
         <Modal.Header closeButton>
           <Modal.Title>Success</Modal.Title>
         </Modal.Header>
-        <Modal.Body>User Registered Successfully</Modal.Body>
+        <Modal.Body>{successText}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleSuccessModalClose}>
             Close

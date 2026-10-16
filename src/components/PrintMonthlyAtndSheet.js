@@ -46,6 +46,10 @@ const printMonthlyAtndSheet = async ({
 
     const attendanceData = response.data;
 
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
+
     // Group data by employee and date
     const employeeAttendance = {};
     attendanceData.forEach((item) => {
@@ -136,6 +140,7 @@ const printMonthlyAtndSheet = async ({
     doc.save(`MonthlyAttendance_${from_date}_to_${to_date}.pdf`);
   } catch (error) {
     console.error("Error generating the attendance report:", error);
+    throw error;
   }
 };
 

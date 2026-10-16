@@ -9,6 +9,7 @@ import { registerEmployee, selectUser } from "../../features/userSlice";
 import Select from 'react-select';
 import UploadDeductions from '../../components/UploadDeductions';
 import moment from 'moment'; // You can use the moment library for date formatting
+import { apiErrorMessage } from '../../utils/apiError';
 
 // Utility function to format datetime strings for <input type="datetime-local">
 const formatDateForInput = (dateString) => {
@@ -335,7 +336,7 @@ const ManageProcessMonth = () => {
       //if (err.response.data.error.originalError.info.message) {
         //setError("Error adding deduction.3"+err.response.data.error.originalError.info.message);
       //} else {
-        setError("Error adding deduction.3"+err);
+        setError(`Error adding process month: ${apiErrorMessage(err)}`);
       //}
     }
   };
@@ -366,19 +367,11 @@ const ManageProcessMonth = () => {
         setSuccessMessage("Record updated successfully.");
         setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
       } else {
-        if (response.data.error.originalError.info.message) {
-          setError("Error updating deduction.1"+response.data.error.originalError.info.message);
-        } else {
-          setError("Error updating deduction at 2"+response);
-        }
+        setError("Error updating process month at 2");
       }
     } catch (err) {
       console.error("Error updating deduction at 3:", err);
-      if (err.response.data.message) {
-        setError("Error updating deduction.3"+err.response.data.message);
-      } else {
-        setError("Error updating deduction.3"+err);
-      }
+      setError(`Error updating process month: ${apiErrorMessage(err)}`);
     }
   };
 
@@ -395,19 +388,11 @@ const ManageProcessMonth = () => {
         setSuccessMessage("Record deleted successfully.");
         setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
       } else {
-        if (response.data.error.originalError.info.message) {
-          setError("Error updating deduction.1"+response.data.error.originalError.info.message);
-        } else {
-          setError("Error updating deduction at 2"+response);
-        }
+        setError("Error updating process month at 2");
       }
     } catch (err) {
       console.error("Error updating deduction at 3:", err);
-      if (err.response.data.message) {
-        setError("Error updating deduction.3"+err.response.data.message);
-      } else {
-        setError("Error updating deduction.3"+err);
-      }
+      setError(`Error updating process month: ${apiErrorMessage(err)}`);
     }
   };
 
@@ -465,8 +450,8 @@ const ManageProcessMonth = () => {
                   <td className={styles["left-justify"]}>
                     {moment(processMonth.pmonth).format('DD/MM/YYYY')}
                   </td>
-                  <td>{processMonth.start_date ? moment(processMonth.start_date).format('DD/MM/YYYY') : null}</td> {/* Actual in deduction */}
-                  <td>{processMonth.end_date ? moment(processMonth.end_date).format('DD/MM/YYYY')  : null}</td> {/* Actual out deduction */}
+                  <td>{processMonth.start_date ? moment(processMonth.start_date).format('DD/MM/YYYY') : null}</td>{/* Actual in deduction */}
+                  <td>{processMonth.end_date ? moment(processMonth.end_date).format('DD/MM/YYYY')  : null}</td>{/* Actual out deduction */}
                   <td>
                     <Form.Control
                       as="select"
@@ -505,8 +490,9 @@ const ManageProcessMonth = () => {
               <td>
                 <Form.Control
                   as="select"
+                  name="billingType"
                   value={newProcessMonth.billingType}
-                  onChange={(e) => setNewProcessMonth({ ...newProcessMonth, billingType: e.target.value })}
+                  onChange={handleInputChange}
                   className={styles["small-input"]}
                 >
                 <option value="" disabled>Select Billing Cycle</option>

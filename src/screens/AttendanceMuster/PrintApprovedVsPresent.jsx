@@ -5,6 +5,7 @@ import { selectUser } from "../../features/userSlice";
 import Select, { components } from 'react-select';
 import axios from '../../api/axios.js';
 import exportApprovedVsPresntToXls from '../../components/ExportApprovedVsPresentToXLS';
+import { apiErrorMessage } from '../../utils/apiError';
 import styles from './PrintDailyAttendance.module.css'; // Import CSS module
 
 // Custom Option component to include checkboxes in the dropdown
@@ -203,7 +204,6 @@ const PrintApprovedVsPresent = () => {
         from_date: fromDate,
         emp_type: selectedEmpType?.value || '', // extract the code like 'SL'
         emp_id: emp_id,
-        token: token,
       };
 
       await exportApprovedVsPresntToXls(data, {
@@ -215,7 +215,7 @@ const PrintApprovedVsPresent = () => {
       
     } catch (error) {
       console.error('Error printing attendance:', error);
-      alert('Failed to print attendance. Please try again.');
+      alert(apiErrorMessage(error));
     }
   };
 

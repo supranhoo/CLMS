@@ -9,6 +9,7 @@ import ErrorMessage from "../../components/ErrorMessage";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, logoutUser, registerUser } from "../../features/userSlice";
 import { Modal } from "react-bootstrap";
+import { apiErrorMessage } from "../../utils/apiError";
 
 const RegisterScreen = () => {
   // States for handling error modal
@@ -23,6 +24,7 @@ const RegisterScreen = () => {
   const [error1, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [errorText, setErrorText] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Use useNavigate hook
 
@@ -37,31 +39,27 @@ const RegisterScreen = () => {
       password,
     };
     //clea;
+    if (password !== confirmpassword) {
+      setMessage("Passwords do not match");
+      return;
+    }
+    setMessage("");
     setError(false);
     setLoading(true);
     try {
-      await dispatch(registerUser(userCredentials)).then((result) => {
-        if (result.payload) {
-          setShowSuccessModal(true);
-          setEmail("");
-          setPassword("");
-          //navigate("/"); // Navigate to the home route
-        }
-        //console.log("STage--1:", result);
-        if (result.error) {
-          setShowErrorModal(true);
-          console.log("Error:", result.error);
-          setError(true);
-        }
-      });
-      //localStorage.setItem("userInfo", JSON.stringify(data));
-      setLoading(false);
-    } catch (error) {
+      await dispatch(registerUser(userCredentials)).unwrap();
+      setShowSuccessModal(true);
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      //navigate("/"); // Navigate to the home route
+    } catch (err) {
+      setErrorText(err?.message || apiErrorMessage(err));
       setShowErrorModal(true);
-      console.log("Submit Err:", error);
+      console.log("Submit Err:", err);
       setError(true);
-      setLoading(false);
     }
+    setLoading(false);
     console.log(emp_id, password);
   };
 
@@ -186,7 +184,7 @@ const RegisterScreen = () => {
         <Modal.Header closeButton>
           <Modal.Title>Error</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Unable to register</Modal.Body>
+        <Modal.Body>{errorText || "Unable to register"}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
             Close

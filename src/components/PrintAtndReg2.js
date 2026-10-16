@@ -57,6 +57,10 @@ const printAtndReg = async ({
 
     const attendanceData = response.data;
 
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
+
     // Group data by contractor, BU, and department
     const contractors = {};
     attendanceData.forEach((item) => {
@@ -75,6 +79,7 @@ const printAtndReg = async ({
     });
 
     const doc = new jsPDF();
+    let firstPageUsed = false; // the document starts with one blank page; use it before adding more
     const headerFontSize = 9;
     const fontSize = 9;
     doc.setFontSize(fontSize);
@@ -136,7 +141,8 @@ const printAtndReg = async ({
           const deptData = buData[deptName];
 
           if (cnt == 0) {
-            doc.addPage();
+            if (firstPageUsed) doc.addPage();
+            firstPageUsed = true;
             yPos = drawPageHeader(
               doc,
               emp_type,
@@ -202,6 +208,7 @@ const printAtndReg = async ({
     doc.save(`Attendance_${from_date}_to_${to_date}.pdf`);
   } catch (error) {
     console.error("Error generating the attendance report:", error);
+    throw error;
   }
 };
 

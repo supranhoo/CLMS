@@ -4,6 +4,7 @@ import Select from "react-select";
 import axios from "../../api/axios.js";
 import * as XLSX from "xlsx";
 import styles from "./Leave.module.css";
+import { apiErrorMessage } from "../../utils/apiError";
 
 const LeaveBalanceReport = () => {
   const [processMonths, setProcessMonths] = useState([]);
@@ -77,7 +78,7 @@ const LeaveBalanceReport = () => {
 
       setRows(res.data.data || []);
     } catch (e) {
-      setError(e.response?.data?.message || "Failed to load balance report");
+      setError(apiErrorMessage(e, "Failed to load balance report"));
     }
   };
 

@@ -3,6 +3,7 @@ import { Table, Form, Button, Alert, Modal } from "react-bootstrap";
 import axios from "../../api/axios.js";
 import Select from 'react-select';
 import styles from "./AddWageDeductionsGrid.module.css";
+import { apiErrorMessage } from "../../utils/apiError";
 
 const ManageServiceCharges = () => {
   const [serviceCharges, setServiceCharges] = useState([]);
@@ -70,8 +71,8 @@ const ManageServiceCharges = () => {
 
   const fetchDesignations = async () => {
     try {
-      const response = await axios.post("/api/entity/getAllDept");
-      setDesignations(response.data.map(d => ({ value: d.dept_code, label: d.dept_name })));
+      const response = await axios.get("/api/employee/getAllDesignation");
+      setDesignations(response.data.map(d => ({ value: d.design_code, label: d.design_name })));
     } catch (error) {
       console.error("Error fetching designations:", error);
     }
@@ -127,7 +128,7 @@ const ManageServiceCharges = () => {
       }
     } catch (error) {
       console.error("Error adding service charge:", error);
-      setErrorMessage("Failed to add service charge.");
+      setErrorMessage(apiErrorMessage(error));
       setTimeout(() => setErrorMessage(""), 3000);
     }
   };
@@ -160,6 +161,7 @@ const ManageServiceCharges = () => {
             <Form.Label>Entity</Form.Label>
             <Select
               options={entities}
+              value={entities.find((o) => o.value === newServiceCharge.entity_code) || null}
               onChange={(option) => handleSelectChange(option, "entity_code")}
               placeholder="Select Entity"
             />
@@ -169,6 +171,7 @@ const ManageServiceCharges = () => {
             <Form.Label>Contractor</Form.Label>
             <Select
               options={contractors}
+              value={contractors.find((o) => o.value === newServiceCharge.ContractorID) || null}
               onChange={(option) => handleSelectChange(option, "ContractorID")}
               placeholder="Select Contractor"
             />
@@ -178,6 +181,7 @@ const ManageServiceCharges = () => {
             <Form.Label>Process Month</Form.Label>
             <Select
               options={processMonths}
+              value={processMonths.find((o) => o.value === newServiceCharge.Eff_PMonth) || null}
               onChange={(option) => handleSelectChange(option, "Eff_PMonth")}
               placeholder="Select Process Month"
             />
@@ -187,6 +191,7 @@ const ManageServiceCharges = () => {
             <Form.Label>Rule Type</Form.Label>
             <Select
               options={ruleTypes}
+              value={ruleTypes.find((o) => o.value === newServiceCharge.RuleType) || null}
               onChange={(option) => handleSelectChange(option, "RuleType")}
               placeholder="Select Rule Type"
             />
@@ -230,6 +235,7 @@ const ManageServiceCharges = () => {
             <Form.Label>Designation</Form.Label>
             <Select
               options={designations}
+              value={designations.find((o) => o.value === newServiceCharge.DesignCode) || null}
               onChange={(option) => handleSelectChange(option, "DesignCode")}
               placeholder="Select Designation"
             />
@@ -239,6 +245,7 @@ const ManageServiceCharges = () => {
             <Form.Label>BU Code</Form.Label>
             <Select
               options={businessUnits}
+              value={businessUnits.find((o) => o.value === newServiceCharge.BuCode) || null}
               onChange={(option) => handleSelectChange(option, "BuCode")}
               placeholder="Select BU Code"
             />

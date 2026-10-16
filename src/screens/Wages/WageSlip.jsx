@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../features/userSlice";
 import Select from "react-select";
 import axios from "../../api/axios.js";
+import { apiErrorMessage } from "../../utils/apiError";
 import { FaSearch } from "react-icons/fa";
 import { jsPDF } from "jspdf";
 import styles from "./WageSlip.module.css"; // Import CSS module
@@ -173,7 +174,6 @@ const WageSlip = () => {
         employee_code: employee_code,
         pmonth: selectedPmonth.value,
         emp_id: emp_id,
-        token: token,
       });
 
       if (response.data && response.data.length > 0) {

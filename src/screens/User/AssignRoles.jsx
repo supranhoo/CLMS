@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "../../api/axios.js";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../features/userSlice";
+import { apiErrorMessage } from "../../utils/apiError";
 import styles from "./AssignRoles.module.css"; // Custom CSS module
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
@@ -10,6 +11,7 @@ const AssignRoles = ({ existingData, onSubmit }) => {
   const [cleared, setCleared] = useState(false); // Track if clearing is done
   const [empCode, setEmpCode] = useState("");
   const [copyEmpCode, setCopyEmpCode] = useState("");
+  const [loadError, setLoadError] = useState("");
 
   const [bu, setBu] = useState([]);
   const [selectedBu, setSelectedBu] = useState([]);
@@ -82,6 +84,7 @@ const AssignRoles = ({ existingData, onSubmit }) => {
       setBu(formattedBUData); // Set formatted data to state
     } catch (error) {
       console.error("Error fetching BU data:", error);
+      setLoadError(apiErrorMessage(error));
     }
   };
 
@@ -99,6 +102,7 @@ const AssignRoles = ({ existingData, onSubmit }) => {
       setContractor(formattedContractorData); // Set formatted data to state
     } catch (error) {
       console.error("Error fetching Contractor data:", error);
+      setLoadError(apiErrorMessage(error));
     }
   };
 
@@ -116,6 +120,7 @@ const AssignRoles = ({ existingData, onSubmit }) => {
       setDept(formattedDeptData); // Set formatted data to state
     } catch (error) {
       console.error("Error fetching BU data:", error);
+      setLoadError(apiErrorMessage(error));
     }
   };
 
@@ -133,6 +138,7 @@ const AssignRoles = ({ existingData, onSubmit }) => {
       setMenu(formattedMenuData); // Set formatted data to state
     } catch (error) {
       console.error("Error fetching Contractor data:", error);
+      setLoadError(apiErrorMessage(error));
     }
   };
 
@@ -151,6 +157,7 @@ const AssignRoles = ({ existingData, onSubmit }) => {
       setLocation(formattedLocationData); // Set formatted data to state
     } catch (error) {
       console.error("Error fetching location data:", error);
+      setLoadError(apiErrorMessage(error));
     }
   };
 
@@ -163,12 +170,37 @@ const AssignRoles = ({ existingData, onSubmit }) => {
       const formattedMenuActivityData = response.data.map((item) => ({
         menu_id: item.menu_id,
         menu_name: item.menu_name,
+        activity_name: item.activity_name,
       }));
 
       setMenuActivity(formattedMenuActivityData); // Set formatted data to state
     } catch (error) {
       console.error("Error fetching Contractor data:", error);
+      setLoadError(apiErrorMessage(error));
     }
+  };
+
+  const mergeBack = (available, selected, key) => [
+    ...available,
+    ...selected.filter(
+      (item) => !available.some((avail) => avail[key] === item[key])
+    ),
+  ];
+
+  // Put every selection back into its available list and empty the selections.
+  const clearSelections = () => {
+    setBu(mergeBack(bu, selectedBu, "bu_code"));
+    setSelectedBu([]);
+    setContractor(mergeBack(contractor, selectedContractor, "contractor_code"));
+    setSelectedContractor([]);
+    setDept(mergeBack(dept, selectedDept, "dept_code"));
+    setSelectedDept([]);
+    setMenu(mergeBack(menu, selectedMenu, "menu_id"));
+    setSelectedMenu([]);
+    setMenuActivity(mergeBack(menuActivity, selectedMenuActivity, "menu_id"));
+    setSelectedMenuActivity([]);
+    setLocation(mergeBack(location, selectedLocation, "loc_code"));
+    setSelectedLocation([]);
   };
 
   const fetchRolesFromEmployee = async (employeeCode) => {
@@ -176,19 +208,14 @@ const AssignRoles = ({ existingData, onSubmit }) => {
       const filterAndAssignRoles = async (available, selected, url, key) => {
         const response = await axios.post(url, { emp_id: employeeCode });
         const fetched = response.data;
-        const updatedAvailable = available.filter(
+        // Replace the selections with the fetched ones; anything that was selected
+        // but is not fetched goes back to the available list.
+        const universe = mergeBack(available, selected, key);
+        const updatedAvailable = universe.filter(
           (item) =>
             !fetched.some((fetchedItem) => fetchedItem[key] === item[key])
         );
-        const updatedSelected = [
-          ...selected,
-          ...fetched.filter(
-            (fetchedItem) =>
-              !selected.some(
-                (selectedItem) => selectedItem[key] === fetchedItem[key]
-              )
-          ),
-        ];
+        const updatedSelected = fetched;
         console.log("step1", updatedAvailable);
         console.log("Step2", updatedSelected);
         return { updatedAvailable, updatedSelected };
@@ -272,6 +299,7 @@ const AssignRoles = ({ existingData, onSubmit }) => {
         `Error fetching roles for employee ${employeeCode}:`,
         error
       );
+      setLoadError(apiErrorMessage(error));
     }
   };
 
@@ -336,6 +364,22 @@ const AssignRoles = ({ existingData, onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (
+      [
+        selectedBu,
+        selectedContractor,
+        selectedDept,
+        selectedMenu,
+        selectedMenuActivity,
+        selectedLocation,
+      ].every((list) => list.length === 0) &&
+      !window.confirm(
+        "This will remove all assignments for this user. Continue?"
+      )
+    ) {
+      return;
+    }
+
     // Payloads for each type of data
     const buPayload = {
       emp_code: empCode,
@@ -394,6 +438,11 @@ const AssignRoles = ({ existingData, onSubmit }) => {
   return (
     <div className={styles.container}>
       <h2 className={styles.heading}>Assign Roles</h2>
+      {loadError && (
+        <div role="alert" style={{ color: "#b00020", marginBottom: "8px" }}>
+          {loadError}
+        </div>
+      )}
       <form onSubmit={handleSubmit}>
         {/* User Code and Copy Roles from Another Employee in a Single Line */}
         <div className={styles.inlineGroup}>
@@ -401,7 +450,10 @@ const AssignRoles = ({ existingData, onSubmit }) => {
           <input
             type="text"
             value={empCode}
-            onChange={(e) => setEmpCode(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value !== empCode) clearSelections();
+              setEmpCode(e.target.value);
+            }}
             required
           />
           <button
@@ -813,7 +865,7 @@ const AssignRoles = ({ existingData, onSubmit }) => {
                   >
                     {menuActivity.map((item) => (
                       <option key={item.menu_id} value={item.menu_id}>
-                        {item.menu_name}
+                        {item.menu_name || item.activity_name}
                       </option>
                     ))}
                   </select>
@@ -875,7 +927,7 @@ const AssignRoles = ({ existingData, onSubmit }) => {
                   >
                     {selectedMenuActivity.map((item) => (
                       <option key={item.menu_id} value={item.menu_id}>
-                        {item.menu_name}
+                        {item.menu_name || item.activity_name}
                       </option>
                     ))}
                   </select>

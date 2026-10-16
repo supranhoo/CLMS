@@ -22,6 +22,13 @@ function getDateRange(fromDate, toDate) {
   return dates;
 }
 
+// Full YYYY-MM-DD key for a date, so a range that crosses two months never collides on the day number
+function dateKeyOf(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+    date.getDate(),
+  ).padStart(2, "0")}`;
+}
+
 function classifyAttendance(punchMark) {
   const pm = (punchMark || "").trim();
 
@@ -35,9 +42,13 @@ function classifyAttendance(punchMark) {
             ? 1
             : pm === "WOH"
               ? 0.5
-              : 0,
+              : pm === "HD"
+                ? 0.5
+                : pm === "WFH"
+                  ? 1
+                  : 0,
 
-    AB: pm === "PX" || pm === "A" || pm === "" ? 1 : 0,
+    AB: pm === "PX" || pm === "A" || pm === "AB" || pm === "" ? 1 : 0,
 
     WO: pm === "WO" ? 1 : 0,
 
@@ -45,7 +56,7 @@ function classifyAttendance(punchMark) {
 
     PAID: ["EL", "CL", "SL", "SPL"].includes(pm) ? 1 : 0,
 
-    UNPAID: pm === "LWP" || pm === "ESI" ? 1 : 0,
+    UNPAID: pm === "LWP" || pm === "ESI" || pm === "LOP" ? 1 : 0,
 
     OD: pm === "OD" ? 1 : 0,
   };
@@ -158,6 +169,9 @@ const ExportMnthAtndToXLS = async ({
 
     console.log(response);
     const attendanceData = response.data;
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
 
     // Calculate dynamic date range
     const dateRange = getDateRange(from_date, to_date); // Array of date objects
@@ -196,8 +210,7 @@ const ExportMnthAtndToXLS = async ({
 
       // Store attendance punch_mark and ot_hours for each day within the date range
       const attendanceDate = new Date(item.attendance_date);
-      const day = attendanceDate.getDate(); // Extract day
-      const dateKey = String(day).padStart(2, "0"); // Use day as the key
+      const dateKey = dateKeyOf(attendanceDate); // Use the full date as the key
 
       if (
         attendanceDate >= new Date(from_date) &&
@@ -230,7 +243,9 @@ const ExportMnthAtndToXLS = async ({
           convertTimeToMinutes(otHour); // Add OT minutes
 
         // Calculate vertical totals for each day (punch mark totals and OT hours)
-        const dateIndex = dateRange.findIndex((date) => date.getDate() === day);
+        const dateIndex = dateRange.findIndex(
+          (date) => dateKeyOf(date) === dateKey,
+        );
         verticalTotals.punches[dateIndex] += calculatePunchMarkTotal(punchMark);
         verticalTotals.otMinutes[dateIndex] += convertTimeToMinutes(otHour); // Add OT minutes for each day
       }
@@ -275,7 +290,11 @@ const ExportMnthAtndToXLS = async ({
       `A3:${worksheet.getColumn(3 + dateRange.length + 12).letter}3`,
     );
     worksheet.getCell("A3").value =
-      `Contractor: ${attendanceData[0].contractor_id} - ${attendanceData[0].contractor_name}`;
+      `Contractor: ${[
+        ...new Set(
+          attendanceData.map((r) => `${r.contractor_id} - ${r.contractor_name}`),
+        ),
+      ].join(", ")}`;
     worksheet.getCell("A3").font = { bold: true, size: 12 };
     worksheet.getCell("A3").alignment = { horizontal: "center" };
 
@@ -331,7 +350,7 @@ const ExportMnthAtndToXLS = async ({
         employee.bu_name,
       ];
       dateRange.forEach((date) => {
-        const day = String(date.getDate()).padStart(2, "0");
+        const day = dateKeyOf(date);
         punchMarkRow.push(attendance[day] || ""); // Add punch mark for each date
       });
 
@@ -378,7 +397,7 @@ const ExportMnthAtndToXLS = async ({
       // Second row: OT Hours
       const otHoursRow = ["", "", "", "", ""]; // Empty cells for EmpCode, Name, Designation
       dateRange.forEach((date) => {
-        const day = String(date.getDate()).padStart(2, "0");
+        const day = dateKeyOf(date);
         //const otTime = convertMinutesToTime(otMinutes[day] || 0);
         //const otTime = otMinutes[day] / 60 || 0;
         const otTime = otMinutes[day]
@@ -389,7 +408,11 @@ const ExportMnthAtndToXLS = async ({
       });
       //otHoursRow.push("test", "test2"); // No total needed for this row
       //otHoursRow.push("", employee.totalOTMinutes / 60); // Add total punch days and OT hours
-      otHoursRow.push("", Number((employee.totalOTMinutes / 60).toFixed(2)));
+      // 9 summary columns (PR .. Total Punch Days) precede 'Total OT Hours'
+      otHoursRow.push(
+        "", "", "", "", "", "", "", "", "",
+        Number((employee.totalOTMinutes / 60).toFixed(2)),
+      );
       worksheet.addRow(otHoursRow).eachCell((cell, colNumber) => {
         if (colNumber > 3) {
           cell.style = getDataCellStyle(); // Apply center alignment for day columns and totals
@@ -437,6 +460,7 @@ const ExportMnthAtndToXLS = async ({
     a.click();
   } catch (error) {
     console.error("Error generating the attendance report:", error);
+    throw error;
   }
 };
 

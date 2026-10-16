@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../features/userSlice";
 import Select, { components } from "react-select";
 import axios from "../../api/axios.js";
+import { apiErrorMessage } from "../../utils/apiError";
 import exportWagesToXLS from "../../components/ExportWagesToXLS";
 import exportWagesToXLSSingleSheet from "../../components/ExportWagesToXLSSingleSheet";
 import printWagesPDF from "../../components/PrintWagesPDF"; // Import the pagebreak version
@@ -325,7 +326,6 @@ const PrintWages = () => {
         department: selectedDepartmentValues,
         emp_type: selectedEmpTypeValues, // Employee Type
         emp_id: emp_id,
-        token: token,
       };
 
       if (separateSheet === "Y") {
@@ -342,7 +342,7 @@ const PrintWages = () => {
       }
     } catch (error) {
       console.error("Error printing wages:", error);
-      alert("Failed to print attendance. Please try again.");
+      alert(apiErrorMessage(error));
     }
   };
 

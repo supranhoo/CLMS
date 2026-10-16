@@ -6,6 +6,7 @@ import styles from "./RegularizePunchGrid.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { registerEmployee, selectUser } from "../../features/userSlice";
+import { apiErrorMessage } from "../../utils/apiError";
 
 // Utility function to format datetime strings for <input type="datetime-local">
 const formatDateForInput = (dateString) => {
@@ -116,8 +117,12 @@ const RegularizePunchGrid = () => {
     fetchPunchData();
   }, [attendanceDate, contractorId]);
 
-  const handleEmployeeCodeValidate = async () => {
-    const empCode = newPunch.employee_code?.trim();
+  const handleEmployeeCodeValidate = async (empCodeParam) => {
+    const empCode = (
+      typeof empCodeParam === "string"
+        ? empCodeParam
+        : empCodeParam?.target?.value ?? newPunch.employee_code
+    )?.trim();
     if (!empCode) return;
 
     if (!attendanceDate || !contractorId) {
@@ -174,7 +179,7 @@ const RegularizePunchGrid = () => {
       }
     } catch (err) {
       console.error(err);
-      setError("Error validating employee");
+      setError("Error validating employee: " + apiErrorMessage(err));
       setIsAddDisabled(true);
     }
   };
@@ -286,7 +291,20 @@ const RegularizePunchGrid = () => {
       if (response.status == 200) {
         console.log("Testing---2");
 
-        setPunchData([...punchData, newPunch]);
+        // Re-fetch so the new row carries the server's attendance_date and key
+        try {
+          const refreshed = await axios.post(
+            "/api/attendance/getRegularisedPunches",
+            { attendance_date: attendanceDate, contractor_id: contractorId }
+          );
+          setPunchData(
+            Array.isArray(refreshed.data.recordset)
+              ? refreshed.data.recordset
+              : []
+          );
+        } catch (refreshErr) {
+          console.error("Error refreshing punches:", refreshErr);
+        }
 
         // Reset the form fields
         setNewPunch({
@@ -307,27 +325,13 @@ const RegularizePunchGrid = () => {
       } else {
         console.log("Testing---3");
 
-        if (response.data.error.originalError.info.message) {
-          setError(
-            "Error adding punch.1" +
-              response.data.error.originalError.info.message
-          );
-        } else {
-          setError("Error adding punch at 2" + response);
-        }
+        setError("Error adding punch. " + apiErrorMessage({ response }));
       }
     } catch (err) {
       console.log("Testing---4");
 
       console.error("Error adding punch at err:", err);
-      if (err.response?.data?.error?.originalError?.info?.message) {
-        setError(
-          "Error adding punch.3" +
-            err.response?.data?.error?.originalError?.info?.message
-        );
-      } else {
-        setError("Error adding punch.3" + err);
-      }
+      setError("Error adding punch. " + apiErrorMessage(err));
     }
   };
 
@@ -339,7 +343,7 @@ const RegularizePunchGrid = () => {
       const response = await axios.post("/api/attendance/getRegularisedPunches", { attendance_date: attendanceDate, contractor_id: contractorId });
       setPunchData(response.data.recordset || []);
       setSuccessMessage(approved === "Y" ? "Local regularisation approved." : "Local regularisation approval withdrawn.");
-    } catch (error) { setError(error.response?.data?.message || error.message); }
+    } catch (error) { setError(apiErrorMessage(error)); }
   };
 
   // Update existing punch record
@@ -364,22 +368,11 @@ const RegularizePunchGrid = () => {
         setSuccessMessage("Record updated successfully.");
         setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
       } else {
-        if (response.data.error.originalError.info.message) {
-          setError(
-            "Error updating punch.1" +
-              response.data.error.originalError.info.message
-          );
-        } else {
-          setError("Error updating punch at 2" + response);
-        }
+        setError("Error updating punch. " + apiErrorMessage({ response }));
       }
     } catch (err) {
       console.error("Error updating punch at 3:", err);
-      if (err.response?.data?.message) {
-        setError("Error updating punch.3" + err.response?.data?.message);
-      } else {
-        setError("Error updating punch.3" + err);
-      }
+      setError("Error updating punch. " + apiErrorMessage(err));
     }
   };
 
@@ -531,19 +524,20 @@ const RegularizePunchGrid = () => {
                     {punch.in_punch_actual
                       ? formatTime(punch.in_punch_actual)
                       : null}
-                  </td>{" "}
+                  </td>
                   {/* Actual in punch */}
                   <td>
                     {punch.out_punch_actual
                       ? formatTime(punch.out_punch_actual)
                       : null}
-                  </td>{" "}
+                  </td>
                   {/* Actual out punch */}
                   <td>
                     <Form.Control
                       className={styles["small-input"]}
                       type="datetime-local"
                       value={punch.in_punch ? formatTime(punch.in_punch) : null}
+                      disabled={punch.approved === "Y"}
                       onChange={(e) => handleUpdateInputChange(e, punch)}
                       name="in_punch"
                     />
@@ -555,6 +549,7 @@ const RegularizePunchGrid = () => {
                       value={
                         punch.out_punch ? formatTime(punch.out_punch) : null
                       }
+                      disabled={punch.approved === "Y"}
                       onChange={(e) => handleUpdateInputChange(e, punch)}
                       name="out_punch"
                     />
@@ -571,7 +566,7 @@ const RegularizePunchGrid = () => {
                     />
                   </td>
                   <td>
-                    <Button size="sm" onClick={() => handleUpdatePunch(punch)}>
+                    <Button size="sm" disabled={punch.approved === "Y"} onClick={() => handleUpdatePunch(punch)}>
                       Save
                     </Button>
                     <Button size="sm" variant="outline-success" onClick={() => reviewPunch(punch)}>{punch.approved === "Y" ? "Withdraw approval" : "Approve"}</Button>
@@ -626,9 +621,9 @@ const RegularizePunchGrid = () => {
                   placeholder="Display Name"
                 />
               </td>
-              <td>{newPunch.in_punch_actual || "N/A"}</td>{" "}
+              <td>{newPunch.in_punch_actual || "N/A"}</td>
               {/* Actual in punch */}
-              <td>{newPunch.out_punch_actual || "N/A"}</td>{" "}
+              <td>{newPunch.out_punch_actual || "N/A"}</td>
               {/* Actual out punch */}
               <td>
                 <Form.Control

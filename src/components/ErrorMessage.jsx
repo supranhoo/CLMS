@@ -5,7 +5,7 @@ const ErrorMessage = ({ variant = "info", children }) => {
   return (
     <div>
       <Alert variant={variant} style={{ fontSize: 20 }}>
-        '<strong>{children}</strong>
+        <strong>{children}</strong>
       </Alert>
     </div>
   );

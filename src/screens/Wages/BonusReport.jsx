@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../features/userSlice";
 import exportBonusReportToXLS from "../../components/ExportBonusReportToXLS";
 import styles from "./BonusReport.module.css";
+import { apiErrorMessage } from "../../utils/apiError";
 
 const ALL = { value: "ALL", label: "Select All" };
 const valuesOf = (items) => items.some((x) => x.value === "ALL") ? [] : items.map((x) => x.value);
@@ -41,7 +42,7 @@ export default function BonusReport() {
         department: formatOptions(department.data, "dept_code", "dept_name"),
         location: formatOptions(location.data, "loc_code", "loc_name"),
       });
-    }).catch((error) => setMessage(error.response?.data?.message || error.message));
+    }).catch((error) => setMessage(apiErrorMessage(error)));
   }, [emp_id]);
 
   useEffect(() => {
@@ -78,13 +79,12 @@ export default function BonusReport() {
         department: valuesOf(form.department),
         location: valuesOf(form.location),
         emp_id,
-        token: user?.token,
       };
       const { data } = await axios.post("/api/wages/getBonusReport", payload);
       await exportBonusReportToXLS({ rows: data, fromPmonth: payload.from_pmonth, toPmonth: payload.to_pmonth, billingType: payload.billingType });
       setMessage(`Bonus report generated successfully for ${data.length} employee-month records.`);
     } catch (error) {
-      setMessage(error.response?.data?.message || error.message);
+      setMessage(apiErrorMessage(error));
     } finally {
       setBusy(false);
     }

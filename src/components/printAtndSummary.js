@@ -37,6 +37,10 @@ const printAtndSummary = async ({ from_date, to_date, contractor, bu, entity, de
 
     const attendanceData = response.data;
 
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
+
     // Sample record to extract dynamic columns (date columns)
     const dynamicColumns = getDynamicColumns(attendanceData[0]);
 
@@ -116,6 +120,7 @@ const printAtndSummary = async ({ from_date, to_date, contractor, bu, entity, de
     doc.save(`AttendanceSummary_${from_date}_to_${to_date}.pdf`);
   } catch (error) {
     console.error("Error generating the attendance summary report:", error);
+    throw error;
   }
 };
 

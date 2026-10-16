@@ -126,6 +126,9 @@ const ExportMnthAtndToXLS = async ({
 
     console.log(response);
     const attendanceData = response.data;
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
     const dateRange = getDateRange(from_date, to_date);
 
     const groupedData = {};
@@ -317,6 +320,7 @@ const ExportMnthAtndToXLS = async ({
     a.click();
   } catch (error) {
     console.error("Error generating the attendance report:", error);
+    throw error;
   }
 };
 

@@ -12,6 +12,7 @@ import "./Paginated1.css";
 import "./Paginated2.css";
 import styles from "../AttendanceMuster/RegularizePunchGrid.module.css";
 import { FaSearch } from "react-icons/fa";
+import { apiErrorMessage } from "../../utils/apiError";
 
 const ManageFixWages = () => {
   const [employees, setEmployees] = useState([]);
@@ -226,6 +227,11 @@ const ManageFixWages = () => {
       employeeIdRef.current.focus();
     }
 
+    if (!formData.BillingType) {
+      newErrors.BillingType = "Billing Type is required.";
+      BillingTypeRef.current.focus();
+    }
+
     if (!formData.eff_date) {
       newErrors.eff_date = "Effective Date is required.";
       eff_dateRef.current.focus();
@@ -336,14 +342,7 @@ const ManageFixWages = () => {
               gridRef.current.focus();
             }
           } else {
-            if (response.data.error.originalError.info.message) {
-              setError(
-                "Error adding EMPLOYEE.1" +
-                  response.data.error.originalError.info.message,
-              );
-            } else {
-              setError("Error adding EMPLOYEE at 2" + response);
-            }
+            setError("Error adding EMPLOYEE at 2");
             setLoading(false); // Reset loading after success
           }
           setLoading(false);
@@ -351,14 +350,7 @@ const ManageFixWages = () => {
         } catch (err) {
           console.log("Stage--6");
           console.log(err);
-          const apiError = err.response?.data?.error;
-          setError(
-            typeof apiError === "string"
-              ? apiError
-              : apiError?.originalError?.info?.message ||
-                  err.response?.data?.message ||
-                  err.message,
-          );
+          setError(apiErrorMessage(err));
           setLoading(false); // Reset loading after success
           employeeIdRef.current.focus();
         }
@@ -402,27 +394,13 @@ const ManageFixWages = () => {
               gridRef.current.focus();
             }
           } else {
-            if (response.data.error.originalError.info.message) {
-              setError(
-                "Error adding Fix Wages.1" +
-                  response.data.error.originalError.info.message,
-              );
-            } else {
-              setError("Error adding Fix Wages at 2" + response);
-            }
+            setError("Error adding Fix Wages at 2");
             setLoading(false); // Reset loading after success
           }
           setLoading(false);
           employeeIdRef.current.focus();
         } catch (err) {
-          const apiError = err.response?.data?.error;
-          setError(
-            typeof apiError === "string"
-              ? apiError
-              : apiError?.originalError?.info?.message ||
-                  err.response?.data?.message ||
-                  err.message,
-          );
+          setError(apiErrorMessage(err));
           setLoading(false); // Reset loading after success
           employeeIdRef.current.focus();
         }
@@ -430,7 +408,7 @@ const ManageFixWages = () => {
     } catch (error) {
       setShowErrorModal(true);
       console.error("Submit Error:", error);
-      setError("Error adding EMPLOYEE at 5" + error);
+      setError(`Error adding EMPLOYEE: ${apiErrorMessage(error)}`);
       setLoading(false);
       employeeIdRef.current.focus();
     }
@@ -481,7 +459,7 @@ const ManageFixWages = () => {
     setMessage(""); // Clear error message
     setFormData({
       EmployeeCode: employee.EmployeeCode,
-      BillingCycle: employee.BillingCycle,
+      BillingType: employee.BillingType,
       eff_date: employee.eff_date ? employee.eff_date : null,
       BasicRate: employee.BasicRate,
       DARate: employee.DARate,
@@ -543,6 +521,9 @@ const ManageFixWages = () => {
     return date.toLocaleDateString("en-GB"); // 'en-GB' will format the date as dd/mm/yyyy
   };
   const formatDateForInput = (dateString) => {
+    // A plain YYYY-MM-DD (or ISO) string already names the day: parsing it with new Date() and reading local
+    // getters shows the previous day west of UTC.
+    if (typeof dateString === "string" && /^\d{4}-\d{2}-\d{2}/.test(dateString)) return dateString.slice(0, 10);
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -558,6 +539,7 @@ const ManageFixWages = () => {
         <div className="Paginated1">
           <Table responsive striped bordered hover>
             <thead style={{ height: "20px", verticalAlign: "midle" }}>
+              <tr>
               <td
                 style={{ height: "20px", width: "5%", verticalAlign: "midle" }}
               >
@@ -658,6 +640,7 @@ const ManageFixWages = () => {
                   Export
                 </Button>
               </td>
+            </tr>
             </thead>
           </Table>
         </div>
@@ -686,7 +669,7 @@ const ManageFixWages = () => {
                 <th>LWF Apply</th>
                 <th>Is Active</th>
                 <th>Emp Type</th>
-                <th>Billing Cycle</th>
+                <th>Billing Type</th>
                 <th>Department</th>
                 <th>bu_name</th>
                 <th>division_name</th>
@@ -696,7 +679,7 @@ const ManageFixWages = () => {
             </thead>
             <tbody>
               {currentItems.map((employee) => (
-                <tr key={employee.EmployeeCode}>
+                <tr key={`${employee.EmployeeCode}|${employee.BillingType}|${String(employee.eff_date).slice(0, 10)}`}>
                   <td>
                     <a href="#" onClick={() => handleEmployeeClick(employee)}>
                       {employee.EmployeeCode}
@@ -722,7 +705,7 @@ const ManageFixWages = () => {
                   <td>{employee.LWFApply}</td>
                   <td>{employee.Is_Active}</td>
                   <td>{employee.EmployeeType}</td>
-                  <td>{employee.BillingCycle}</td>
+                  <td>{employee.BillingType}</td>
                   <td>{employee.Department}</td>
                   <td>{employee.BusinessUnit}</td>
                   <td>{employee.Division}</td>
@@ -777,6 +760,26 @@ const ManageFixWages = () => {
 
                   {errors.EmployeeCode && (
                     <div className="error-message">{errors.EmployeeCode}</div>
+                  )}
+                </Form.Group>
+                <Form.Group controlId="BillingType" className="formGroup">
+                  <Form.Label>
+                    Billing Type<span className="mandatory">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    as="select"
+                    name="BillingType"
+                    value={formData.BillingType || ""}
+                    onChange={handleChange}
+                    ref={BillingTypeRef}
+                    disabled={!!selectedEmployee}
+                  >
+                    <option value="">Select Billing Type</option>
+                    <option value="M">M - Monthly</option>
+                    <option value="F">F - Fortnightly</option>
+                  </Form.Control>
+                  {errors.BillingType && (
+                    <div className="error-message">{errors.BillingType}</div>
                   )}
                 </Form.Group>
                 <Form.Group controlId="eff_date" className="formGroup">
@@ -1022,13 +1025,8 @@ const ManageFixWages = () => {
                   >
                     <option value="">Select PF Applicability</option>{" "}
                     {/* Optional default placeholder */}
-                    <option value="0">0 - No PF Applicable</option>
-                    <option value="1">1 - BASIC only (₹1800 cap) </option>
-                    <option value="2">
-                      2 - BASIC + Allowances (₹1800 cap)
-                    </option>
-                    <option value="3">3 - BASIC only (NO cap)</option>
-                    <option value="4">4 - BASIC + Allowances (NO cap)</option>
+                    <option value="Y">Yes</option>
+                    <option value="N">No</option>
                   </Form.Control>
                   {errors.PFApply && (
                     <div className="error-message">{errors.PFApply}</div>

@@ -6,6 +6,7 @@ import Select, { components } from "react-select";
 import axios from "../../api/axios.js";
 import exportFixWagesDumpToXLS from "../../components/ExportFixWagesDumpToXLS";
 import styles from "./ExportFixWagesDump.module.css"; // Import CSS module
+import { apiErrorMessage } from "../../utils/apiError";
 
 // Custom Option component to include checkboxes in the dropdown
 const CustomOption = (props) => {
@@ -110,7 +111,7 @@ const ExportFixWagesDump = () => {
   // Fetch Entity data from the server
   const fetchEntityData = async () => {
     try {
-      const response = await axios.pos("/api/entity/getAssignedEntity", {
+      const response = await axios.post("/api/entity/getAssignedEntity", {
         emp_id,
       });
       const formattedEntityData = [
@@ -227,7 +228,6 @@ const ExportFixWagesDump = () => {
         emp_type: selectedEmpTypeValues, // Employee Type
         activeEmp: activeEmp,
         emp_id: emp_id,
-        token: token,
       };
 
       await exportFixWagesDumpToXLS(data, {
@@ -237,7 +237,7 @@ const ExportFixWagesDump = () => {
       });
     } catch (error) {
       console.error("Error printing attendance:", error);
-      alert("Failed to print attendance. Please try again.");
+      alert(apiErrorMessage(error));
     }
   };
 
@@ -353,9 +353,9 @@ const ExportFixWagesDump = () => {
               <option value="" disabled>
                 -- Select Active/InActive Employee--{" "}
               </option>
-              <option value="Active">Active</option>
-              <option value="InActive">In-Active</option>
-              <option value="All">All</option>
+              <option value="Y">Active</option>
+              <option value="N">In-Active</option>
+              <option value="ALL">All</option>
             </select>
           </div>
 

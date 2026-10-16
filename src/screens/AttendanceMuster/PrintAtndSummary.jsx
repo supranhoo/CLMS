@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from "../../features/userSlice";
 import Select, { components } from 'react-select';
 import axios from '../../api/axios.js';
+import { apiErrorMessage } from '../../utils/apiError';
 import printAtndSummary from '../../components/printAtndSummary';
 import printAtndSummaryToXLS from '../../components/printAtndSummaryToXLS';
 import printAtndReg2_pagebreak from '../../components/PrintAtndReg2_pagebreak'; // Import the pagebreak version
@@ -30,7 +31,8 @@ const PrintAtndSummary = () => {
   const [selectedEntity, setSelectedEntity] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState([]);
   const [separatePage, setSeparatePage] = useState(false);
-  const [empType, setEmpType] = useState('PR'); // New state for Employee Type
+  const [empType, setEmpType] = useState('ALL'); // New state for Employee Type
+  const [empTypes, setEmpTypes] = useState([]);
   const [outputType, setOutputType] = useState('PDF'); // New state for Employee Type
   const navigate = useNavigate();
 
@@ -106,8 +108,22 @@ const PrintAtndSummary = () => {
     }
   };
 
+  // Fetch Employee Type data from the server
+  const fetchEmpTypeData = async () => {
+    try {
+      const response = await axios.get('/api/employee/getEmpType');
+      setEmpTypes(response.data.map(item => ({
+        value: item.emp_type_code,
+        label: item.emp_type_desc,
+      })));
+    } catch (error) {
+      console.error('Error fetching Employee Type data:', error);
+    }
+  };
+
   // Load all data on component mount
   useEffect(() => {
+    fetchEmpTypeData();
     fetchBUData();
     fetchContractorData();
     fetchDeptData();
@@ -168,6 +184,11 @@ const PrintAtndSummary = () => {
       const selectedDepartmentValues = selectedDepartment.map(option => option.value);
       console.log("Selected Contractors:", selectedContractorValues);
 
+      if (fromDate && toDate && fromDate > toDate) {
+        alert('From Date must not be after To Date.');
+        return;
+      }
+
       const data = {
         contractor: selectedContractorValues,
         bu: selectedBUValues,
@@ -177,44 +198,22 @@ const PrintAtndSummary = () => {
         to_date: toDate,
         emp_type: empType, // Employee Type
         emp_id: emp_id,
-        token: token,
       };
 
-      if (outputType == 'PDF'){
-        if (separatePage) {
-          await printAtndSummary(data, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-        } else {
-          await printAtndSummaryToXLS(data, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
+      const config = {
+        headers: {
+          'Content-Type': 'application/json'
         }
-        alert('Attendance printed successfully!');
-      } 
-      else {
-        if (separatePage) {
-          await printAtndSummary(data, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-        } else {
-          await printAtndSummaryToXLS(data, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-        }
-        alert('Attendance printed successfully!');
+      };
+      if (outputType === 'PDF') {
+        await printAtndSummary(data, config);
+      } else {
+        await printAtndSummaryToXLS(data, config);
       }
+      alert('Attendance printed successfully!');
     } catch (error) {
       console.error('Error printing attendance:', error);
-      alert('Failed to print attendance. Please try again.');
+      alert(apiErrorMessage(error));
     }
   };
 
@@ -253,8 +252,10 @@ const PrintAtndSummary = () => {
               onChange={(e) => setEmpType(e.target.value)}
               required
             >
-              <option value="PR">Piece Rate</option>
-              <option value="LS">Labour Supply</option>
+              <option value="ALL">All Employee Types</option>
+              {empTypes.map(item => (
+                <option key={item.value} value={item.value}>{item.label}</option>
+              ))}
             </select>
           </div>
 

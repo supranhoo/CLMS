@@ -34,8 +34,7 @@ const exportFixWagesDumpToXLS = async ({ contractor, bu, entity, department, emp
     const attendanceData = response.data;
 
     if (!attendanceData || attendanceData.length === 0) {
-      console.error("No data available for the selected filters.");
-      return;
+      throw new Error("No data for the selected filters");
     }
 
     // Extract headers dynamically from the first record in the dataset
@@ -60,6 +59,7 @@ const exportFixWagesDumpToXLS = async ({ contractor, bu, entity, department, emp
 
   } catch (error) {
     console.error("Error generating the attendance XLS report:", error);
+    throw error;
   }
 };
 

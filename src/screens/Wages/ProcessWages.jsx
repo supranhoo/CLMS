@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../features/userSlice";
 import Select, { components } from "react-select";
 import axios from "../../api/axios.js";
+import { apiErrorMessage } from "../../utils/apiError";
 import styles from "./ProcessWages.module.css"; // Import CSS module
 import moment from "moment"; // You can use the moment library for date formatting
 
@@ -244,7 +245,6 @@ const ProcessWages = () => {
         entity: selectedEntityValues,
         pmonth: selectedPmonthValue,
         emp_id: emp_id,
-        token: token,
       };
       const response = await axios.post("/api/wages/processWages", data, {
         timeout: 30 * 60 * 1000,
@@ -252,7 +252,7 @@ const ProcessWages = () => {
       alert("Wages Processed successfully!");
     } catch (error) {
       console.error("Error printing attendance:", error);
-      alert("Failed to Process Wages. Please try again.");
+      alert(`Failed to Process Wages: ${apiErrorMessage(error)}`);
       setLoading(false); // Stop loading
     } finally {
       setLoading(false); // Stop loading

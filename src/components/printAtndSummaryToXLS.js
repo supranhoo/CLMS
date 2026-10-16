@@ -52,6 +52,10 @@ const printAtndSummaryToXLS = async ({ from_date, to_date, contractor, bu, entit
 
     const attendanceData = response.data;
 
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
+
     // Sample record to extract dynamic columns (date columns)
     const dynamicColumns = getDynamicColumns(attendanceData[0]);
 
@@ -124,6 +128,7 @@ const printAtndSummaryToXLS = async ({ from_date, to_date, contractor, bu, entit
 
   } catch (error) {
     console.error("Error generating the attendance summary XLS:", error);
+    throw error;
   }
 };
 

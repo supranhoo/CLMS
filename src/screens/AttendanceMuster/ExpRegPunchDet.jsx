@@ -5,6 +5,7 @@ import { selectUser } from "../../features/userSlice";
 import Select, { components } from 'react-select';
 import axios from '../../api/axios.js';
 import exportAtndToXls from '../../components/ExpRegPunchDetToXLS';
+import { apiErrorMessage } from '../../utils/apiError';
 import styles from './PrintDailyAttendance.module.css'; // Import CSS module
 
 // Custom Option component to include checkboxes in the dropdown
@@ -204,6 +205,11 @@ const ExpRegPunchDet = () => {
       const selectedEmpTypeValues = selectedEmpType.map(option => option.value);
       console.log("Selected Contractors:", selectedContractorValues);
 
+      if (fromDate && toDate && fromDate > toDate) {
+        alert('From Date must not be after To Date.');
+        return;
+      }
+
       const data = {
         contractor: selectedContractorValues,
         bu: selectedBUValues,
@@ -213,13 +219,12 @@ const ExpRegPunchDet = () => {
         to_date: toDate,
         emp_type: selectedEmpTypeValues, // Employee Type
         emp_id: emp_id,
-        token: token,
       };
       await exportAtndToXls(data, {headers: {'Content-Type': 'application/json'}});
       alert('Regularised Punch Details Exported successfully!');
     } catch (error) {
       console.error('Error :', error);
-      alert('Failed to print attendance. Please try again.');
+      alert(apiErrorMessage(error));
     }
   };
 

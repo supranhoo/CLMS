@@ -92,6 +92,21 @@ const formatTime = (dateTimeString) => {
   return `${timeWithoutSeconds}`;
 };
 
+// Excel sheet names: no []:*?/\\, at most 31 characters, unique (case-insensitive) within the workbook
+const uniqueSheetName = (name, usedNames) => {
+  const base =
+    String(name ?? "").replace(/[\[\]:*?/\\]/g, " ").trim().slice(0, 31) || "Sheet";
+  let candidate = base;
+  let n = 1;
+  while (usedNames.has(candidate.toLowerCase())) {
+    n += 1;
+    const suffix = ` (${n})`;
+    candidate = base.slice(0, 31 - suffix.length) + suffix;
+  }
+  usedNames.add(candidate.toLowerCase());
+  return candidate;
+};
+
 const ExportMnthAtndToXLS = async ({
   from_date,
   to_date,
@@ -126,6 +141,9 @@ const ExportMnthAtndToXLS = async ({
 
     console.log(response);
     const attendanceData = response.data;
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
     console.log("Stage----AA1");
     const dateRange = getDateRange(from_date, to_date);
     console.log("Stage----AA1");
@@ -187,7 +205,11 @@ const ExportMnthAtndToXLS = async ({
       employee.working_hours[day] = item.working_hours
         ? item.working_hours
         : null;
-      employee.ot_hours[day] = item.ot_hours ? formatTime(item.ot_hours) : null;
+      employee.ot_hours[day] = item.ot_hours
+        ? /^\d{1,2}:\d{2}/.test(String(item.ot_hours))
+          ? String(item.ot_hours).slice(0, 5)
+          : formatTime(item.ot_hours)
+        : null;
 
       employee.attendance[day] = item.punch_mark || "";
 
@@ -208,10 +230,13 @@ const ExportMnthAtndToXLS = async ({
     console.log("Stage----2a");
 
     const workbook = new ExcelJS.Workbook();
+    const usedSheetNames = new Set();
 
     for (const contractorId in groupedData) {
       const { contractorName, employees } = groupedData[contractorId];
-      const worksheet = workbook.addWorksheet(contractorName);
+      const worksheet = workbook.addWorksheet(
+        uniqueSheetName(contractorName, usedSheetNames)
+      );
 
       worksheet.pageSetup.paperSize = 9;
       worksheet.pageSetup.orientation = "landscape";
@@ -290,8 +315,8 @@ const ExportMnthAtndToXLS = async ({
           empCode,
           employee.name,
           employee.designation,
-          employee.bu_name,
           employee.dept_name,
+          employee.bu_name,
           employee.empType,
         ];
         console.log("Stage----6");
@@ -334,6 +359,7 @@ const ExportMnthAtndToXLS = async ({
     a.click();
   } catch (error) {
     console.error("Error generating the attendance report:", error);
+    throw error;
   }
 };
 

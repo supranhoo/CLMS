@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../api/axios.js';
+import { apiErrorMessage } from '../../utils/apiError';
+import { escapeHtml } from '../../utils/escapeHtml';
 import './GridStyles.css'; // For styling the grid
 
 const UpdDeptInMust = () => {
@@ -92,6 +94,10 @@ const UpdDeptInMust = () => {
   };
 
   const fetchMusterData = async () => {
+    if (!musterDate) {
+      alert('Select a muster date before showing data.');
+      return;
+    }
     try {
       setAttendanceMuster([]);
       setIsEditable(false);
@@ -107,6 +113,7 @@ const UpdDeptInMust = () => {
       setIsEditable(true); 
     } catch (error) {
       console.error('Error fetching muster data:', error);
+      alert(apiErrorMessage(error));
     }
   };
 
@@ -128,7 +135,7 @@ const UpdDeptInMust = () => {
 
     } catch (error) {
       console.error('Error updating muster data:', error);
-      alert('Failed to upload punches. Check the console for more details.');
+      alert(apiErrorMessage(error));
     }
   };
 
@@ -172,12 +179,12 @@ const openInNewWindow = (records) => {
               <tbody>
                 ${records.map(record => `
                   <tr>
-                    <td>${record.attendance_date}</td>
-                    <td>${record.EMPLOYEE_CODE}</td>
-                    <td>${record.entity_code}</td>
-                    <td>${record.bu_code}</td>
-                    <td>${record.div_code}</td>
-                    <td>${record.dept_code}</td>
+                    <td>${escapeHtml(record.attendance_date)}</td>
+                    <td>${escapeHtml(record.EMPLOYEE_CODE)}</td>
+                    <td>${escapeHtml(record.entity_code)}</td>
+                    <td>${escapeHtml(record.bu_code)}</td>
+                    <td>${escapeHtml(record.div_code)}</td>
+                    <td>${escapeHtml(record.dept_code)}</td>
                   </tr>
                 `).join('')}
               </tbody>

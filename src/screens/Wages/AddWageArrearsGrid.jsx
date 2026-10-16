@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerEmployee, selectUser } from "../../features/userSlice";
 import Select from "react-select";
 import UploadArrears from "../../components/UploadArrears";
+import { apiErrorMessage } from "../../utils/apiError";
 
 // Function to check user permission to access Upload Manual Muster button
 const checkUserPermission = async (emp_id, activity_id) => {
@@ -232,32 +233,39 @@ const AddWageArrearsGrid = () => {
   };
 
   // Handle input changes for updating existing deductiones
-  const handleUpdateInputChange = (e, deduction) => {
+  const handleUpdateInputChange = (e, deduction, index) => {
     const { name, value } = e.target;
     const updatedPunch = { ...deduction, [name]: value };
-    const updatedData = arrearsData.map((item) =>
-      item.employee_code === deduction.employee_code ? updatedPunch : item,
+    const updatedData = arrearsData.map((item, i) =>
+      i === index ? updatedPunch : item,
     );
     setArrearsData(updatedData); // Update deduction data in the state
   };
 
   // Update existing deduction record
-  const handleUpdateArrear = async (updatedDeduction) => {
+  const handleUpdateArrear = async (updatedDeduction, index) => {
     console.log("updatedDeduction:", updatedDeduction);
     try {
       const response = await axios.post("/api/wages/updateWageArrears", {
         ...updatedDeduction,
-        pmonth: selectedPmonth.value,
-        arrearCode: selectedArrearCode.value,
-        billingType: selectedBillingCycle.value,
+        pmonth: updatedDeduction.pmonth
+          ? String(updatedDeduction.pmonth).slice(0, 10)
+          : selectedPmonth?.value,
+        arrearRefPmonth: updatedDeduction.arrearRefPmonth
+          ? String(updatedDeduction.arrearRefPmonth).slice(0, 10)
+          : updatedDeduction.arrearRefPmonth,
+        arrearCode:
+          updatedDeduction.arrearCode ||
+          updatedDeduction.arrear_code ||
+          selectedArrearCode?.value,
+        billingType:
+          updatedDeduction.billingType || selectedBillingCycle?.value,
         modified_by: emp_id, // Adjust based on actual user
       });
 
       if (response.status == 200) {
-        const updatedData = arrearsData.map((deduction) =>
-          deduction.employee_code === updatedDeduction.employee_code
-            ? updatedDeduction
-            : deduction,
+        const updatedData = arrearsData.map((deduction, i) =>
+          i === index ? updatedDeduction : deduction,
         );
         setArrearsData(updatedData); // Update the deduction data in the grid
         // Show success message
@@ -265,22 +273,11 @@ const AddWageArrearsGrid = () => {
         setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
         employee_codeRef.current.focus();
       } else {
-        if (response.data.error.originalError.info.message) {
-          setError(
-            "Error updating deduction.1" +
-              response.data.error.originalError.info.message,
-          );
-        } else {
-          setError("Error updating deduction at 2" + response);
-        }
+        setError("Error updating deduction at 2");
       }
     } catch (err) {
       console.error("Error updating deduction at 3:", err);
-      if (err.response.data.message) {
-        setError("Error updating deduction.3" + err.response.data.message);
-      } else {
-        setError("Error updating deduction.3" + err);
-      }
+      setError(`Error updating deduction: ${apiErrorMessage(err)}`);
     }
   };
 
@@ -333,7 +330,16 @@ const AddWageArrearsGrid = () => {
       if (response.status == 200) {
         console.log("Testing---2");
 
-        setArrearsData([...arrearsData, newArrear]);
+        setArrearsData([
+          ...arrearsData,
+          {
+            ...newArrear,
+            pmonth: selectedPmonth.value,
+            arrearRefPmonth: selectedArrearPmonth.value,
+            arrearCode: selectedArrearCode.value,
+            billingType: selectedBillingCycle.value,
+          },
+        ]);
 
         // Reset the form fields
         setNewDeduction({
@@ -366,7 +372,7 @@ const AddWageArrearsGrid = () => {
       //if (err.response.data.error.originalError.info.message) {
       //setError("Error adding deduction.3"+err.response.data.error.originalError.info.message);
       //} else {
-      setError("Error adding deduction.3" + err);
+      setError(`Error adding deduction: ${apiErrorMessage(err)}`);
       //}
     }
   };
@@ -385,6 +391,7 @@ const AddWageArrearsGrid = () => {
       console.log("arrearsData", arrearsData);
     } catch (error) {
       console.error("Error fetching getWageArrears:", error);
+      setError(`Error fetching wage arrears: ${apiErrorMessage(error)}`);
     }
   };
 
@@ -502,18 +509,22 @@ const AddWageArrearsGrid = () => {
     try {
       const response = await axios.post("/api/wages/deleteWageArrears", {
         ...updatedDeduction,
-        pmonth: selectedPmonth.value,
-        ArrearCode: selectedArrearCode.value,
-        billingType: selectedBillingCycle.value,
+        pmonth: updatedDeduction.pmonth
+          ? String(updatedDeduction.pmonth).slice(0, 10)
+          : selectedPmonth?.value,
+        arrearRefPmonth: updatedDeduction.arrearRefPmonth
+          ? String(updatedDeduction.arrearRefPmonth).slice(0, 10)
+          : updatedDeduction.arrearRefPmonth,
+        arrearCode:
+          updatedDeduction.arrearCode ||
+          updatedDeduction.arrear_code ||
+          selectedArrearCode?.value,
+        billingType:
+          updatedDeduction.billingType || selectedBillingCycle?.value,
         modified_by: emp_id, // Adjust based on actual user
       });
 
       if (response.status == 200) {
-        const updatedData = arrearsData.map((deduction) =>
-          deduction.employee_code === updatedDeduction.employee_code
-            ? updatedDeduction
-            : deduction,
-        );
         fetchDeductionData();
         //setDedData(updatedData); // Update the deduction data in the grid
         // Show success message
@@ -521,22 +532,11 @@ const AddWageArrearsGrid = () => {
         setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
         employee_codeRef.current.focus();
       } else {
-        if (response.data.error.originalError.info.message) {
-          setError(
-            "Error updating deduction.1" +
-              response.data.error.originalError.info.message,
-          );
-        } else {
-          setError("Error updating deduction at 2" + response);
-        }
+        setError("Error updating deduction at 2");
       }
     } catch (err) {
       console.error("Error updating deduction at 3:", err);
-      if (err.response.data.message) {
-        setError("Error updating deduction.3" + err.response.data.message);
-      } else {
-        setError("Error updating deduction.3" + err);
-      }
+      setError(`Error updating deduction: ${apiErrorMessage(err)}`);
     }
   };
 
@@ -707,8 +707,16 @@ const AddWageArrearsGrid = () => {
           </thead>
           <tbody>
             {arrearsData.length > 0 ? (
-              arrearsData.map((arrear) => (
-                <tr key={arrear.employee_code}>
+              arrearsData.map((arrear, index) => (
+                <tr
+                  key={[
+                    arrear.employee_code,
+                    arrear.pmonth,
+                    arrear.billingType,
+                    arrear.arrearCode || arrear.arrear_code,
+                    arrear.arrearRefPmonth,
+                  ].join("|")}
+                >
                   <td className={styles["left-justify"]}>
                     {arrear.employee_code}
                   </td>
@@ -734,7 +742,7 @@ const AddWageArrearsGrid = () => {
                       className={styles["small-input"]}
                       type="decimal"
                       value={arrear.arrearDays}
-                      onChange={(e) => handleUpdateInputChange(e, arrear)}
+                      onChange={(e) => handleUpdateInputChange(e, arrear, index)}
                       name="arrearDays"
                     />
                   </td>
@@ -743,7 +751,7 @@ const AddWageArrearsGrid = () => {
                       className={styles["small-input"]}
                       type="decimal"
                       value={arrear.arrearValue}
-                      onChange={(e) => handleUpdateInputChange(e, arrear)}
+                      onChange={(e) => handleUpdateInputChange(e, arrear, index)}
                       name="arrearValue"
                     />
                   </td>
@@ -752,14 +760,14 @@ const AddWageArrearsGrid = () => {
                       className={styles["small-input"]}
                       type="remarks"
                       value={arrear.remarks}
-                      onChange={(e) => handleUpdateInputChange(e, arrear)}
+                      onChange={(e) => handleUpdateInputChange(e, arrear, index)}
                       name="remarks"
                     />
                   </td>
                   <td>
                     <Button
                       size="sm"
-                      onClick={() => handleUpdateArrear(arrear)}
+                      onClick={() => handleUpdateArrear(arrear, index)}
                     >
                       Save
                     </Button>

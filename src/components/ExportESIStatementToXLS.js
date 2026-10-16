@@ -67,6 +67,10 @@ const exportWagesToXLS = async ({
 
     const attendanceData = response.data;
 
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
+
     // Group data by contractor
     const contractors = {};
     attendanceData.forEach((item) => {
@@ -248,6 +252,7 @@ const exportWagesToXLS = async ({
     document.body.removeChild(link);
   } catch (error) {
     console.error("Error exporting the wages report:", error);
+    throw error;
   }
 };
 

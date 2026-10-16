@@ -9,6 +9,7 @@ import { registerEmployee, selectUser } from "../../features/userSlice";
 import Select from 'react-select';
 import UploadDeductions from '../../components/UploadDeductions';
 import moment from 'moment'; // You can use the moment library for date formatting
+import { apiErrorMessage } from '../../utils/apiError';
 
 // Utility function to format datetime strings for <input type="datetime-local">
 const formatDateForInput = (dateString) => {
@@ -144,27 +145,13 @@ const ManageWageProcessLock = () => {
     const { name, value } = e.target;
   };
   
-  // Handle input changes for updating existing deductiones
-  const handleUpdateInputChange = (e, deduction) => {
-    const { name, value } = e.target;
-    console.log("target");
-    console.log(e.target);
-    const updatedProcessMonth = { ...deduction, [name]: value };
-    const updatedData = processMonthData.map((item) =>
-    item.pmonth === deduction.pmonth && item.billingtype === deduction.billingtype && 
-    item.entityCode === deduction.entityCode &&item.contractorId === deduction.contractorId
-      ? updatedProcessMonth
-      : item
-  );    setProcessMonthData(updatedData); // Update deduction data in the state
-  };
-
   const fetchContractorData = async () => {
     try {
       const response = await axios.get("/api/contractor/getAllContractors");
-      const formattedContractorList = response.data.map(item => ({
+      const formattedContractorList = [{ value: "ALL", label: "ALL" }, ...response.data.map(item => ({
         value: item.Contractor_ID,
         label: item.Contractor_Name,
-      }));
+      }))];
       setContractorList(formattedContractorList); // Set the correct formatted array
     } catch (error) {
       console.error("Error fetching contractors:", error);
@@ -177,10 +164,10 @@ const ManageWageProcessLock = () => {
     try {
       //setLoading(true);
       const response = await axios.get("/api/entity");
-      const formattedEntityList = response.data.map(item => ({
+      const formattedEntityList = [{ value: "ALL", label: "ALL" }, ...response.data.map(item => ({
         value: item.entity_code,
         label: item.entity_name,
-      }));
+      }))];
       setEntityList(formattedEntityList); // Set the correct formatted array
     } catch (error) {
       console.error("Error fetching contractors:", error);
@@ -276,7 +263,6 @@ const ManageWageProcessLock = () => {
 
       if (response.status == 200) {
         fetchWageProcessLock();
-        setProcessMonthData([processMonthData, newProcessMonth]);
 
         // Reset the form fields
         setNewProcessMonth({
@@ -296,7 +282,7 @@ const ManageWageProcessLock = () => {
     } catch (err) {
       console.log("Testing---4");
       console.error("Error adding deduction at err:", err);
-      setError("Error adding deduction.3"+err);
+      setError(`Error adding wage lock: ${apiErrorMessage(err)}`);
     }
   };
 
@@ -310,6 +296,7 @@ const ManageWageProcessLock = () => {
       console.log("processMonthData",processMonthData);
     } catch (error) {
       console.error("Error fetching getWageDeductions:", error);
+      setError(`Error fetching wage locks: ${apiErrorMessage(error)}`);
     }
   }
   
@@ -331,19 +318,11 @@ const ManageWageProcessLock = () => {
         setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
         //employee_codeRef.current.focus();
       } else {
-        if (response.data.error.originalError.info.message) {
-          setError("Error updating deduction.1"+response.data.error.originalError.info.message);
-        } else {
-          setError("Error updating deduction at 2"+response);
-        }
+        setError("Error deleting wage lock at 2");
       }
     } catch (err) {
       console.error("Error updating deduction at 3:", err);
-      if (err.response.data.message) {
-        setError("Error updating deduction.3"+err.response.data.message);
-      } else {
-        setError("Error updating deduction.3"+err);
-      }
+      setError(`Error deleting wage lock: ${apiErrorMessage(err)}`);
     }
   };
 
@@ -378,74 +357,21 @@ const ManageWageProcessLock = () => {
           </thead>
           <tbody>
             {processMonthData.length > 0 ? (
-              processMonthData.map((processMonth) => (
-                <tr key={`${processMonth.pmonth}-${processMonth.billingType}-${processMonth.entityCode}-${processMonth.contractorId}`}>
+              processMonthData.map((processMonth) => {
+                const lockPmonth = String(processMonth.pmonth || "").slice(0, 10);
+                const lockContractor = processMonth.ContractorId ?? processMonth.contractorId;
+                const labelOf = (list, value) => list?.find((option) => option.value === value)?.label ?? value;
+                return (
+                <tr key={`${lockPmonth}-${processMonth.billingType}-${processMonth.entityCode}-${lockContractor}`}>
+                  <td>{labelOf(billingCycle, processMonth.billingType)}</td>
                   <td>
-                    {billingCycleLoading ? <p>Loading Billing Cycles...</p> : (
-                    <Form.Control
-                      as="select"
-                      value={processMonth.billingType}
-                      className={styles["small-input"]}
-                      name="billingCycle"
-                    >
-                    {billingCycle?.map((option) => (
-                      <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                    ))}
-                    </Form.Control>
-                     )}
-                  </td>
-                  <td>
-                   {allPmonthLoading ? <p>Loading PMonth List...</p> : (
-                    <Form.Control
-                      as="select"
-                      name="pmonth"
-                      value={processMonth.pmonth}
-                      className={styles["small-input"]}
-                    >
-                    {pmonthList?.map((option) => (
-                      <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                    ))}
-                    </Form.Control>
+                    {labelOf(
+                      pmonthList?.map((option) => ({ ...option, value: String(option.value).slice(0, 10) })),
+                      lockPmonth
                     )}
                   </td>
-                  <td>
-                    {entityListLoading ? <p>Loading Entity List...</p> : (
-                      <Form.Control
-                        as="select"
-                        name="entityCode"
-                        value={processMonth.entityCode}
-                        onChange={(e) => handleUpdateInputChange(e, processMonth)}
-                        className={styles["small-input"]}
-                      >
-                      {entityList?.map((option) => (
-                        <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                      ))}
-                      </Form.Control>
-                    )}
-                  </td>
-                  <td>
-                    {contractorListLoading ? <p>Loading Contractor List...</p> : (
-                      <Form.Control
-                        as="select"
-                        name="contractorId"
-                        value={processMonth.contractorId}
-                        onChange={(e) => handleUpdateInputChange(e, processMonth)}
-                        className={styles["small-input"]}
-                      >
-                      {contractorList?.map((option) => (
-                        <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                      ))}
-                      </Form.Control>
-                    )}
-                    </td>
+                  <td>{labelOf(entityList, processMonth.entityCode)}</td>
+                  <td>{labelOf(contractorList, lockContractor)}</td>
                   <td>
                     <div>
                     <Button size="sm" onClick={() => handleDeleteProcessMonth(processMonth)}>
@@ -454,7 +380,8 @@ const ManageWageProcessLock = () => {
                     </div>
                   </td>
                 </tr>
-              ))
+                );
+              })
             ) : (
               <tr>
                 <td colSpan="9">No records found for the selected date</td>

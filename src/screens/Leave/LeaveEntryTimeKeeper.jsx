@@ -3,6 +3,7 @@ import { Table, Form, Button, Alert } from "react-bootstrap";
 import Select from "react-select";
 import axios from "../../api/axios.js";
 import styles from "./Leave.module.css";
+import { apiErrorMessage } from "../../utils/apiError";
 import { isValidDate, toISODate } from "../../utils/dateUtils";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -15,6 +16,8 @@ const LeaveEntryTimeKeeper = () => {
   const [leaveTypes, setLeaveTypes] = useState([]);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
 
   const empRef = useRef(null);
 
@@ -67,39 +70,55 @@ const LeaveEntryTimeKeeper = () => {
 
   /* -------------------- MASTER LOAD -------------------- */
   const fetchEmployees = async () => {
-    const res = await axios.get("/api/employee/getAllEmployees");
-    setEmployees(
-      res.data.map((e) => ({
-        value: e.Employee_Code,
-        label: `${e.display_name} (${e.Employee_Code})`,
-      }))
-    );
+    try {
+      const res = await axios.get("/api/employee/getAllEmployees");
+      setEmployees(
+        res.data.map((e) => ({
+          value: e.Employee_Code,
+          label: `${e.display_name} (${e.Employee_Code})`,
+        }))
+      );
+    } catch (e) {
+      setError(apiErrorMessage(e));
+    }
   };
 
   const fetchLeavePeriods = async () => {
-    const res = await axios.get("/api/leave/getActiveLeavePeriods");
-    setLeavePeriods(
-      res.data.map((p) => ({
-        value: p.leave_period_id,
-        label: p.period_name,
-      }))
-    );
+    try {
+      const res = await axios.get("/api/leave/getActiveLeavePeriods");
+      setLeavePeriods(
+        res.data.map((p) => ({
+          value: p.leave_period_id,
+          label: p.period_name,
+        }))
+      );
+    } catch (e) {
+      setError(apiErrorMessage(e));
+    }
   };
 
   const fetchLeaveTypes = async () => {
-    const res = await axios.get("/api/leave/getLeaveTypes");
-    setLeaveTypes(
-      res.data.map((l) => ({
-        value: l.leave_type_code,
-        label: l.leave_type_name,
-      }))
-    );
+    try {
+      const res = await axios.get("/api/leave/getLeaveTypes");
+      setLeaveTypes(
+        res.data.map((l) => ({
+          value: l.leave_type_code,
+          label: l.leave_type_name,
+        }))
+      );
+    } catch (e) {
+      setError(apiErrorMessage(e));
+    }
   };
 
   const fetchRecentEntries = async () => {
-    const res = await axios.get("/api/leave/getRecentLeaves");
-    setEntries(res.data);
-    console.log(res);
+    try {
+      const res = await axios.get("/api/leave/getRecentLeaves");
+      setEntries(res.data);
+      console.log(res);
+    } catch (e) {
+      setError(apiErrorMessage(e));
+    }
   };
 
   /* -------------------- HELPERS -------------------- */
@@ -148,6 +167,7 @@ const LeaveEntryTimeKeeper = () => {
   };
 
   const handleSubmit = async () => {
+    if (savingRef.current) return;
     setError("");
     setSuccess("");
 
@@ -176,6 +196,8 @@ const LeaveEntryTimeKeeper = () => {
       approved_by: emp_id,
     };
 
+    savingRef.current = true;
+    setSaving(true);
     try {
       await axios.post("/api/leave/addLeave", payload);
       setSuccess("Leave saved & approved successfully");
@@ -193,7 +215,10 @@ const LeaveEntryTimeKeeper = () => {
       }));
       empRef.current?.focus();
     } catch (e) {
-      setError(e.response?.data?.error || "Failed to save leave entry");
+      setError(apiErrorMessage(e, "Failed to save leave entry"));
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
     }
   };
 
@@ -211,7 +236,7 @@ const LeaveEntryTimeKeeper = () => {
       setSuccess("Leave entry deleted successfully");
       fetchRecentEntries();
     } catch (e) {
-      setError(e.response?.data?.error || "Failed to delete leave entry");
+      setError(apiErrorMessage(e, "Failed to delete leave entry"));
     }
   };
 
@@ -337,7 +362,7 @@ const LeaveEntryTimeKeeper = () => {
           />
         </Form.Group>
 
-        <Button size="sm" onClick={handleSubmit}>
+        <Button size="sm" onClick={handleSubmit} disabled={saving}>
           Save & Approve
         </Button>
       </div>

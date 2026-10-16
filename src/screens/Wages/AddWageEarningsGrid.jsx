@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../features/userSlice";
 import Select from "react-select";
 import UploadEarnings from "../../components/UploadEarnings";
+import { apiErrorMessage } from "../../utils/apiError";
 
 /* ================================
    Permission Helper (unchanged)
@@ -214,11 +215,11 @@ const AddWageEarningsGrid = () => {
   /* ================================
      Update existing earning row
   ================================ */
-  const handleUpdateInputChange = (e, earning) => {
+  const handleUpdateInputChange = (e, earning, index) => {
     const { name, value } = e.target;
     const updatedEarning = { ...earning, [name]: value };
-    const updatedData = ernData.map((item) =>
-      item.employee_code === earning.employee_code ? updatedEarning : item
+    const updatedData = ernData.map((item, i) =>
+      i === index ? updatedEarning : item
     );
     setErnData(updatedData);
   };
@@ -282,10 +283,7 @@ const AddWageEarningsGrid = () => {
       }
     } catch (err) {
       console.error("Error adding earning:", err);
-      setError(
-        "Error adding earning: " +
-          (err?.response?.data?.message || err?.message || "Unknown error")
-      );
+      setError(`Error adding earning: ${apiErrorMessage(err)}`);
     }
   };
 
@@ -344,8 +342,8 @@ const AddWageEarningsGrid = () => {
     try {
       const response = await axios.get("/api/wages/getErnCodes");
       const formattedErnCodes = (response.data || []).map((item) => ({
-        value: item.ernCode,
-        label: item.ernName,
+        value: item.ernCode || item.ern_code,
+        label: item.ernName || item.ern_name || item.ern_desc || item.ernCode || item.ern_code,
       }));
       setErnCodes(formattedErnCodes);
     } catch (error) {
@@ -395,24 +393,27 @@ const AddWageEarningsGrid = () => {
   /* ================================
      Update / Delete (baseline preserved)
   ================================ */
-  const handleUpdateEarning = async (updatedEarning) => {
+  const handleUpdateEarning = async (updatedEarning, index) => {
     try {
       setError("");
       setSuccessMessage("");
 
       const response = await axios.post("/api/wages/updateWageEarnings", {
         ...updatedEarning,
-        pmonth: selectedPmonth?.value,
-        ernCode: selectedErnCode?.value,
-        billingType: selectedBillingCycle?.value,
+        pmonth: updatedEarning.pmonth
+          ? String(updatedEarning.pmonth).slice(0, 10)
+          : selectedPmonth?.value,
+        ernCode:
+          updatedEarning.ernCode ||
+          updatedEarning.ern_code ||
+          selectedErnCode?.value,
+        billingType: updatedEarning.billingType || selectedBillingCycle?.value,
         modified_by: emp_id,
       });
 
       if (response.status === 200) {
-        const updatedData = ernData.map((earning) =>
-          earning.employee_code === updatedEarning.employee_code
-            ? updatedEarning
-            : earning
+        const updatedData = ernData.map((earning, i) =>
+          i === index ? updatedEarning : earning
         );
         setErnData(updatedData);
 
@@ -425,10 +426,7 @@ const AddWageEarningsGrid = () => {
       }
     } catch (err) {
       console.error("Error updating earning:", err);
-      setError(
-        "Error updating earning: " +
-          (err?.response?.data?.message || err?.message || "Unknown error")
-      );
+      setError(`Error updating earning: ${apiErrorMessage(err)}`);
     }
   };
 
@@ -439,9 +437,11 @@ const AddWageEarningsGrid = () => {
 
       const response = await axios.post("/api/wages/deleteWageEarnings", {
         ...row,
-        pmonth: selectedPmonth?.value,
-        ernCode: selectedErnCode?.value,
-        billingType: selectedBillingCycle?.value,
+        pmonth: row.pmonth
+          ? String(row.pmonth).slice(0, 10)
+          : selectedPmonth?.value,
+        ernCode: row.ernCode || row.ern_code || selectedErnCode?.value,
+        billingType: row.billingType || selectedBillingCycle?.value,
         modified_by: emp_id,
       });
 
@@ -456,10 +456,7 @@ const AddWageEarningsGrid = () => {
       }
     } catch (err) {
       console.error("Error deleting earning:", err);
-      setError(
-        "Error deleting earning: " +
-          (err?.response?.data?.message || err?.message || "Unknown error")
-      );
+      setError(`Error deleting earning: ${apiErrorMessage(err)}`);
     }
   };
 
@@ -620,8 +617,15 @@ const AddWageEarningsGrid = () => {
 
           <tbody>
             {ernData.length > 0 ? (
-              ernData.map((earning) => (
-                <tr key={earning.employee_code}>
+              ernData.map((earning, index) => (
+                <tr
+                  key={[
+                    earning.employee_code,
+                    earning.pmonth,
+                    earning.billingType,
+                    earning.ernCode,
+                  ].join("|")}
+                >
                   <td className={styles["left-justify"]}>
                     {earning.employee_code}
                   </td>
@@ -636,7 +640,7 @@ const AddWageEarningsGrid = () => {
                       type="number"
                       step="0.01"
                       value={earning.ernValue}
-                      onChange={(e) => handleUpdateInputChange(e, earning)}
+                      onChange={(e) => handleUpdateInputChange(e, earning, index)}
                       name="ernValue"
                     />
                   </td>
@@ -645,7 +649,7 @@ const AddWageEarningsGrid = () => {
                       className={styles["small-input"]}
                       type="text"
                       value={earning.remarks || ""}
-                      onChange={(e) => handleUpdateInputChange(e, earning)}
+                      onChange={(e) => handleUpdateInputChange(e, earning, index)}
                       name="remarks"
                     />
                   </td>
@@ -653,7 +657,7 @@ const AddWageEarningsGrid = () => {
                     <div>
                       <Button
                         size="sm"
-                        onClick={() => handleUpdateEarning(earning)}
+                        onClick={() => handleUpdateEarning(earning, index)}
                       >
                         Save
                       </Button>{" "}

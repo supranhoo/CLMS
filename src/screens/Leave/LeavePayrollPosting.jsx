@@ -5,6 +5,7 @@ import { Table, Form, Button, Alert } from "react-bootstrap";
 import Select from "react-select";
 import axios from "../../api/axios.js";
 import styles from "./Leave.module.css";
+import { apiErrorMessage } from "../../utils/apiError";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../features/userSlice";
@@ -67,13 +68,14 @@ const LeavePayrollPosting = () => {
         })),
       );
     } catch (e) {
-      setError("Failed to load masters");
+      setError("Failed to load masters: " + apiErrorMessage(e));
     }
   };
 
-  const previewPosting = async () => {
+  // keepSuccess (a string) is shown again after the refresh, so a post's success text is not wiped
+  const previewPosting = async (keepSuccess) => {
     setError("");
-    setSuccess("");
+    setSuccess(typeof keepSuccess === "string" ? keepSuccess : "");
 
     if (!selectedMonth) return setError("Please select Process Month");
     if (!selectedContractor) return setError("Please select Contractor");
@@ -92,7 +94,7 @@ const LeavePayrollPosting = () => {
       setRows(res.data.data || []);
       setPreviewSnapshot(snapshot);
     } catch (e) {
-      setError(e.response?.data?.message || "Failed to preview posting data");
+      setError(apiErrorMessage(e, "Failed to preview posting data"));
     }
   };
 
@@ -118,15 +120,13 @@ const LeavePayrollPosting = () => {
         mode: "POST",
       });
 
-      setSuccess(
-        res.data?.data?.[0]?.posted_rows
-          ? `Payroll leave posted successfully. Rows: ${res.data.data[0].posted_rows}`
-          : "Payroll leave posted successfully",
-      );
+      const postedMessage = res.data?.data?.[0]?.posted_rows
+        ? `Payroll leave posted successfully. Rows: ${res.data.data[0].posted_rows}`
+        : "Payroll leave posted successfully";
 
-      previewPosting();
+      await previewPosting(postedMessage);
     } catch (e) {
-      setError(e.response?.data?.message || "Failed to post payroll leave");
+      setError(apiErrorMessage(e, "Failed to post payroll leave"));
     }
   };
 

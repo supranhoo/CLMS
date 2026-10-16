@@ -57,6 +57,10 @@ const exportAtndToXLS = async ({ from_date, to_date, contractor, bu, entity, dep
 
     const attendanceData = response.data;
 
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
+
     // Prepare data for Excel
     const excelData = [];
     
@@ -113,6 +117,7 @@ const exportAtndToXLS = async ({ from_date, to_date, contractor, bu, entity, dep
 
   } catch (error) {
     console.error("Error generating the attendance XLS report:", error);
+    throw error;
   }
 };
 

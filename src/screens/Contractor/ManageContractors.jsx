@@ -15,6 +15,9 @@ import axios from "../../api/axios.js";
 import "./Paginated1.css";
 import "./Paginated2.css";
 import { downloadWorkbook } from "../../utils/exportWorkbook.js";
+import { apiErrorMessage } from "../../utils/apiError";
+
+const isYes = (value) => value === "Y" || value === true;
 
 const blankContractorForm = () => ({
   Contractor_ID: "",
@@ -115,7 +118,7 @@ const ManageContractors = () => {
     } catch (error) {
       console.error("Error fetching contractors:", error);
       setLoading(false);
-      // Handle error state as needed
+      setMessage(apiErrorMessage(error));
     }
   };
 
@@ -238,6 +241,12 @@ const ManageContractors = () => {
         Food_Acco_Charges: formData.Food_Acco_Charges
           ? parseFloat(formData.Food_Acco_Charges).toFixed(2)
           : "0.00",
+        Is_Administrative_Applicable: isYes(formData.Is_Administrative_Applicable)
+          ? "Y"
+          : "N",
+        Is_FoodAccoChargs_Applicable: isYes(formData.Is_FoodAccoChargs_Applicable)
+          ? "Y"
+          : "N",
       };
 
       let result;
@@ -253,16 +262,14 @@ const ManageContractors = () => {
         const localDateForDisplay = convertUTCToLocalTime(utcDateFromBackend);
         console.log("Local Time:", localDateForDisplay); // Display the local date
 
-        const updatedFormData1 = {
-          ...updatedFormData,
-          Modified_By: emp_id,
-          // Modified_Date: new Date(getCurrentDateTime()).toISOString(),
-          Modified_Date: formatDateTimeForInput(new Date()),
-          //Modified_Date: convertLocalTimeToUTC,
-        };
-        console.log("Time at submite-Cre:", updatedFormData1.Created_Date);
-        console.log("Time at submite-Mod:", updatedFormData1.Modified_Date);
-        console.log("updatedFormData1:", updatedFormData1);
+        // The server stamps the audit columns itself; do not send them back.
+        const {
+          Created_By,
+          Created_Date,
+          Modified_By,
+          Modified_Date,
+          ...updatedFormData1
+        } = updatedFormData;
         // Edit existing contractor
         result = await axios.put(
           `/api/contractor/updateContractor/${selectedContractor.Contractor_ID}`,
@@ -277,28 +284,22 @@ const ManageContractors = () => {
           Modified_By: null,
           Modified_Date: null,
         };
-        result = await dispatch(registerContractor(updatedFormData1));
+        result = await dispatch(registerContractor(updatedFormData1)).unwrap();
       }
 
-      if (result.data || result.payload) {
-        setErrors({});
-        setMessage("");
-        setError(false);
-        setShowSuccessModal(true);
-        fetchContractors(); // Refresh the contractor data
-        setSelectedContractor(null); // Reset form
-        clearForm();
-      } else if (result.error) {
-        setShowErrorModal(true);
-        console.error("Error:", result.error);
-        setError(true);
-        setMessage(result.error.message || "Submission failed.");
-      }
+      setErrors({});
+      setMessage("");
+      setError(false);
+      setShowSuccessModal(true);
+      fetchContractors(); // Refresh the contractor data
+      setSelectedContractor(null); // Reset form
+      clearForm();
       setLoading(false);
     } catch (error) {
       setShowErrorModal(true);
       console.error("Submit Error:", error);
       setError(true);
+      setMessage(apiErrorMessage(error));
       setLoading(false);
     }
   };
@@ -331,10 +332,10 @@ const ManageContractors = () => {
       Modified_By: contractor.Modified_By,
       Created_Date: formatDateTimeForInput(contractor.Created_Date),
       Modified_Date: formatDateTimeForInput(contractor.Modified_Date),
-      Is_Administrative_Applicable: contractor.Is_Administrative_Applicable,
+      Is_Administrative_Applicable: isYes(contractor.Is_Administrative_Applicable),
       Administrative_Charge_Percent:
         contractor.Administrative_Charge_Percent || "",
-      Is_FoodAccoChargs_Applicable: contractor.Is_FoodAccoChargs_Applicable,
+      Is_FoodAccoChargs_Applicable: isYes(contractor.Is_FoodAccoChargs_Applicable),
       Food_Acco_Charges: contractor.Food_Acco_Charges || "",
       HeadIDs: contractor.HeadIDs || "",
       EmailID: contractor.EmailID || "",
@@ -702,7 +703,7 @@ const ManageContractors = () => {
             <Form.Check
               type="checkbox"
               name="Is_Administrative_Applicable"
-              checked={!!formData.Is_Administrative_Applicable}
+              checked={isYes(formData.Is_Administrative_Applicable)}
               onChange={handleChange}
             />
           </Form.Group>
@@ -727,7 +728,7 @@ const ManageContractors = () => {
             <Form.Check
               type="checkbox"
               name="Is_FoodAccoChargs_Applicable"
-              checked={!!formData.Is_FoodAccoChargs_Applicable}
+              checked={isYes(formData.Is_FoodAccoChargs_Applicable)}
               onChange={handleChange}
             />
           </Form.Group>

@@ -5,6 +5,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { logoutUser } from "../../features/userSlice";
+import { revokeServerSession } from "../../api/session";
 import logo from "../../assets/grouplogo.png"; // Import your logo image
 import "./Header.css";
 //import axios from "../../api/axios.js";
@@ -65,6 +66,8 @@ const Header = () => {
 
     menuData.forEach((menuItem) => {
       if (menuItem.parent_menu_id) {
+        // Skip items whose parent is not in the list instead of throwing
+        if (!menuMap[menuItem.parent_menu_id]) return;
         menuMap[menuItem.parent_menu_id].children.push(
           menuMap[menuItem.menu_id]
         );
@@ -77,6 +80,7 @@ const Header = () => {
   };
 
   const logoutHandler = () => {
+    revokeServerSession();
     dispatch(logoutUser());
     setUserId(""); // Clear username on logout
     setMenu([]); // Clear menu on logout
@@ -84,6 +88,7 @@ const Header = () => {
   };
 
   const handleLogout = () => {
+    revokeServerSession();
     dispatch(logoutUser());
     setUserId(""); // Clear username on logout
     setMenu([]); // Clear menu on logout

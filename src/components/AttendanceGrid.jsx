@@ -6,6 +6,12 @@ import AttendancePage from "./MusterGrid";
 import printAtndReg from "./PrintAtndReg";
 import UploadManualPunches from "./UploadManualPunches";
 
+// Full YYYY-MM-DD key for a date, so a range that crosses two months never collides on the day number
+const dateKeyOf = (date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+    date.getDate(),
+  ).padStart(2, "0")}`;
+
 // Function to check user permission to access Upload Manual Muster button
 const checkUserPermission = async (emp_id, activity_id) => {
   try {
@@ -115,7 +121,7 @@ const AttendanceGrid = ({ from_date, to_date, emp_id }) => {
       if (!acc[employee_code]) {
         acc[employee_code] = { display_name, days: {} };
       }
-      const day = new Date(record.attendance_date).getDate();
+      const day = dateKeyOf(new Date(record.attendance_date));
       acc[employee_code].days[day] = record;
       return acc;
     }, {});
@@ -153,7 +159,7 @@ const AttendanceGrid = ({ from_date, to_date, emp_id }) => {
     if (!acc[employee_code]) {
       acc[employee_code] = { display_name, days: {} };
     }
-    const day = new Date(record.attendance_date).getDate();
+    const day = dateKeyOf(new Date(record.attendance_date));
     acc[employee_code].days[day] = record;
     return acc;
   }, {});
@@ -224,7 +230,7 @@ const AttendanceGrid = ({ from_date, to_date, emp_id }) => {
 
   // Event handler for Print SL
   const handlePrintSL = () => {
-    printAtndReg(from_date, to_date, "LS");
+    printAtndReg(from_date, to_date, "SL");
   };
 
   // Event handler for Print PR
@@ -462,7 +468,7 @@ const AttendanceGrid = ({ from_date, to_date, emp_id }) => {
                       const date = new Date(
                         startDate.getTime() + i * 24 * 60 * 60 * 1000,
                       );
-                      const day = date.getDate();
+                      const day = dateKeyOf(date);
                       const record = days[day];
                       const cellStyle = record ? getCellStyle(record) : {};
                       return (

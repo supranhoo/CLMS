@@ -6,6 +6,7 @@ import Select, { components } from "react-select";
 import axios from "../../api/axios.js";
 import printMonthlyAtndSheet from "../../components/PrintMonthlyAtndSheet";
 import exportMnthAtndToXLS from "../../components/ExportMnthAtndToXLS";
+import { apiErrorMessage } from "../../utils/apiError";
 import styles from "./PrintDailyAttendance.module.css"; // Import CSS module
 
 // Custom Option component to include checkboxes in the dropdown
@@ -63,8 +64,8 @@ const MonthlyAtndSheet = () => {
       <label style={{ marginLeft: 8 }}>Select All Filtered</label>
     </div>
   );
-  const handleSelectAllFiltered = (filteredOptions) => {
-    setSelectedBU(filteredOptions);
+  const handleSelectAllFiltered = (filteredOptions, setSelected) => {
+    setSelected(filteredOptions);
     setSearchTerm(""); // Clear search input after selecting all filtered options
   };
 
@@ -275,6 +276,11 @@ const MonthlyAtndSheet = () => {
       );
       console.log("Selected Contractors:", selectedContractorValues);
 
+      if (fromDate && toDate && fromDate > toDate) {
+        alert("From Date must not be after To Date.");
+        return;
+      }
+
       const data = {
         contractor: selectedContractorValues,
         bu: selectedBUValues,
@@ -285,23 +291,21 @@ const MonthlyAtndSheet = () => {
         to_date: toDate,
         emp_type: selectedEmpTypeValues, // Employee Type
         emp_id: emp_id,
-        token: token,
       };
 
       if (outputType == "PDF") {
         await printMonthlyAtndSheet(data, {
           headers: { "Content-Type": "application/json" },
         });
-        alert("Attendance printed successfully!");
       } else {
         await exportMnthAtndToXLS(data, {
           headers: { "Content-Type": "application/json" },
         });
-        alert("Attendance printed successfully!");
       }
+      alert("Attendance printed successfully!");
     } catch (error) {
       console.error("Error printing attendance:", error);
-      alert("Failed to print attendance. Please try again.");
+      alert(apiErrorMessage(error));
     }
   };
 
@@ -390,7 +394,7 @@ const MonthlyAtndSheet = () => {
                     {props.selectProps.inputValue && (
                       <SelectAllOption
                         selectAllFiltered={() =>
-                          handleSelectAllFiltered(filteredLocCodeOptions)
+                          handleSelectAllFiltered(filteredLocCodeOptions, setSelectedLocCode)
                         }
                       />
                     )}

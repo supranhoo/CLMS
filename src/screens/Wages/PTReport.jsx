@@ -6,6 +6,7 @@ import axios from "../../api/axios.js";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import styles from "./PrintWages.module.css";
+import { apiErrorMessage } from "../../utils/apiError";
 
 //---------------------------------------------------
 // CUSTOM OPTION (Checkbox)
@@ -26,7 +27,6 @@ const CustomOption = (props) => {
 
 const PTReport = () => {
   const user = useSelector(selectUser);
-  const token = user?.token;
   const emp_id = user?.emp_id;
 
   //---------------------------------------------------
@@ -238,21 +238,24 @@ const PTReport = () => {
   const handleRunReport = async () => {
     if (!selectedFY) return alert("Select Financial Year");
 
-    const res = await axios.post("/api/wages/getPTReport", {
-      fy_start: selectedFY.start_date,
-      fy_end: selectedFY.end_date,
-      contractor: selectedContractor.map((o) => o.value),
-      bu: selectedBU.map((o) => o.value),
-      entity: selectedEntity.map((o) => o.value),
-      department: selectedDepartment.map((o) => o.value),
-      emp_type: selectedEmpType.map((o) => o.value),
-      emp_id,
-      token,
-    });
+    try {
+      const res = await axios.post("/api/wages/getPTReport", {
+        fy_start: selectedFY.start_date,
+        fy_end: selectedFY.end_date,
+        contractor: selectedContractor.map((o) => o.value),
+        bu: selectedBU.map((o) => o.value),
+        entity: selectedEntity.map((o) => o.value),
+        department: selectedDepartment.map((o) => o.value),
+        emp_type: selectedEmpType.map((o) => o.value),
+        emp_id,
+      });
 
-    if (!res.data.length) return alert("No data found");
+      if (!res.data.length) return alert("No data found");
 
-    await exportToExcel(res.data);
+      await exportToExcel(res.data);
+    } catch (error) {
+      alert(apiErrorMessage(error));
+    }
   };
 
   //---------------------------------------------------

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import axios from '../api/axios.js';
+import { apiErrorMessage } from '../utils/apiError';
+import { escapeHtml } from '../utils/escapeHtml';
 
 function UploadManualMuster({ setShowUpload,created_by }) { // Accept the prop to control visibility
   const [file, setFile] = useState(null);
@@ -31,8 +33,10 @@ function UploadManualMuster({ setShowUpload,created_by }) { // Accept the prop t
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
       // Prepare the punches data from Excel data
-      const musterData = jsonData.flatMap(row => {
-        const employeeCode = row['EmployeeCode'];
+      const skippedRows = [];
+      const musterData = jsonData.flatMap((row, index) => {
+        const rowNo = (row.__rowNum__ ?? index + 1) + 1; // spreadsheet row (header is row 1)
+        const employeeCode = hasValue(row['EmployeeCode']) ? String(row['EmployeeCode']).trim() : '';
         const atDate = row['AttendanceDate'];
         const shift = row['Shift'];
         const punchMark = row['MusterMark'];
@@ -41,11 +45,19 @@ function UploadManualMuster({ setShowUpload,created_by }) { // Accept the prop t
         const remarks = row['Remarks'];
 
         // Skip rows with missing employee_code
-        if (!employeeCode) return [];
+        if (!employeeCode) {
+          skippedRows.push(`Row ${rowNo}: EmployeeCode is missing`);
+          return [];
+        }
 
-        const formattedAtDate = atDate ? excelDateToJSDate(atDate) : null;
-        const formattedworkingHours = workingHours ? excelTimeToHHMM(workingHours) : null;
-        const formattedOTHours = otHours ? excelTimeToHHMM(otHours) : null;
+        const formattedAtDate = hasValue(atDate) ? excelDateToJSDate(atDate) : null;
+        const formattedworkingHours = hasValue(workingHours) ? excelTimeToHHMM(workingHours) : null;
+        const formattedOTHours = hasValue(otHours) ? excelTimeToHHMM(otHours) : null;
+        if (!formattedAtDate) {
+          skippedRows.push(`Row ${rowNo}: AttendanceDate is ${hasValue(atDate) ? 'not a valid date' : 'missing'}`);
+        }
+        if (hasValue(workingHours) && !formattedworkingHours) skippedRows.push(`Row ${rowNo}: WorkingHours is not a valid time`);
+        if (hasValue(otHours) && !formattedOTHours) skippedRows.push(`Row ${rowNo}: OTHours is not a valid time`);
 
         const musterRecords = [];
 
@@ -69,17 +81,25 @@ function UploadManualMuster({ setShowUpload,created_by }) { // Accept the prop t
 
       console.log('Processed Punches Data:', musterData);
 
+      // Rows that were skipped or only partly used, shown to the user so nothing is dropped silently
+      const skippedNote = skippedRows.length
+        ? `\n\n${skippedRows.length} row(s) in the file were skipped or only partly used:\n` +
+          skippedRows.slice(0, 10).join('\n') +
+          (skippedRows.length > 10 ? '\n...' : '')
+        : '';
+
       try {
         const response = await axios.post('/api/attendance/uploadManualMuster', { muster: musterData });
 
         if (response.data.notInsertedRecords && response.data.notInsertedRecords.length > 0) {
           openInNewWindow(response.data.notInsertedRecords);
+          if (skippedNote) alert(skippedNote.trim());
         } else {
-          alert('All records were successfully inserted.');
+          alert(`All records were successfully inserted.${skippedNote}`);
         }
       } catch (error) {
         console.error('Error uploading punches:', error);
-        alert('Failed to upload punches. Check the console for more details.');
+        alert(`Failed to upload punches: ${apiErrorMessage(error)}${skippedNote}`);
       }
       setCompleted(true); // Mark the process as completed
       setShowUpload(false); // Hide the component after completion
@@ -136,14 +156,14 @@ function UploadManualMuster({ setShowUpload,created_by }) { // Accept the prop t
               <tbody>
                 ${records.map(record => `
                   <tr>
-                    <td>${record.employee_code}</td>
-                    <td>${record.attendance_date}</td>
-                    <td>${record.shift}</td>
-                    <td>${record.punch_mark}</td>
-                    <td>${record.working_hours}</td>
-                    <td>${record.ot_hours}</td>
-                    <td>${record.remarks}</td>
-                    <td>${record.result}</td>
+                    <td>${escapeHtml(record.employee_code)}</td>
+                    <td>${escapeHtml(record.attendance_date)}</td>
+                    <td>${escapeHtml(record.shift)}</td>
+                    <td>${escapeHtml(record.punch_mark)}</td>
+                    <td>${escapeHtml(record.working_hours)}</td>
+                    <td>${escapeHtml(record.ot_hours)}</td>
+                    <td>${escapeHtml(record.remarks)}</td>
+                    <td>${escapeHtml(record.result)}</td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -170,16 +190,26 @@ function UploadManualMuster({ setShowUpload,created_by }) { // Accept the prop t
 
 // Convert Excel serial date to a JavaScript Date in DD-MM-YYYY format
 function excelDateToJSDate(excelDate) {
-  const date = new Date((excelDate - 25569) * 86400 * 1000);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
+  const serial = Number(excelDate);
+  if (!hasValue(excelDate) || !Number.isFinite(serial)) return null;
+  const date = new Date((serial - 25569) * 86400 * 1000);
+  if (!Number.isFinite(date.getTime())) return null;
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const year = date.getUTCFullYear();
   return `${year}-${month}-${day}`;
+}
+
+// A cell value of 0 (Excel serial 0, 00:00) is a real value; only undefined, null and '' are missing
+function hasValue(value) {
+  return value !== undefined && value !== null && value !== '';
 }
 
 // Convert Excel serial time to HH:MM format
 function excelTimeToHHMM(excelTime) {
-  const totalMinutes = Math.round(excelTime * 24 * 60);
+  const value = Number(excelTime);
+  if (!hasValue(excelTime) || !Number.isFinite(value)) return null;
+  const totalMinutes = Math.round(value * 24 * 60);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;

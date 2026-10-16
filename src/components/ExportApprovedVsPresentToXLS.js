@@ -34,6 +34,10 @@ const exportApprovedVsPresentToXLS = async ({ from_date,emp_type, emp_id, token 
 
     const attendanceData = response.data;
 
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
+
     // Group data by entity and contractor
     const groupedData = attendanceData.reduce((acc, item) => {
       if (!acc[item.entity_name]) acc[item.entity_name] = {};
@@ -239,6 +243,7 @@ const exportApprovedVsPresentToXLS = async ({ from_date,emp_type, emp_id, token 
     document.body.removeChild(link);
   } catch (error) {
     console.error("Error exporting the manpower report:", error);
+    throw error;
   }
 };
 

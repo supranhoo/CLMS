@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Table, Form, Button, Alert, Modal } from "react-bootstrap";
 import Select from "react-select";
 import axios from "../../api/axios.js";
+import { apiErrorMessage } from "../../utils/apiError";
 import styles from "./ManualMusterMark.module.css";
 
 const EmpRequest = () => {
@@ -62,6 +63,7 @@ const EmpRequest = () => {
   };
 
   const handleAddRequest = async () => {
+    setError("");
     try {
       const response = await axios.post("/api/attendance/addEmpRequest", newRequest);
       if (response.status === 200) {
@@ -78,13 +80,13 @@ const EmpRequest = () => {
           reason: "",
           approver_id: "",
         });
-        employeeCodeRef.current.focus();
+        employeeCodeRef.current?.focus();
       } else {
         setError("Failed to add request.");
       }
     } catch (error) {
       console.error("Error adding request:", error);
-      setError("An error occurred while adding the request.");
+      setError(apiErrorMessage(error, "An error occurred while adding the request."));
     }
   };
 
@@ -171,7 +173,6 @@ const EmpRequest = () => {
             <th>End Date</th>
             <th>Reason</th>
             <th>Approver ID</th>
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -185,11 +186,6 @@ const EmpRequest = () => {
                 <td>{request.end_date}</td>
                 <td>{request.reason}</td>
                 <td>{request.approver_id}</td>
-                <td>
-                  <Button size="sm" variant="danger">
-                    Delete
-                  </Button>
-                </td>
               </tr>
             ))
           ) : (

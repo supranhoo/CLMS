@@ -44,6 +44,10 @@ const printWagesPDF = async ({
 
     const attendanceData = response.data;
 
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
+
     // Group data by contractor and department
     const contractors = {};
     attendanceData.forEach((item) => {
@@ -164,6 +168,7 @@ const printWagesPDF = async ({
     doc.save(`Wages_Register_${pmonth}.pdf`);
   } catch (error) {
     console.error("Error generating the wages report:", error);
+    throw error;
   }
 };
 

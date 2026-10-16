@@ -39,6 +39,10 @@ const expApprVsPresentPeriodToXLS = async ({ from_date, to_date, emp_type, emp_i
     });
 
     const attendanceData = response.data;
+
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
     console.log("API Data Received:", attendanceData.length, "records", attendanceData);
 
     const workbook = new ExcelJS.Workbook();
@@ -228,6 +232,7 @@ const expApprVsPresentPeriodToXLS = async ({ from_date, to_date, emp_type, emp_i
 
   } catch (error) {
     console.error("Error exporting the manpower report:", error);
+    throw error;
   }
 };
 

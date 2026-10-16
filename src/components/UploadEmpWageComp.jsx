@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import axios from "../api/axios.js";
 import PropTypes from "prop-types";
+import { apiErrorMessage } from "../utils/apiError";
+import { escapeHtml } from "../utils/escapeHtml";
 
 const UploadEmpWageComp = ({ created_by, onClose, onSuccess, onError }) => {
   const [file, setFile] = useState(null);
@@ -22,96 +24,80 @@ const UploadEmpWageComp = ({ created_by, onClose, onSuccess, onError }) => {
       const rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
 
       // transform rows → API payload
-      const components = rows.flatMap((r) => {
-        const EmployeeCode = r["EmployeeCode"]?.toString().trim();
-        const eff_date = excelDateToISO(r["eff_date"]);
-        const billingType = r["BillingCycle"]?.toString().trim();
-        const BasicRate = r["BasicRate"]?.toString().trim();
-        const DARate = r["DARate"]?.toString().trim();
-        const JaggeryRate = r["JaggeryRate"]?.toString().trim();
-        const GrossRate = r["GrossRate"]?.toString().trim();
-        const ESIApply = r["ESIApply"]?.toString().trim();
-        const PFApply = r["PFApply"]?.toString().trim();
-        const LWFApply = r["LWFApply"]?.toString().trim();
-        const OTHALWRT = r["OTHALWRT"]?.toString().trim();
-        const HRART = r["HRART"]?.toString().trim();
-        const TRALWRT = r["TRALWRT"]?.toString().trim();
-        const UNALWRT = r["UNALWRT"]?.toString().trim();
+      const errors = [];
+      const hasValue = (v) => v !== undefined && v !== null && String(v).trim() !== "";
+      const text = (v) => (hasValue(v) ? String(v).trim() : "");
+      const components = [];
+      rows.forEach((r, index) => {
+        const rowNo = (r.__rowNum__ ?? index + 1) + 1; // spreadsheet row (header is row 1)
+        const problems = [];
+        const numberField = (name, value, { required = false } = {}) => {
+          if (!hasValue(value)) {
+            if (required) problems.push(`${name} is required`);
+            return 0;
+          }
+          const n = Number(value);
+          if (!Number.isFinite(n) || n < 0) {
+            problems.push(`${name} must be a non-negative number`);
+            return 0;
+          }
+          return n;
+        };
+
+        const EmployeeCode = text(r["EmployeeCode"]);
+        // The app's own export writes BillingType; older files use BillingCycle.
+        const billingType = text(r["BillingType"] ?? r["BillingCycle"]).toUpperCase();
+        const effRaw = r["eff_date"] ?? r["Eff_Date"] ?? r["EffDate"] ?? r["Date"];
+        const eff_date = excelDateToISO(effRaw);
         // Keep compatibility with both the exported header and the legacy header.
-        const MEDIALWRT = (r["MEDIALWRT"] ?? r["MEDALWRT"])
-          ?.toString()
-          .trim();
-        const CONALWRT = r["CONALWRT"]?.toString().trim();
-        const HRAOLDRT = (r["HRAOLDRT"] ?? r["OLDHRART"])
-          ?.toString()
-          .trim();
-        const OTFACTOR = r["OTFactor"]?.toString().trim();
+        const MEDIALWRT = r["MEDIALWRT"] ?? r["MEDALWRT"];
+        const HRAOLDRT = r["HRAOLDRT"] ?? r["OLDHRART"];
+        const OTFACTOR = r["OTFactor"] ?? r["OTFACTOR"];
 
-        if (
-          !EmployeeCode ||
-          !eff_date ||
-          !billingType ||
-          !BasicRate ||
-          !DARate ||
-          !JaggeryRate ||
-          !GrossRate ||
-          !ESIApply ||
-          !PFApply ||
-          !LWFApply ||
-          !OTHALWRT ||
-          !HRART ||
-          !TRALWRT ||
-          !UNALWRT ||
-          !MEDIALWRT ||
-          !CONALWRT ||
-          !HRAOLDRT ||
-          OTFACTOR === ""
-        ) {
-          console.log(
-            "Stage-1",
-            EmployeeCode,
-            eff_date,
-            BasicRate,
-            DARate,
-            JaggeryRate,
-            GrossRate,
-            ESIApply,
-            PFApply,
-            LWFApply,
-            OTHALWRT,
-            HRART,
-            TRALWRT,
-            UNALWRT,
-            MEDIALWRT,
-            CONALWRT,
-            HRAOLDRT,
-            OTFACTOR,
-          );
-          throw new Error("Data Issue");
-          return [];
-        } // skip incomplete rows  //
+        if (!EmployeeCode) problems.push("EmployeeCode is required");
+        if (!billingType) problems.push("BillingType (or BillingCycle) is required");
+        else if (!["M", "F"].includes(billingType))
+          problems.push("BillingType must be M or F");
+        if (!hasValue(effRaw)) problems.push("eff_date is required");
+        else if (!eff_date) problems.push("eff_date is not a valid date");
 
-        return {
+        const BasicRate = numberField("BasicRate", r["BasicRate"], { required: true });
+        if (hasValue(r["BasicRate"]) && BasicRate === 0 && Number.isFinite(Number(r["BasicRate"])))
+          problems.push("BasicRate must be greater than 0");
+        const record = {
           EmployeeCode: EmployeeCode,
           eff_date: eff_date,
           billingType: billingType,
-          BasicRate: Number(r["BasicRate"] || 0),
-          DARate: Number(r["DARate"] || 0),
-          JaggeryRate: Number(r["JaggeryRate"] || 0),
-          ESIApply: (r["ESIApply"] || "").toString().trim() || null,
-          PFApply: (r["PFApply"] || "").toString().trim() || null,
-          LWFApply: (r["LWFApply"] || "").toString().trim() || null,
-          OTHALWRT: Number(r["OTHALWRT"] || 0),
-          HRART: Number(r["HRART"] || 0),
-          TRALWRT: Number(r["TRALWRT"] || 0),
-          UNALWRT: Number(r["UNALWRT"] || 0),
-          MEDIALWRT: Number(MEDIALWRT || 0),
-          CONALWRT: Number(r["CONALWRT"] || 0),
-          HRAOLDRT: Number(HRAOLDRT || 0),
-          OTFACTOR: Number(OTFACTOR || 0),
+          BasicRate: BasicRate,
+          DARate: numberField("DARate", r["DARate"]),
+          JaggeryRate: numberField("JaggeryRate", r["JaggeryRate"]),
+          GrossRate: numberField("GrossRate", r["GrossRate"]),
+          ESIApply: text(r["ESIApply"]) || null,
+          PFApply: text(r["PFApply"]) || null,
+          LWFApply: text(r["LWFApply"]) || null,
+          OTHALWRT: numberField("OTHALWRT", r["OTHALWRT"]),
+          HRART: numberField("HRART", r["HRART"]),
+          TRALWRT: numberField("TRALWRT", r["TRALWRT"]),
+          UNALWRT: numberField("UNALWRT", r["UNALWRT"]),
+          MEDIALWRT: numberField("MEDIALWRT", MEDIALWRT),
+          CONALWRT: numberField("CONALWRT", r["CONALWRT"]),
+          HRAOLDRT: numberField("HRAOLDRT", HRAOLDRT),
           created_by: created_by,
         };
+        // OTFactor is optional: leave it out when blank so the server default applies.
+        if (hasValue(OTFACTOR)) record.OTFACTOR = numberField("OTFactor", OTFACTOR);
+
+        if (problems.length) errors.push(`Row ${rowNo}: ${problems.join("; ")}`);
+        else components.push(record);
       });
+
+      if (errors.length) {
+        const shown = errors.slice(0, 5).join(" | ");
+        throw new Error(
+          `${errors.length} row(s) have problems, nothing was uploaded. ${shown}${errors.length > 5 ? " | ..." : ""}`,
+        );
+      }
+      if (!components.length) throw new Error("No data rows found in the file.");
 
       console.log("payload:", components);
 
@@ -131,7 +117,7 @@ const UploadEmpWageComp = ({ created_by, onClose, onSuccess, onError }) => {
       onClose();
     } catch (err) {
       console.error(err);
-      onError(err.message || "Upload failed – check console.");
+      onError(apiErrorMessage(err, "Upload failed."));
     } finally {
       setIsBusy(false);
     }
@@ -164,23 +150,39 @@ UploadEmpWageComp.propTypes = {
 
 // helpers
 function excelDateToISO(val) {
-  if (!val) return null;
+  if (val === undefined || val === null || val === "") return null;
+
+  // Accept only real calendar dates
+  const checked = (iso) => {
+    const d = new Date(iso);
+    return Number.isFinite(d.getTime()) && d.toISOString().slice(0, 10) === iso
+      ? iso
+      : null;
+  };
 
   // If it's a JS Date object (Excel stores as actual date type)
   if (val instanceof Date) {
-    return val.toISOString().slice(0, 10); // YYYY-MM-DD
+    return Number.isFinite(val.getTime()) ? val.toISOString().slice(0, 10) : null; // YYYY-MM-DD
   }
 
   // Excel serial number
   if (typeof val === "number") {
+    if (!Number.isFinite(val)) return null;
     const jsDate = new Date((val - 25569) * 86400 * 1000);
-    return jsDate.toISOString().slice(0, 10);
+    return Number.isFinite(jsDate.getTime())
+      ? jsDate.toISOString().slice(0, 10)
+      : null;
   }
 
-  // If it's a DD-MM-YYYY string (user manually typed)
-  if (typeof val === "string" && /^\d{2}-\d{2}-\d{4}$/.test(val)) {
-    const [d, m, y] = val.split("-");
-    return `${y}-${m}-${d}`; // YYYY-MM-DD
+  if (typeof val === "string") {
+    const t = val.trim();
+    // YYYY-MM-DD text, as written by the app's own export (a time part is ignored)
+    if (/^\d{4}-\d{2}-\d{2}(?:$|[T ])/.test(t)) return checked(t.slice(0, 10));
+    // If it's a DD-MM-YYYY string (user manually typed)
+    if (/^\d{2}-\d{2}-\d{4}$/.test(t)) {
+      const [d, m, y] = t.split("-");
+      return checked(`${y}-${m}-${d}`); // YYYY-MM-DD
+    }
   }
 
   return null; // unrecognized format
@@ -213,20 +215,20 @@ function openRejectWindow(recs) {
     ${recs
       .map(
         (r) => `<tr>
-                <td>${r.EmployeeCode}</td>
-                <td>${r.eff_date}</td>
-                <td>${r.BasicRate}</td>
-                <td>${r.DARate}</td>
-                <td>${r.JaggeryRate}</td>
-                <td>${r.ESIApply}</td>
-                <td>${r.PFApply}</td>
-                <td>${r.LWFApply}</td>
-                <td>${r.OTHALWRT}</td>
-                <td>${r.HRART}</td>
-                <td>${r.TRALWRT}</td>
-                <td>${r.UNALWRT}</td>
-                <td>${r.OTFACTOR}</td>
-                <td>${r.result}</td></tr>
+                <td>${escapeHtml(r.EmployeeCode)}</td>
+                <td>${escapeHtml(r.eff_date)}</td>
+                <td>${escapeHtml(r.BasicRate)}</td>
+                <td>${escapeHtml(r.DARate)}</td>
+                <td>${escapeHtml(r.JaggeryRate)}</td>
+                <td>${escapeHtml(r.ESIApply)}</td>
+                <td>${escapeHtml(r.PFApply)}</td>
+                <td>${escapeHtml(r.LWFApply)}</td>
+                <td>${escapeHtml(r.OTHALWRT)}</td>
+                <td>${escapeHtml(r.HRART)}</td>
+                <td>${escapeHtml(r.TRALWRT)}</td>
+                <td>${escapeHtml(r.UNALWRT)}</td>
+                <td>${escapeHtml(r.OTFACTOR)}</td>
+                <td>${escapeHtml(r.result)}</td></tr>
                `,
       )
       .join("")}

@@ -10,6 +10,7 @@ import {
 } from "../../features/userSlice";
 import Loading from "../../components/Loading";
 import ErrorMessage from "../../components/ErrorMessage";
+import { apiErrorMessage } from "../../utils/apiError";
 import "./User.css";
 import axios from "../../api/axios.js";
 import "./Paginated1.css";
@@ -71,7 +72,7 @@ const ManageUsers = () => {
     } catch (error) {
       console.error("Error fetching Users:", error);
       setLoading(false);
-      // Handle error state as needed
+      setMessage(apiErrorMessage(error));
     }
   };
 
@@ -141,8 +142,6 @@ const ManageUsers = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: type === "checkbox" ? checked : value,
-      [name]: name === 'emp_id' ? parseInt(value) : value, // Ensure emp_id is stored as an integer
-  
     }));
   };
   // Validation function
@@ -241,6 +240,7 @@ const ManageUsers = () => {
       setShowErrorModal(true);
       console.error("Submit Error:", error);
       setError(true);
+      setMessage(apiErrorMessage(error));
       setLoading(false);
     }
   };
@@ -297,6 +297,7 @@ const ManageUsers = () => {
         <div className="Paginated1">
           <Table responsive striped bordered hover>
             <thead style={{ height: "50%", verticalAlign: "midle" }}>
+              <tr>
               <td
                 style={{ height: "50$", width: "5%", verticalAlign: "midle" }}
               >
@@ -371,6 +372,7 @@ const ManageUsers = () => {
                 <Button variant="secondary">Upload</Button>
                 <Button variant="secondary">Export</Button>
               </td>
+            </tr>
             </thead>
           </Table>
         </div>
@@ -434,7 +436,7 @@ const ManageUsers = () => {
           <Form.Group controlId="emp_id" className="formGroup">
             <Form.Label>User ID</Form.Label>
             <Form.Control
-              type="number"
+              type="text"
               name="emp_id"
               value={formData.emp_id}
               placeholder="Enter User ID"
@@ -548,7 +550,7 @@ const ManageUsers = () => {
         <Modal.Header closeButton>
           <Modal.Title>Error</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Unable to register</Modal.Body>
+        <Modal.Body>{message || "Unable to register"}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
             Close

@@ -6,6 +6,7 @@ import axios from "../../api/axios.js";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import styles from "./PrintWages.module.css";
+import { apiErrorMessage } from "../../utils/apiError";
 
 //---------------------------------------------------
 // FORMAT MONTH (Mon-YYYY)
@@ -242,17 +243,21 @@ const PTMonthReport = () => {
   const handleRunReport = async () => {
     if (!selectedMonths.length) return alert("Select Process Months");
 
-    const res = await axios.post("/api/wages/getPTMonthWiseReport", {
-      pmonths: selectedMonths.map((m) => m.value),
-      emp_type: selectedEmpType.map((o) => o.value),
-      contractor: selectedContractor.map((o) => o.value),
-      bu: selectedBU.map((o) => o.value),
-      entity: selectedEntity.map((o) => o.value),
-      department: selectedDepartment.map((o) => o.value),
-      emp_id,
-    });
+    try {
+      const res = await axios.post("/api/wages/getPTMonthWiseReport", {
+        pmonths: selectedMonths.map((m) => m.value),
+        emp_type: selectedEmpType.map((o) => o.value),
+        contractor: selectedContractor.map((o) => o.value),
+        bu: selectedBU.map((o) => o.value),
+        entity: selectedEntity.map((o) => o.value),
+        department: selectedDepartment.map((o) => o.value),
+        emp_id,
+      });
 
-    await exportToExcel(res.data);
+      await exportToExcel(res.data);
+    } catch (error) {
+      alert(apiErrorMessage(error));
+    }
   };
 
   //---------------------------------------------------

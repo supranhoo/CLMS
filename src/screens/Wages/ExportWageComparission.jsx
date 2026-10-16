@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from "../../features/userSlice";
 import Select, { components } from 'react-select';
 import axios from '../../api/axios.js';
+import { apiErrorMessage } from "../../utils/apiError";
 import exportWageComparissionToXLS from '../../components/ExportWageComparissionToXLS';
 import styles from './PrintWages.module.css'; // Import CSS module
 import moment from 'moment'; // You can use the moment library for date formatting
@@ -284,7 +285,6 @@ const ExportWageComparission = () => {
         cur_pmonth: selectedPmonth2Value,
         entity: selectedEntityValue,
         emp_id: emp_id,
-        token: token,
       };
       console.log('Data:',data);
 
@@ -293,7 +293,7 @@ const ExportWageComparission = () => {
 
     } catch (error) {
       console.error('Error printing wages:', error);
-      alert('Failed to print attendance. Please try again.');
+      alert(apiErrorMessage(error));
     }
   };
 

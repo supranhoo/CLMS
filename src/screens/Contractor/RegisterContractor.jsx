@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerContractor, selectUser } from "../../features/userSlice";
 import Loading from "../../components/Loading";
 import ErrorMessage from "../../components/ErrorMessage";
+import { apiErrorMessage } from "../../utils/apiError";
 import "./Contractor.css";
 
 const RegisterContractor = () => {
@@ -44,9 +45,9 @@ const RegisterContractor = () => {
     HeadIDs: "",
     EmailID: "",
     ContractorCode: "",
-    GstNo: "",
-    GstPercent: "",
-    GstPercent1: "",
+    GSTNo: "",
+    GSTPercent: "",
+    GSTPercent1: "",
   });
 
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -72,11 +73,11 @@ const RegisterContractor = () => {
     try {
       const updatedFormData = {
         ...formData,
-        GstPercent: formData.GstPercent
-          ? parseFloat(formData.GstPercent).toFixed(2)
+        GSTPercent: formData.GSTPercent
+          ? parseFloat(formData.GSTPercent).toFixed(2)
           : "0.00",
-        GstPercent1: formData.GstPercent1
-          ? parseFloat(formData.GstPercent1).toFixed(2)
+        GSTPercent1: formData.GSTPercent1
+          ? parseFloat(formData.GSTPercent1).toFixed(2)
           : "0.00",
         Administrative_Charge_Percent: formData.Administrative_Charge_Percent
           ? parseFloat(formData.Administrative_Charge_Percent).toFixed(2)
@@ -84,23 +85,23 @@ const RegisterContractor = () => {
         Food_Acco_Charges: formData.Food_Acco_Charges
           ? parseFloat(formData.Food_Acco_Charges).toFixed(2)
           : "0.00",
+        Is_Administrative_Applicable: formData.Is_Administrative_Applicable
+          ? "Y"
+          : "N",
+        Is_FoodAccoChargs_Applicable: formData.Is_FoodAccoChargs_Applicable
+          ? "Y"
+          : "N",
       };
-      const result = await dispatch(registerContractor(updatedFormData));
-      if (result.payload) {
-        setMessage("");
-        setError(false);
-        setShowSuccessModal(true);
-      } else if (result.error) {
-        setShowErrorModal(true);
-        console.error("Error:", result.error);
-        setError(true);
-        setMessage(result.error.message || "Registration failed.");
-      }
+      await dispatch(registerContractor(updatedFormData)).unwrap();
+      setMessage("");
+      setError(false);
+      setShowSuccessModal(true);
       setLoading(false);
     } catch (error) {
       setShowErrorModal(true);
       console.error("Submit Error:", error);
       setError(true);
+      setMessage(apiErrorMessage(error));
       setLoading(false);
     }
   };
@@ -392,8 +393,8 @@ const RegisterContractor = () => {
             <Form.Label>GST No</Form.Label>
             <Form.Control
               type="text"
-              name="GstNo"
-              value={formData.GstNo}
+              name="GSTNo"
+              value={formData.GSTNo}
               placeholder="Enter GST No"
               onChange={handleChange}
             />
@@ -403,8 +404,8 @@ const RegisterContractor = () => {
             <Form.Label>GST Percent</Form.Label>
             <Form.Control
               type="text"
-              name="GstPercent"
-              value={formData.GstPercent}
+              name="GSTPercent"
+              value={formData.GSTPercent}
               placeholder="Enter GST Percent"
               onChange={handleChange}
             />
@@ -414,8 +415,8 @@ const RegisterContractor = () => {
             <Form.Label>GST Percent 1</Form.Label>
             <Form.Control
               type="text"
-              name="GstPercent1"
-              value={formData.GstPercent1}
+              name="GSTPercent1"
+              value={formData.GSTPercent1}
               placeholder="Enter GST Percent 1"
               onChange={handleChange}
             />

@@ -7,6 +7,7 @@ import axios from "../../api/axios.js";
 import printAtndReg2 from "../../components/PrintAtndRegFormat2";
 import exportAtndToXls from "../../components/ExportAtndFormat2ToXLS";
 import printAtndReg2_pagebreak from "../../components/PrintAtndFormat2_pagebreak"; // Import the pagebreak version
+import { apiErrorMessage } from "../../utils/apiError";
 import styles from "./PrintDailyAttendance.module.css"; // Import CSS module
 
 // Custom Option component to include checkboxes in the dropdown
@@ -241,6 +242,11 @@ const PrintDailyAttendance = () => {
       );
       console.log("Selected Contractors:", selectedContractorValues);
 
+      if (fromDate && toDate && fromDate > toDate) {
+        alert("From Date must not be after To Date.");
+        return;
+      }
+
       const data = {
         contractor: selectedContractorValues,
         bu: selectedBUValues,
@@ -250,7 +256,6 @@ const PrintDailyAttendance = () => {
         to_date: toDate,
         emp_type: selectedEmpTypeValues, // Employee Type
         emp_id: emp_id,
-        token: token,
       };
 
       if (outputType == "PDF") {
@@ -267,7 +272,6 @@ const PrintDailyAttendance = () => {
             },
           });
         }
-        alert("Attendance printed successfully!");
       } else {
         if (separatePage) {
           await exportAtndToXls(data, {
@@ -282,11 +286,11 @@ const PrintDailyAttendance = () => {
             },
           });
         }
-        alert("Attendance printed successfully!");
       }
+      alert("Attendance printed successfully!");
     } catch (error) {
       console.error("Error printing attendance:", error);
-      alert("Failed to print attendance. Please try again.");
+      alert(apiErrorMessage(error));
     }
   };
 

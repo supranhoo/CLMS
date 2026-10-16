@@ -66,6 +66,10 @@ const exportWagesToXLSSingleSheet = async ({
     });
 
     const attendanceData = response.data;
+
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
     console.log("Wages Data:", attendanceData);
     // Group data by contractor
     // Create a new Excel workbook
@@ -853,6 +857,7 @@ const exportWagesToXLSSingleSheet = async ({
     document.body.removeChild(link);
   } catch (error) {
     console.error("Error exporting the wages report:", error);
+    throw error;
   }
 };
 

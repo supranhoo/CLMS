@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from "../../features/userSlice";
 import Select, { components } from 'react-select';
 import axios from '../../api/axios.js';
+import { apiErrorMessage } from "../../utils/apiError";
 import exportBankStatementToXLS from '../../components/ExportBankStatementToXLS';
 import styles from './PrintWages.module.css'; // Import CSS module
 import moment from 'moment'; // You can use the moment library for date formatting
@@ -302,14 +303,13 @@ const ExportBankStatement = () => {
         emp_type: selectedEmpTypeValues, // Employee Type
         bank:selectedBankValues,
         emp_id: emp_id,
-        token: token,
       };
       console.log(data);
       await exportBankStatementToXLS(data, {headers: {'Content-Type': 'application/json'}});
       alert('Wages printed successfully!');
     } catch (error) {
       console.error('Error printing wages:', error);
-      alert('Failed to print attendance. Please try again.');
+      alert(apiErrorMessage(error));
     }
   };
 

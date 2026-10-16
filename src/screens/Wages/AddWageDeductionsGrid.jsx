@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerEmployee, selectUser } from "../../features/userSlice";
 import Select from "react-select";
 import UploadDeductions from "../../components/UploadDeductions";
+import { apiErrorMessage } from "../../utils/apiError";
 
 // Function to check user permission to access Upload Manual Muster button
 const checkUserPermission = async (emp_id, activity_id) => {
@@ -245,11 +246,11 @@ const AddWageDeductionsGrid = () => {
   };
 
   // Handle input changes for updating existing deductiones
-  const handleUpdateInputChange = (e, deduction) => {
+  const handleUpdateInputChange = (e, deduction, index) => {
     const { name, value } = e.target;
     const updatedDeduction = { ...deduction, [name]: value };
-    const updatedData = dedData.map((item) =>
-      item.employee_code === deduction.employee_code ? updatedDeduction : item
+    const updatedData = dedData.map((item, i) =>
+      i === index ? updatedDeduction : item
     );
     setDedData(updatedData); // Update deduction data in the state
   };
@@ -272,7 +273,15 @@ const AddWageDeductionsGrid = () => {
       if (response.status == 200) {
         console.log("Testing---2");
 
-        setDedData([...dedData, newDeduction]);
+        setDedData([
+          ...dedData,
+          {
+            ...newDeduction,
+            pmonth: selectedPmonth.value,
+            dedCode: selectedDedCode.value,
+            billingType: selectedBillingCycle.value,
+          },
+        ]);
 
         // Reset the form fields
         setNewDeduction({
@@ -300,7 +309,7 @@ const AddWageDeductionsGrid = () => {
     } catch (err) {
       console.log("Testing---4");
       console.error("Error adding deduction at err:", err);
-      setError("Error adding deduction.3" + err);
+      setError(`Error adding deduction: ${apiErrorMessage(err)}`);
     }
   };
 
@@ -318,6 +327,7 @@ const AddWageDeductionsGrid = () => {
       console.log("dedData", dedData);
     } catch (error) {
       console.error("Error fetching getWageDeductions:", error);
+      setError(`Error fetching wage deductions: ${apiErrorMessage(error)}`);
     }
   };
 
@@ -347,8 +357,8 @@ const AddWageDeductionsGrid = () => {
     try {
       const response = await axios.get("/api/wages/getDedCodes");
       const formattedDedCodes = response.data.map((item) => ({
-        value: item.dedCode,
-        label: item.dedName,
+        value: item.dedCode || item.ded_code,
+        label: item.dedName || item.ded_name || item.ded_desc || item.dedCode || item.ded_code,
       }));
       setDedCodes(formattedDedCodes); // Set the correct formatted array
     } catch (error) {
@@ -409,44 +419,37 @@ const AddWageDeductionsGrid = () => {
   };
 
   // Update existing deduction record
-  const handleUpdateDeduction = async (updatedDeduction) => {
+  const handleUpdateDeduction = async (updatedDeduction, index) => {
     console.log("updatedDeduction:", updatedDeduction);
     try {
       const response = await axios.post("/api/wages/updateWageDeductions", {
         ...updatedDeduction,
-        pmonth: selectedPmonth.value,
-        dedCode: selectedDedCode.value,
-        billingType: selectedBillingCycle.value,
+        pmonth: updatedDeduction.pmonth
+          ? String(updatedDeduction.pmonth).slice(0, 10)
+          : selectedPmonth?.value,
+        dedCode:
+          updatedDeduction.dedCode ||
+          updatedDeduction.ded_code ||
+          selectedDedCode?.value,
+        billingType:
+          updatedDeduction.billingType || selectedBillingCycle?.value,
         modified_by: emp_id, // Adjust based on actual user
       });
 
       if (response.status == 200) {
-        const updatedData = dedData.map((deduction) =>
-          deduction.employee_code === updatedDeduction.employee_code
-            ? updatedDeduction
-            : deduction
+        const updatedData = dedData.map((deduction, i) =>
+          i === index ? updatedDeduction : deduction
         );
         setDedData(updatedData); // Update the deduction data in the grid
         setSuccessMessage("Record updated successfully.");
         setTimeout(() => setSuccessMessage(""), 3000);
         employee_codeRef.current.focus();
       } else {
-        if (response.data.error.originalError.info.message) {
-          setError(
-            "Error updating deduction.1" +
-              response.data.error.originalError.info.message
-          );
-        } else {
-          setError("Error updating deduction at 2" + response);
-        }
+        setError("Error updating deduction at 2");
       }
     } catch (err) {
       console.error("Error updating deduction at 3:", err);
-      if (err.response.data.message) {
-        setError("Error updating deduction.3" + err.response.data.message);
-      } else {
-        setError("Error updating deduction.3" + err);
-      }
+      setError(`Error updating deduction: ${apiErrorMessage(err)}`);
     }
   };
 
@@ -455,9 +458,15 @@ const AddWageDeductionsGrid = () => {
     try {
       const response = await axios.post("/api/wages/deleteWageDeductions", {
         ...updatedDeduction,
-        pmonth: selectedPmonth.value,
-        dedCode: selectedDedCode.value,
-        billingType: selectedBillingCycle.value,
+        pmonth: updatedDeduction.pmonth
+          ? String(updatedDeduction.pmonth).slice(0, 10)
+          : selectedPmonth?.value,
+        dedCode:
+          updatedDeduction.dedCode ||
+          updatedDeduction.ded_code ||
+          selectedDedCode?.value,
+        billingType:
+          updatedDeduction.billingType || selectedBillingCycle?.value,
         modified_by: emp_id,
       });
 
@@ -467,22 +476,11 @@ const AddWageDeductionsGrid = () => {
         setTimeout(() => setSuccessMessage(""), 3000);
         employee_codeRef.current.focus();
       } else {
-        if (response.data.error.originalError.info.message) {
-          setError(
-            "Error updating deduction.1" +
-              response.data.error.originalError.info.message
-          );
-        } else {
-          setError("Error updating deduction at 2" + response);
-        }
+        setError("Error updating deduction at 2");
       }
     } catch (err) {
       console.error("Error updating deduction at 3:", err);
-      if (err.response.data.message) {
-        setError("Error updating deduction.3" + err.response.data.message);
-      } else {
-        setError("Error updating deduction.3" + err);
-      }
+      setError(`Error updating deduction: ${apiErrorMessage(err)}`);
     }
   };
 
@@ -649,8 +647,15 @@ const AddWageDeductionsGrid = () => {
           </thead>
           <tbody>
             {dedData.length > 0 ? (
-              dedData.map((deduction) => (
-                <tr key={deduction.employee_code}>
+              dedData.map((deduction, index) => (
+                <tr
+                  key={[
+                    deduction.employee_code,
+                    deduction.pmonth,
+                    deduction.billingType,
+                    deduction.dedCode,
+                  ].join("|")}
+                >
                   <td className={styles["left-justify"]}>
                     {deduction.employee_code}
                   </td>
@@ -664,7 +669,7 @@ const AddWageDeductionsGrid = () => {
                       className={styles["small-input"]}
                       type="decimal"
                       value={deduction.dedValue}
-                      onChange={(e) => handleUpdateInputChange(e, deduction)}
+                      onChange={(e) => handleUpdateInputChange(e, deduction, index)}
                       name="dedValue"
                     />
                   </td>
@@ -673,7 +678,7 @@ const AddWageDeductionsGrid = () => {
                       className={styles["small-input"]}
                       type="remarks"
                       value={deduction.remarks}
-                      onChange={(e) => handleUpdateInputChange(e, deduction)}
+                      onChange={(e) => handleUpdateInputChange(e, deduction, index)}
                       name="remarks"
                     />
                   </td>
@@ -681,7 +686,7 @@ const AddWageDeductionsGrid = () => {
                     <div>
                       <Button
                         size="sm"
-                        onClick={() => handleUpdateDeduction(deduction)}
+                        onClick={() => handleUpdateDeduction(deduction, index)}
                       >
                         Save
                       </Button>

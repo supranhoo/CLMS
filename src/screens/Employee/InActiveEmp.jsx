@@ -28,6 +28,9 @@ const formatDateForInput = (dateString) => {
 */
 /*
 const formatDateForInput = (dateString) => {
+  // A plain YYYY-MM-DD (or ISO) string already names the day: parsing it with new Date() and reading local
+  // getters shows the previous day west of UTC.
+  if (typeof dateString === "string" && /^\d{4}-\d{2}-\d{2}/.test(dateString)) return dateString.slice(0, 10);
   const date = new Date(dateString);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");

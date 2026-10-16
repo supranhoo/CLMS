@@ -37,6 +37,10 @@ async function printAtndReg(from_date, to_date, emp_type) {
     });
 
     const attendanceData = response.data;
+
+    if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+      throw new Error("No data for the selected filters");
+    }
     const loop_cnt = 0;
 
     // Group data by contractor and department
@@ -53,6 +57,7 @@ async function printAtndReg(from_date, to_date, emp_type) {
 
     // Create a new jsPDF document
     const doc = new jsPDF();
+    let firstPageUsed = false; // the document starts with one blank page; use it before adding more
 
     const headerFontSize = 10;
     const fontSize = 10;
@@ -81,8 +86,9 @@ async function printAtndReg(from_date, to_date, emp_type) {
     for (const contractorCode in contractors) {
       const contractorDepartments = contractors[contractorCode];
 
-      // Add a new page for each contractor
-      doc.addPage();
+      // Add a new page for each contractor (the first contractor uses the initial page)
+      if (firstPageUsed) doc.addPage();
+      firstPageUsed = true;
 
       // Add the multi-line heading
       doc.setFontSize(headerFontSize);
@@ -223,9 +229,10 @@ async function printAtndReg(from_date, to_date, emp_type) {
     }
 
     // Save the PDF and trigger the download
-    doc.save(`Attendance_SL_${from_date}_to_${to_date}.pdf`);
+    doc.save(`Attendance_${emp_type}_${from_date}_to_${to_date}.pdf`);
   } catch (error) {
     console.error("Error generating the SL report:", error);
+    throw error;
   }
 }
 

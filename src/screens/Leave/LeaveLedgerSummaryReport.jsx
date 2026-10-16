@@ -4,6 +4,7 @@ import Select from "react-select";
 import axios from "../../api/axios.js";
 import * as XLSX from "xlsx";
 import styles from "./Leave.module.css";
+import { apiErrorMessage } from "../../utils/apiError";
 
 const LeaveLedgerSummaryReport = () => {
   const [processMonths, setProcessMonths] = useState([]);
@@ -81,7 +82,7 @@ const LeaveLedgerSummaryReport = () => {
 
       setRows(res.data.data || []);
     } catch (e) {
-      setError(e.response?.data?.message || "Failed to load summary report");
+      setError(apiErrorMessage(e, "Failed to load summary report"));
     }
   };
 

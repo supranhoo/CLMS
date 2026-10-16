@@ -153,7 +153,6 @@ const ApproveEmployeeChanges = () => {
     "emp_category_code",
     "loc_code",
     "cost_code",
-    "panno",
     "level",
   ];
 
