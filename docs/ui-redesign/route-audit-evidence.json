@@ -6,17 +6,17 @@
     "src/screens/**/*.jsx"
   ],
   "counts": {
-    "routeDeclarations": 73,
-    "staticRoutes": 68,
+    "routeDeclarations": 74,
+    "staticRoutes": 69,
     "parameterizedRoutes": 4,
     "fallbackRoutes": 1,
-    "routedComponentFiles": 66,
-    "screenJsxFiles": 66,
+    "routedComponentFiles": 67,
+    "screenJsxFiles": 67,
     "menuGroups": 8,
     "menuEntries": 72,
     "uniqueMenuDestinations": 70,
     "routesWithMenus": 62,
-    "routesWithoutMenus": 10,
+    "routesWithoutMenus": 11,
     "unmatchedMenuEntries": 0,
     "resolvedSourceNavigationReferences": 84,
     "unmatchedResolvedSourceNavigationReferences": 1,
@@ -39,11 +39,13 @@
       "Reference masters": 7,
       "Unavailable / error state": 2,
       "State profiles / feature coverage": 1,
+      "Design system reference (development only)": 1,
       "Local operational workspace": 1,
       "Workbook import": 1,
       "Compliance report working data": 1
     },
     "waveCounts": {
+      "W0": 1,
       "W1": 7,
       "W2": 15,
       "W3": 13,
@@ -63,6 +65,7 @@
     "/resetSuccess",
     "/resetPassword",
     "/development/unavailable/:module",
+    "/development/design-system",
     "/development/import/:kind"
   ],
   "duplicateMenuDestinations": [
@@ -96,18 +99,18 @@
   "unroutedScreenFiles": [],
   "resolvedSourceNavigationReferences": [
     {
+      "source": "src/App.jsx:360",
+      "path": "/login",
+      "route": "/login",
+      "resolvedFrom": "literal",
+      "kind": "location assignment"
+    },
+    {
       "source": "src/api/axios.js:32",
       "path": "/login",
       "route": "/login",
       "resolvedFrom": "literal",
       "kind": "navigation call"
-    },
-    {
-      "source": "src/App.jsx:359",
-      "path": "/login",
-      "route": "/login",
-      "resolvedFrom": "literal",
-      "kind": "location assignment"
     },
     {
       "source": "src/components/DevelopmentBanner.jsx:9",
@@ -208,14 +211,14 @@
       "kind": "navigation call"
     },
     {
-      "source": "src/screens/AttendanceMuster/PrintApprovedVsPresent.jsx:140",
+      "source": "src/screens/AttendanceMuster/PrintApprVsPresentPeriod.jsx:141",
       "path": "/",
       "route": "/",
       "resolvedFrom": "literal",
       "kind": "navigation call"
     },
     {
-      "source": "src/screens/AttendanceMuster/PrintApprVsPresentPeriod.jsx:141",
+      "source": "src/screens/AttendanceMuster/PrintApprovedVsPresent.jsx:140",
       "path": "/",
       "route": "/",
       "resolvedFrom": "literal",
@@ -257,14 +260,14 @@
       "kind": "navigation call"
     },
     {
-      "source": "src/screens/Compliance/ComplianceReports.jsx:91",
+      "source": "src/screens/Compliance/ComplianceReports.jsx:97",
       "path": "/dashboard",
       "route": "/Dashboard",
       "resolvedFrom": "literal",
       "kind": "link attribute"
     },
     {
-      "source": "src/screens/Compliance/ComplianceReports.jsx:101",
+      "source": "src/screens/Compliance/ComplianceReports.jsx:107",
       "path": "/development/features",
       "route": "/development/features",
       "resolvedFrom": "literal",
@@ -418,7 +421,7 @@
       "kind": "navigation call"
     },
     {
-      "source": "src/screens/Employee/ManageEmployees.jsx:1184",
+      "source": "src/screens/Employee/ManageEmployees.jsx:1185",
       "path": "/development/import/employees",
       "route": "/development/import/:kind",
       "resolvedFrom": "literal",

@@ -10,3 +10,5 @@ The user selected **Modern BFCL workspace** on 16 October 2026. This folder cont
 [Browser audit](browser-audit.md), [style/component audit](style-and-component-audit.md) and [workflow requirements](workflow-requirements.md) provide current-state evidence and detailed screen requirements. The master plan's W0–W6 sequence governs the delivery; lower priority findings in audits do not remove current screens from scope.
 
 Begin implementation with CSS containment, tokens and the app shell, then prove four reference screen types before converting the remaining families. The whole redesign is complete only after all routes, states, field/action parity and release gates pass.
+
+**Implementation status:** wave W0 (foundation) is implemented and awaiting review: see [w0/README.md](w0/README.md). Waves W1–W6 have not started.

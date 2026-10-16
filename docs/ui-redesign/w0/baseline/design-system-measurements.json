@@ -1,0 +1,471 @@
+{
+ "checkedAt": "2026-10-16T11:37:51.900Z",
+ "base": "http://127.0.0.1:5173",
+ "controlsMeasured": 41,
+ "pairsOnPage": 9,
+ "parity": [
+  {
+   "label": "button-primary focus",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-secondary focus",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-danger focus",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-outline-primary focus",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "field focus",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-primary hover",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-secondary hover",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-danger hover",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-outline-primary hover",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "field hover",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-primary active",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-secondary active",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-danger active",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-outline-primary active",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-primary focus+hover",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-secondary focus+hover",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-danger focus+hover",
+   "ok": true,
+   "diffs": []
+  },
+  {
+   "label": "button-outline-primary focus+hover",
+   "ok": true,
+   "diffs": []
+  }
+ ],
+ "failures": [],
+ "rows": [
+  {
+   "id": "button-primary:default",
+   "tag": "button",
+   "disabled": false,
+   "size": "87x40",
+   "textContrast": 6.7,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-primary:hover",
+   "tag": "button",
+   "disabled": false,
+   "size": "87x40",
+   "textContrast": 8.72,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-primary:focus",
+   "tag": "button",
+   "disabled": false,
+   "size": "87x40",
+   "textContrast": 6.7,
+   "focusIndicator": {
+    "width": 2,
+    "style": "solid",
+    "contrast": 6.7
+   },
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-primary:active",
+   "tag": "button",
+   "disabled": false,
+   "size": "87x40",
+   "textContrast": 10.36,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-primary:disabled",
+   "tag": "button",
+   "disabled": true,
+   "size": "87x40",
+   "textContrast": {
+    "ratio": 3.86,
+    "note": "disabled: exempt, recorded for legibility"
+   },
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-primary:busy",
+   "tag": "button",
+   "disabled": false,
+   "size": "104.1x40",
+   "textContrast": 6.7,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-secondary:default",
+   "tag": "button",
+   "disabled": false,
+   "size": "107.4x40",
+   "textContrast": 12.19,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-secondary:hover",
+   "tag": "button",
+   "disabled": false,
+   "size": "107.4x40",
+   "textContrast": 11.37,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-secondary:focus",
+   "tag": "button",
+   "disabled": false,
+   "size": "107.4x40",
+   "textContrast": 12.19,
+   "focusIndicator": {
+    "width": 2,
+    "style": "solid",
+    "contrast": 6.7
+   },
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-secondary:active",
+   "tag": "button",
+   "disabled": false,
+   "size": "107.4x40",
+   "textContrast": 9.89,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-secondary:disabled",
+   "tag": "button",
+   "disabled": true,
+   "size": "107.4x40",
+   "textContrast": {
+    "ratio": 3.86,
+    "note": "disabled: exempt, recorded for legibility"
+   },
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-secondary:busy",
+   "tag": "button",
+   "disabled": false,
+   "size": "104.1x40",
+   "textContrast": 12.19,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-danger:default",
+   "tag": "button",
+   "disabled": false,
+   "size": "83.3x40",
+   "textContrast": 6.47,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-danger:hover",
+   "tag": "button",
+   "disabled": false,
+   "size": "83.3x40",
+   "textContrast": 8.31,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-danger:focus",
+   "tag": "button",
+   "disabled": false,
+   "size": "83.3x40",
+   "textContrast": 6.47,
+   "focusIndicator": {
+    "width": 2,
+    "style": "solid",
+    "contrast": 6.7
+   },
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-danger:active",
+   "tag": "button",
+   "disabled": false,
+   "size": "83.3x40",
+   "textContrast": 8.31,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-danger:disabled",
+   "tag": "button",
+   "disabled": true,
+   "size": "83.3x40",
+   "textContrast": {
+    "ratio": 3.86,
+    "note": "disabled: exempt, recorded for legibility"
+   },
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-danger:busy",
+   "tag": "button",
+   "disabled": false,
+   "size": "104.1x40",
+   "textContrast": 6.47,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-outline-primary:default",
+   "tag": "button",
+   "disabled": false,
+   "size": "82.5x40",
+   "textContrast": 6.7,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-outline-primary:hover",
+   "tag": "button",
+   "disabled": false,
+   "size": "82.5x40",
+   "textContrast": 8.72,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-outline-primary:focus",
+   "tag": "button",
+   "disabled": false,
+   "size": "82.5x40",
+   "textContrast": 6.7,
+   "focusIndicator": {
+    "width": 2,
+    "style": "solid",
+    "contrast": 6.7
+   },
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-outline-primary:active",
+   "tag": "button",
+   "disabled": false,
+   "size": "82.5x40",
+   "textContrast": 10.36,
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-outline-primary:disabled",
+   "tag": "button",
+   "disabled": true,
+   "size": "82.5x40",
+   "textContrast": {
+    "ratio": 4.76,
+    "note": "disabled: exempt, recorded for legibility"
+   },
+   "targetAim": "40+"
+  },
+  {
+   "id": "button-outline-primary:busy",
+   "tag": "button",
+   "disabled": false,
+   "size": "104.1x40",
+   "textContrast": 6.7,
+   "targetAim": "40+"
+  },
+  {
+   "id": "field:default",
+   "tag": "input",
+   "disabled": false,
+   "size": "247.5x40",
+   "textContrast": 14.1,
+   "boundaryContrast": 4.76,
+   "targetAim": "40+"
+  },
+  {
+   "id": "field:hover",
+   "tag": "input",
+   "disabled": false,
+   "size": "247.5x40",
+   "textContrast": 14.1,
+   "boundaryContrast": 7.58,
+   "targetAim": "40+"
+  },
+  {
+   "id": "field:focus",
+   "tag": "input",
+   "disabled": false,
+   "size": "247.5x40",
+   "textContrast": 14.1,
+   "boundaryContrast": 6.7,
+   "focusIndicator": {
+    "width": 2,
+    "style": "solid",
+    "contrast": 6.7
+   },
+   "targetAim": "40+"
+  },
+  {
+   "id": "field:disabled",
+   "tag": "input",
+   "disabled": true,
+   "size": "247.5x40",
+   "textContrast": {
+    "ratio": 3.86,
+    "note": "disabled: exempt, recorded for legibility"
+   },
+   "boundaryContrast": 1.48,
+   "targetAim": "40+"
+  },
+  {
+   "id": "field:readonly",
+   "tag": "input",
+   "disabled": false,
+   "size": "247.5x40",
+   "textContrast": 13.48,
+   "boundaryContrast": 4.76,
+   "targetAim": "40+"
+  },
+  {
+   "id": "field:invalid",
+   "tag": "input",
+   "disabled": false,
+   "size": "247.5x40",
+   "textContrast": 14.1,
+   "boundaryContrast": 6.47,
+   "targetAim": "40+"
+  },
+  {
+   "id": "select:default",
+   "tag": "select",
+   "disabled": false,
+   "size": "247.5x40",
+   "textContrast": 14.1,
+   "boundaryContrast": 4.76,
+   "targetAim": "40+"
+  },
+  {
+   "id": "select:disabled",
+   "tag": "select",
+   "disabled": true,
+   "size": "247.5x40",
+   "textContrast": {
+    "ratio": 3.86,
+    "note": "disabled: exempt, recorded for legibility"
+   },
+   "boundaryContrast": 1.48,
+   "targetAim": "40+"
+  },
+  {
+   "id": "status:success:Active",
+   "tag": "span",
+   "disabled": false,
+   "size": "57.9x24.2",
+   "textContrast": 6.49
+  },
+  {
+   "id": "status:neutral:Inactive",
+   "tag": "span",
+   "disabled": false,
+   "size": "67.7x24.2",
+   "textContrast": 8.4
+  },
+  {
+   "id": "status:warning:Pending",
+   "tag": "span",
+   "disabled": false,
+   "size": "69.5x24.2",
+   "textContrast": 6.38
+  },
+  {
+   "id": "status:success:Approved",
+   "tag": "span",
+   "disabled": false,
+   "size": "79.4x24.2",
+   "textContrast": 6.49
+  },
+  {
+   "id": "status:danger:Rejected",
+   "tag": "span",
+   "disabled": false,
+   "size": "72.9x24.2",
+   "textContrast": 6.8
+  },
+  {
+   "id": "status:draft:Draft",
+   "tag": "span",
+   "disabled": false,
+   "size": "49x24.2",
+   "textContrast": 6.92
+  },
+  {
+   "id": "status:locked:Locked",
+   "tag": "span",
+   "disabled": false,
+   "size": "63.8x24.2",
+   "textContrast": 8.23
+  },
+  {
+   "id": "status:needs-rules:Needs rules",
+   "tag": "span",
+   "disabled": false,
+   "size": "93.1x24.2",
+   "textContrast": 8.18
+  },
+  {
+   "id": "status:local-only:Local only",
+   "tag": "span",
+   "disabled": false,
+   "size": "82.1x24.2",
+   "textContrast": 9.23
+  }
+ ]
+}

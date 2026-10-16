@@ -8,6 +8,17 @@ For each row in `route-inventory.csv`, record the tested URL/parameter value, sh
 
 Statuses to use during implementation: Planned, In progress, Passed, Failed, Not applicable with reason. Evidence must link to actual screenshots, test output or reviewed files. Never mark a route Passed from build success alone.
 
+## W0 status (updated 16 October 2026)
+
+Wave W0 is implemented and awaiting review; see [w0/README.md](w0/README.md). Every other gate below is still **Planned**.
+
+| ID | Status | Evidence and limits |
+| --- | --- | --- |
+| A01 | In progress | Route inventory regenerates from source (74 rows: the original 73 plus the W0 reference route). The field/action parity tables were not re-audited. |
+| A02 | Passed | Leakage vs pristine Bootstrap 84/84 → 0/85 cases, [before](w0/baseline/before.json) vs [after](w0/baseline/after.json). Order independence was already true before W0, so it is not discriminating. |
+| A03 | Passed | Real PDF text extraction, both visit orders and client-side navigation; ordinary pages 0 characters → content. Chromium print path only; no real print dialog. |
+| A04 | Passed | [Rendered measurements](w0/baseline/design-system-measurements.md) and 8 token unit tests. No screen-reader or forced-colors testing. |
+
 ## Wave gates
 
 | ID | Wave/package | Check | Passing evidence |
