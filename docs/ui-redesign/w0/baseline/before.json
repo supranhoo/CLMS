@@ -1,5 +1,5 @@
 {
- "capturedAt": "2026-10-16T11:07:58.059Z",
+ "capturedAt": "2026-10-16T11:18:12.660Z",
  "base": "http://127.0.0.1:5173",
  "viewport": "1440x900",
  "caseCount": 84,
@@ -602,6 +602,8 @@
  "routes": {
   "/": {
    "finalPath": "/dashboard",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 72,
@@ -1275,6 +1277,8 @@
   },
   "/Dashboard": {
    "finalPath": "/Dashboard",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 72,
@@ -1948,6 +1952,8 @@
   },
   "/login": {
    "finalPath": "/login",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 3,
@@ -2624,6 +2630,8 @@
   },
   "/change-password": {
    "finalPath": "/change-password",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -3298,6 +3306,8 @@
   },
   "/register": {
    "finalPath": "/register",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -3971,6 +3981,8 @@
   },
   "/registerContractor": {
    "finalPath": "/registerContractor",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -4644,6 +4656,8 @@
   },
   "/manageContractors": {
    "finalPath": "/manageContractors",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 8,
@@ -5332,6 +5346,8 @@
   },
   "/manageUsers": {
    "finalPath": "/manageUsers",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 8,
@@ -6022,6 +6038,8 @@
   },
   "/AssignRoles": {
    "finalPath": "/AssignRoles",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -6694,6 +6712,8 @@
   },
   "/manageEmployees": {
    "finalPath": "/manageEmployees",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 8,
@@ -7388,6 +7408,8 @@
   },
   "/manageAttendance": {
    "finalPath": "/manageAttendance",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 7,
@@ -8076,6 +8098,8 @@
   },
   "/printDailyAttendance": {
    "finalPath": "/printDailyAttendance",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -8747,6 +8771,8 @@
   },
   "/PrintAttendanceFormat2": {
    "finalPath": "/PrintAttendanceFormat2",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -9418,6 +9444,8 @@
   },
   "/printAtndSummary": {
    "finalPath": "/printAtndSummary",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -10090,6 +10118,8 @@
   },
   "/monthlyAtndSheet": {
    "finalPath": "/monthlyAtndSheet",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -10761,6 +10791,8 @@
   },
   "/updDeptInMust": {
    "finalPath": "/updDeptInMust",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -11431,6 +11463,8 @@
   },
   "/manageShGrpAlloc": {
    "finalPath": "/manageShGrpAlloc",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 6,
@@ -12113,6 +12147,8 @@
   },
   "/regularizePunches": {
    "finalPath": "/regularizePunches",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 2,
@@ -12800,6 +12836,8 @@
   },
   "/exportEmpMastDump": {
    "finalPath": "/exportEmpMastDump",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -13470,6 +13508,8 @@
   },
   "/processWages": {
    "finalPath": "/processWages",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -14138,6 +14178,8 @@
   },
   "/ExportFixWagesDump": {
    "finalPath": "/ExportFixWagesDump",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -14810,6 +14852,8 @@
   },
   "/ManageFixWages": {
    "finalPath": "/ManageFixWages",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 9,
@@ -15503,6 +15547,8 @@
   },
   "/printWages": {
    "finalPath": "/printWages",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -16175,6 +16221,8 @@
   },
   "/regenerateMuster": {
    "finalPath": "/regenerateMuster",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -16844,6 +16892,8 @@
   },
   "/wageDeductions": {
    "finalPath": "/wageDeductions",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 4,
@@ -17529,6 +17579,8 @@
   },
   "/wageEarnings": {
    "finalPath": "/wageEarnings",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 4,
@@ -18214,6 +18266,8 @@
   },
   "/wageArrears": {
    "finalPath": "/wageArrears",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 4,
@@ -18901,6 +18955,8 @@
   },
   "/PTReport": {
    "finalPath": "/PTReport",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -19569,6 +19625,8 @@
   },
   "/manualProcessAttendance": {
    "finalPath": "/manualProcessAttendance",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -20234,6 +20292,8 @@
   },
   "/wageSlip": {
    "finalPath": "/wageSlip",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 3,
@@ -20907,6 +20967,8 @@
   },
   "/PrintWageSlips": {
    "finalPath": "/PrintWageSlips",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -21577,6 +21639,8 @@
   },
   "/monthlyAtndRegTimes": {
    "finalPath": "/monthlyAtndRegTimes",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -22249,6 +22313,8 @@
   },
   "/getBankStatement": {
    "finalPath": "/getBankStatement",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -22920,6 +22986,8 @@
   },
   "/getPFStatement": {
    "finalPath": "/getPFStatement",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -23591,6 +23659,8 @@
   },
   "/getESIStatement": {
    "finalPath": "/getESIStatement",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -24262,6 +24332,8 @@
   },
   "/getCashStatement": {
    "finalPath": "/getCashStatement",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -24933,6 +25005,8 @@
   },
   "/PTMonthReport": {
    "finalPath": "/PTMonthReport",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -25601,6 +25675,8 @@
   },
   "/manageProcessMonth": {
    "finalPath": "/manageProcessMonth",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 7,
@@ -26283,6 +26359,8 @@
   },
   "/manageWageProcessLock": {
    "finalPath": "/manageWageProcessLock",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -26960,6 +27038,8 @@
   },
   "/ManualMuster": {
    "finalPath": "/ManualMuster",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 4,
@@ -27647,6 +27727,8 @@
   },
   "/EmpRequest": {
    "finalPath": "/EmpRequest",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -28327,6 +28409,8 @@
   },
   "/printApprovedVsPresent": {
    "finalPath": "/printApprovedVsPresent",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -28997,6 +29081,8 @@
   },
   "/ServiceCharges": {
    "finalPath": "/ServiceCharges",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -29673,6 +29759,8 @@
   },
   "/ExportWageComparission": {
    "finalPath": "/ExportWageComparission",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -30344,6 +30432,8 @@
   },
   "/printApprVsPresentPeriod": {
    "finalPath": "/printApprVsPresentPeriod",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -31013,6 +31103,8 @@
   },
   "/InActiveEmp": {
    "finalPath": "/InActiveEmp",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -31682,6 +31774,8 @@
   },
   "/resetSuccess": {
    "finalPath": "/resetSuccess",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -32349,6 +32443,8 @@
   },
   "/resetPassword": {
    "finalPath": "/resetPassword",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -33023,6 +33119,8 @@
   },
   "/ExpRegPunchDetToXLS": {
    "finalPath": "/ExpRegPunchDetToXLS",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -33692,6 +33790,8 @@
   },
   "/UploadEmpWageComp": {
    "finalPath": "/UploadEmpWageComp",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -34361,6 +34461,8 @@
   },
   "/ApproveEmployeeChanges": {
    "finalPath": "/ApproveEmployeeChanges",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 2,
@@ -35034,6 +35136,8 @@
   },
   "/ManageApprovedManpower": {
    "finalPath": "/ManageApprovedManpower",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 4,
@@ -35715,6 +35819,8 @@
   },
   "/LeaveEntryTimeKeeper": {
    "finalPath": "/LeaveEntryTimeKeeper",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -36392,6 +36498,8 @@
   },
   "/leave-ledger-entry": {
    "finalPath": "/leave-ledger-entry",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 11,
@@ -37069,6 +37177,8 @@
   },
   "/leave-payroll-posting": {
    "finalPath": "/leave-payroll-posting",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 3,
@@ -37745,6 +37855,8 @@
   },
   "/leave-ledger-summary": {
    "finalPath": "/leave-ledger-summary",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 2,
@@ -38421,6 +38533,8 @@
   },
   "/leave-balance-report": {
    "finalPath": "/leave-balance-report",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 2,
@@ -39097,6 +39211,8 @@
   },
   "/ProcessSandwich": {
    "finalPath": "/ProcessSandwich",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -39765,6 +39881,8 @@
   },
   "/SandwichRuleMaster": {
    "finalPath": "/SandwichRuleMaster",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 5,
@@ -40445,6 +40563,8 @@
   },
   "/BonusReport": {
    "finalPath": "/BonusReport",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -41115,6 +41235,8 @@
   },
   "/masters/shifts": {
    "finalPath": "/masters/shifts",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -41789,6 +41911,8 @@
   },
   "/masters/business-units": {
    "finalPath": "/masters/business-units",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -42463,6 +42587,8 @@
   },
   "/masters/cities": {
    "finalPath": "/masters/cities",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -43137,6 +43263,8 @@
   },
   "/masters/divisions": {
    "finalPath": "/masters/divisions",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -43811,6 +43939,8 @@
   },
   "/masters/holidays": {
    "finalPath": "/masters/holidays",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -44485,6 +44615,8 @@
   },
   "/masters/locations": {
    "finalPath": "/masters/locations",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -45159,6 +45291,8 @@
   },
   "/masters/cost-centres": {
    "finalPath": "/masters/cost-centres",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -45833,6 +45967,8 @@
   },
   "/development/features": {
    "finalPath": "/development/features",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 2,
@@ -46520,6 +46656,8 @@
   },
   "/development/accounting": {
    "finalPath": "/development/accounting",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 2,
@@ -47191,6 +47329,8 @@
   },
   "/development/approvals": {
    "finalPath": "/development/approvals",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 2,
@@ -47860,6 +48000,8 @@
   },
   "/development/audit": {
    "finalPath": "/development/audit",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 2,
@@ -48529,6 +48671,8 @@
   },
   "/development/outbox": {
    "finalPath": "/development/outbox",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -49200,6 +49344,8 @@
   },
   "/development/jobs": {
    "finalPath": "/development/jobs",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 2,
@@ -49869,6 +50015,8 @@
   },
   "/development/import/employees": {
    "finalPath": "/development/import/employees",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 3,
@@ -50543,6 +50691,8 @@
   },
   "/development/import/contractors": {
    "finalPath": "/development/import/contractors",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 3,
@@ -51217,6 +51367,8 @@
   },
   "/development/import/punches": {
    "finalPath": "/development/import/punches",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 3,
@@ -51889,6 +52041,8 @@
   },
   "/compliance/form-xii-register-of-contractors": {
    "finalPath": "/compliance/form-xii-register-of-contractors",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -52565,6 +52719,8 @@
   },
   "/compliance/form-xiii-register-of-workmen": {
    "finalPath": "/compliance/form-xiii-register-of-workmen",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -53241,6 +53397,8 @@
   },
   "/compliance/form-xix-wage-slip": {
    "finalPath": "/compliance/form-xix-wage-slip",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -53917,6 +54075,8 @@
   },
   "/compliance/form-xvi-muster-roll": {
    "finalPath": "/compliance/form-xvi-muster-roll",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -54593,6 +54753,8 @@
   },
   "/compliance/form-xviii-wages-cum-muster-roll": {
    "finalPath": "/compliance/form-xviii-wages-cum-muster-roll",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -55269,6 +55431,8 @@
   },
   "/compliance/form-xxiii-register-of-overtime": {
    "finalPath": "/compliance/form-xxiii-register-of-overtime",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 1,
@@ -55945,6 +56109,8 @@
   },
   "/development/unavailable/payroll": {
    "finalPath": "/development/unavailable/payroll",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -56616,6 +56782,8 @@
   },
   "/__w0_unknown_route__": {
    "finalPath": "/__w0_unknown_route__",
+   "invisibleText": [],
+   "invisibleTextCount": 0,
    "signatures": {
     "button.btn": {
      "count": 0,
@@ -57363,6 +57531,13 @@
    "pdfPages": 6,
    "pdfToScreenRatio": 0.97,
    "cssVisibleRatio": 0.983
+  },
+  "spa: compliance -> /manageContractors": [
+   0
+  ],
+  "spa: compliance -> /manageContractors#detail": {
+   "bodyClassAfterNavigation": "",
+   "pdfChars": 0
   }
  },
  "order": {

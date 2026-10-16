@@ -96,8 +96,23 @@ function routeSignatures() {
     }
     sigs[sel] = { count: els.length, signatures: counter };
   }
+  // Invisible text: a visible label whose colour is (almost) the colour of what is behind it, e.g. white text whose
+  // background came from a CSS variable that no longer resolves. Size/spacing signatures cannot see this class of bug.
+  const lum = ([r, g, b]) => { const f = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+  const parse = c => { const m = c.match(/rgba?\(([^)]+)\)/); if (!m) return null; const [r, g, b, a = 1] = m[1].split(/[ ,\/]+/).filter(Boolean).map(Number); return { r, g, b, a }; };
+  const effectiveBg = el => { for (let n = el; n; n = n.parentElement) { const c = parse(getComputedStyle(n).backgroundColor); if (c && c.a > 0.5) return c; } return { r: 255, g: 255, b: 255, a: 1 }; };
+  const invisibleText = [];
+  for (const el of document.querySelectorAll('button, a, th, td, label, h1, h2, h3, legend, .btn, [role=tab]')) {
+    const text = (el.childNodes.length && [...el.childNodes].some(n => n.nodeType === 3 && n.nodeValue.trim())) ? el.textContent.trim() : '';
+    if (!text || !el.getClientRects().length) continue;
+    const cs = getComputedStyle(el); if (cs.visibility !== 'visible' || cs.opacity === '0') continue;
+    const fg = parse(cs.color); const bg = effectiveBg(el); if (!fg) continue;
+    const l1 = lum([fg.r, fg.g, fg.b]); const l2 = lum([bg.r, bg.g, bg.b]);
+    const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+    if (ratio < 1.5) invisibleText.push(`${el.tagName.toLowerCase()}"${text.slice(0, 24)}" ${cs.color} on rgb(${bg.r},${bg.g},${bg.b}) =${ratio.toFixed(2)}`);
+  }
   const de = document.documentElement;
-  return { signatures: sigs, pageOverflowPx: Math.max(0, de.scrollWidth - de.clientWidth), h1: [...document.querySelectorAll('h1')].slice(0, 2).map(h => h.textContent.trim().slice(0, 60)), bodyChars: document.body.innerText.length };
+  return { invisibleText: invisibleText.slice(0, 8), invisibleTextCount: invisibleText.length, signatures: sigs, pageOverflowPx: Math.max(0, de.scrollWidth - de.clientWidth), h1: [...document.querySelectorAll('h1')].slice(0, 2).map(h => h.textContent.trim().slice(0, 60)), bodyChars: document.body.innerText.length };
 }
 
 function printVisibility() {
@@ -124,6 +139,7 @@ const slug = p => (p === '/' ? 'root' : p.replace(/^\//, '').replace(/[^A-Za-z0-
 
 async function capture(argv) {
   const out = argv[argv.indexOf('--out') + 1]; const shots = argv.includes('--shots') ? argv[argv.indexOf('--shots') + 1] : null;
+  const only = argv.includes('--only') ? argv[argv.indexOf('--only') + 1].split(',') : null; // quick re-check of named routes; skips print/order sections
   if (!out || out.startsWith('--')) throw new Error('--out <file.json> is required');
   if (shots) fs.mkdirSync(shots, { recursive: true });
   const { chromium } = await loadPlaywright();
@@ -146,7 +162,7 @@ async function capture(argv) {
   await page.getByRole('button', { name: /demo workspace/i }).click(); await settle();
   if (!(await page.evaluate(() => !!localStorage.getItem('user')))) throw new Error('Demo sign-in did not establish a session');
 
-  const cases = [...staticRoutes(), ...VARIANTS];
+  const cases = only || [...staticRoutes(), ...VARIANTS];
   const routes = {};
   for (const route of cases) {
     errors.length = 0;
@@ -161,7 +177,7 @@ async function capture(argv) {
 
   // print: real PDF through Chromium's print path (print media + @page rules), text extracted with pdftotext.
   // Compliance pages only render their print area after "Preview working data", so preview first.
-  const printRoutes = ['/manageContractors', '/manageEmployees', '/printDailyAttendance', '/Dashboard', '/masters/shifts', `/compliance/${SLUGS[0]}`, `/compliance/${SLUGS[3]}`];
+  const printRoutes = only ? [] : ['/manageContractors', '/manageEmployees', '/printDailyAttendance', '/Dashboard', '/masters/shifts', `/compliance/${SLUGS[0]}`, `/compliance/${SLUGS[3]}`];
   const printResults = {};
   const pdfDir = fs.mkdtempSync(path.join(shots || (process.env.TMPDIR || '/tmp'), 'w0pdf-'));
   const nonSpace = s => s.replace(/\s+/g, '').length;
@@ -195,10 +211,28 @@ async function capture(argv) {
     }
   }
 
+  // print after client-side navigation away from a compliance report (no reload): the report-only print rule must be
+  // released on unmount, otherwise the next screen prints blank.
+  if (!only) {
+    await page.emulateMedia({ media: 'screen' });
+    await page.goto(BASE + `/compliance/${SLUGS[0]}`, { waitUntil: 'domcontentloaded' }); await settle();
+    await previewIfCompliance(`/compliance/${SLUGS[0]}`);
+    await page.evaluate(to => { window.history.pushState({}, '', to); window.dispatchEvent(new PopStateEvent('popstate')); }, '/manageContractors'); await settle();
+    const bodyClass = await page.evaluate(() => document.body.className);
+    await page.emulateMedia({ media: 'print' });
+    const pdf = path.join(pdfDir, 'spa_compliance_to_contractors.pdf');
+    await page.pdf({ path: pdf, format: 'A4', printBackground: true, preferCSSPageSize: true });
+    let chars = null; try { chars = nonSpace(execFileSync('pdftotext', ['-layout', pdf, '-'], { encoding: 'utf8' })); } catch { /* optional */ }
+    await page.emulateMedia({ media: 'screen' });
+    printResults['spa: compliance -> /manageContractors'] = [chars];
+    printResults['spa: compliance -> /manageContractors#detail'] = { bodyClassAfterNavigation: bodyClass, pdfChars: chars };
+  }
+
   // order independence: client-side navigation (no reload) forward and reverse
-  const chain = ['/Dashboard', '/manageAttendance', '/masters/shifts', '/manageEmployees', '/Dashboard'];
+  const chain = only ? [] : ['/Dashboard', '/manageAttendance', '/masters/shifts', '/manageEmployees', '/Dashboard'];
   const order = { forward: [], reverse: [] };
   for (const [label, seq] of [['forward', chain], ['reverse', [...chain].reverse()]]) {
+    if (!seq.length) continue;
     await page.goto(BASE + seq[0], { waitUntil: 'domcontentloaded' }); await settle();
     for (const r of seq) {
       await page.evaluate(to => { window.history.pushState({}, '', to); window.dispatchEvent(new PopStateEvent('popstate')); }, r); await settle();
@@ -247,6 +281,8 @@ function compare(beforeFile, afterFile) {
   }
   lines.push(`${changed}/${Object.keys(A.routes).length} routes have different style signatures for their own elements`);
   lines.push(...changedRoutes.slice(0, 80).map(s => '   ' + s));
+  const invis = Object.entries(B.routes).filter(([r, v]) => (v.invisibleTextCount || 0) > (A.routes[r]?.invisibleTextCount || 0));
+  lines.push(`\nvisible text with contrast < 1.5:1 (invisible text) newly appeared on ${invis.length} routes` + (invis.length ? ':\n' + invis.map(([r, v]) => `   ${r}: ${v.invisibleText.slice(0, 3).join(' | ')}`).join('\n') : ''));
   const overflow = Object.entries(B.routes).filter(([r, v]) => v.pageOverflowPx > (A.routes[r]?.pageOverflowPx || 0));
   lines.push(`\npage-level horizontal overflow increased on ${overflow.length} routes` + (overflow.length ? ': ' + overflow.map(([r, v]) => `${r}(+${v.pageOverflowPx - (A.routes[r]?.pageOverflowPx || 0)}px)`).join(', ') : ''));
   const newErr = Object.entries(B.routes).filter(([r, v]) => v.consoleErrors.some(e => !(A.routes[r]?.consoleErrors || []).includes(e)));
