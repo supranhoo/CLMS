@@ -1,0 +1,27 @@
+{
+  "source": "Current CLMS build source maps",
+  "javascriptModules": 116,
+  "originalStylesheets": 35,
+  "jsxModulesRenamed": 78,
+  "omittedStylesheetStubs": 9,
+  "sourceMaps": [
+    {
+      "path": "build/static/js/main.5696f25c.js.map",
+      "sha256": "bfeee76fe4f23587537f16c951cf3537e5d6f923e779d19fd4fee9012a18d66e"
+    },
+    {
+      "path": "build/static/css/main.a3c501b4.css.map",
+      "sha256": "ab22d3ca9f842426c9a5298c3511870f681b0847d3d6108837ea86d694c4089f"
+    }
+  ],
+  "excluded": [
+    "vendor node_modules",
+    "backend implementation",
+    "environment files",
+    "password files",
+    "keys",
+    "license files",
+    "logs",
+    "live database records"
+  ]
+}

@@ -1,0 +1,13 @@
+.punches-grid {
+    width: 100%;
+  }
+  
+  .punches-grid table {
+    width: 100%;
+  }
+  
+  .punches-grid th, .punches-grid td {
+    padding: 10px;
+    text-align: left;
+  }
+  

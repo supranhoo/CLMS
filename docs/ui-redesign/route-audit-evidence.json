@@ -1,0 +1,801 @@
+{
+  "generatedFrom": [
+    "src/App.jsx",
+    "server/seed.mjs",
+    "server/modules/workspace.mjs",
+    "src/screens/**/*.jsx"
+  ],
+  "counts": {
+    "routeDeclarations": 73,
+    "staticRoutes": 68,
+    "parameterizedRoutes": 4,
+    "fallbackRoutes": 1,
+    "routedComponentFiles": 66,
+    "screenJsxFiles": 66,
+    "menuGroups": 8,
+    "menuEntries": 72,
+    "uniqueMenuDestinations": 70,
+    "routesWithMenus": 62,
+    "routesWithoutMenus": 10,
+    "unmatchedMenuEntries": 0,
+    "resolvedSourceNavigationReferences": 84,
+    "unmatchedResolvedSourceNavigationReferences": 1,
+    "dynamicSourceNavigationReferences": 4,
+    "featureWorkbenchLinks": 15,
+    "unmatchedFeatureWorkbenchLinks": 0,
+    "familyCounts": {
+      "Entry / authentication": 6,
+      "Dashboard / navigation": 1,
+      "Contractor management": 2,
+      "Administration / access": 2,
+      "Worker management": 4,
+      "Attendance operation": 10,
+      "Attendance report / export": 8,
+      "Worker report / export": 1,
+      "Wage input / setup / processing": 9,
+      "Wage output / report": 12,
+      "Leave operation": 3,
+      "Leave report": 2,
+      "Reference masters": 7,
+      "Unavailable / error state": 2,
+      "State profiles / feature coverage": 1,
+      "Local operational workspace": 1,
+      "Workbook import": 1,
+      "Compliance report working data": 1
+    },
+    "waveCounts": {
+      "W1": 7,
+      "W2": 15,
+      "W3": 13,
+      "W4": 10,
+      "W5": 26,
+      "W6": 2
+    }
+  },
+  "unmatchedMenus": [],
+  "noMenuRoutes": [
+    "/",
+    "/Dashboard",
+    "/login",
+    "/change-password",
+    "/register",
+    "/registerContractor",
+    "/resetSuccess",
+    "/resetPassword",
+    "/development/unavailable/:module",
+    "/development/import/:kind"
+  ],
+  "duplicateMenuDestinations": [
+    {
+      "url": "/approveemployeechanges",
+      "entries": [
+        {
+          "group": "Masters Module",
+          "label": "Approve Employee Changes"
+        },
+        {
+          "group": "Approvals",
+          "label": "Employee Change Approvals"
+        }
+      ]
+    },
+    {
+      "url": "/regularizepunches",
+      "entries": [
+        {
+          "group": "Attendance Module",
+          "label": "Regularize Punches"
+        },
+        {
+          "group": "Approvals",
+          "label": "Attendance Regularisation"
+        }
+      ]
+    }
+  ],
+  "unroutedScreenFiles": [],
+  "resolvedSourceNavigationReferences": [
+    {
+      "source": "src/api/axios.js:32",
+      "path": "/login",
+      "route": "/login",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/App.jsx:359",
+      "path": "/login",
+      "route": "/login",
+      "resolvedFrom": "literal",
+      "kind": "location assignment"
+    },
+    {
+      "source": "src/components/DevelopmentBanner.jsx:9",
+      "path": "/dashboard",
+      "route": "/Dashboard",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/components/DevelopmentBanner.jsx:10",
+      "path": "/development/features",
+      "route": "/development/features",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/components/Header/Header.jsx:83",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/components/Header/Header.jsx:90",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/components/Header/Header.jsx:96",
+      "path": "/change-password",
+      "route": "/change-password",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/components/Header/Header.jsx:183",
+      "path": "/dashboard",
+      "route": "/Dashboard",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/ExpRegPunchDet.jsx:139",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/ManageApprovedManpower.jsx:301",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/ManageAttendance.jsx:40",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/ManualMuster.jsx:633",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/ManualProcessAttendance.jsx:67",
+      "path": "/development/import/punches",
+      "route": "/development/import/:kind",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/ManualProcessAttendance.jsx:67",
+      "path": "/development/jobs",
+      "route": "/development/:tool",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/MonthlyAtndRegTimes.jsx:211",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/MonthlyAtndSheet.jsx:211",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/PrintApprovedVsPresent.jsx:140",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/PrintApprVsPresentPeriod.jsx:141",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/PrintAtndSummary.jsx:121",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/PrintAttendanceFormat2.jsx:164",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/PrintDailyAttendance.jsx:186",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/ProcessSandwich.jsx:149",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/AttendanceMuster/RegularizePunchGrid.jsx:448",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Compliance/ComplianceReports.jsx:91",
+      "path": "/dashboard",
+      "route": "/Dashboard",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Compliance/ComplianceReports.jsx:101",
+      "path": "/development/features",
+      "route": "/development/features",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Contractor/ManageContractors.jsx:310",
+      "path": "/manageContractors",
+      "route": "/manageContractors",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Contractor/ManageContractors.jsx:357",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Contractor/ManageContractors.jsx:454",
+      "path": "/development/import/contractors",
+      "route": "/development/import/:kind",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Contractor/ManageContractors.jsx:918",
+      "path": "/login",
+      "route": "/login",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Contractor/RegisterContractor.jsx:110",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Contractor/RegisterContractor.jsx:117",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Contractor/RegisterContractor.jsx:471",
+      "path": "/login",
+      "route": "/login",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Development/FeatureWorkbench.jsx:129",
+      "path": "/dashboard",
+      "route": "/Dashboard",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Development/LocalWorkspace.jsx:73",
+      "path": "/dashboard",
+      "route": "/Dashboard",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Development/LocalWorkspace.jsx:85",
+      "path": "/development/import/employees",
+      "route": "/development/import/:kind",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Development/LocalWorkspace.jsx:85",
+      "path": "/development/import/contractors",
+      "route": "/development/import/:kind",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Development/LocalWorkspace.jsx:85",
+      "path": "/development/import/punches",
+      "route": "/development/import/:kind",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Development/LocalWorkspace.jsx:85",
+      "path": "/development/jobs",
+      "route": "/development/:tool",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Development/LocalWorkspace.jsx:85",
+      "path": "/development/features",
+      "route": "/development/features",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Development/Unavailable.jsx:31",
+      "path": "/development/features",
+      "route": "/development/features",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Development/Unavailable.jsx:32",
+      "path": "/dashboard",
+      "route": "/Dashboard",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Employee/ApproveEmployeeChanges.jsx:81",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Employee/ExportEmpMastDump.jsx:140",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Employee/InActiveEmp.jsx:244",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Employee/ManageEmployees.jsx:913",
+      "path": "/manageEmployees",
+      "route": "/manageEmployees",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Employee/ManageEmployees.jsx:1008",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Employee/ManageEmployees.jsx:1184",
+      "path": "/development/import/employees",
+      "route": "/development/import/:kind",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Employee/ManageShGrpAlloc.jsx:193",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/LandingPage/Dashboard.jsx:39",
+      "path": "/login",
+      "route": "/login",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/LandingPage/LandingPage.jsx:16",
+      "path": "/dashboard",
+      "route": "/Dashboard",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/LandingPage/LandingPage.jsx:37",
+      "path": "/login",
+      "route": "/login",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Leave/LeaveEntryTimeKeeper.jsx:223",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Leave/LeaveLedgerEntry.jsx:280",
+      "path": "/menu",
+      "route": null,
+      "resolvedFrom": "MENU_URL",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Leave/LeaveLedgerEntry.jsx:371",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Leave/LeavePayrollPosting.jsx:194",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/LoginScreen/ChangePassword.jsx:27",
+      "path": "/login",
+      "route": "/login",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/LoginScreen/ChangePassword.jsx:65",
+      "path": "/login",
+      "route": "/login",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/LoginScreen/LoginScreen.jsx:63",
+      "path": "/dashboard",
+      "route": "/Dashboard",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/LoginScreen/LoginScreen.jsx:153",
+      "path": "/resetPassword",
+      "route": "/resetPassword",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/LoginScreen/ResetPasswd.jsx:86",
+      "path": "/resetSuccess",
+      "route": "/resetSuccess",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/LoginScreen/ResetSuccess.jsx:11",
+      "path": "/login",
+      "route": "/login",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/RegisterScreen/RegisterScreen.jsx:106",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/RegisterScreen/RegisterScreen.jsx:181",
+      "path": "/login",
+      "route": "/login",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/User/AssignRoles.jsx:391",
+      "path": "/dashboard",
+      "route": "/Dashboard",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/User/ManageUsers.jsx:252",
+      "path": "/manageUsers",
+      "route": "/manageUsers",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/User/ManageUsers.jsx:277",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/User/ManageUsers.jsx:542",
+      "path": "/login",
+      "route": "/login",
+      "resolvedFrom": "literal",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/Wages/AddWageArrearsGrid.jsx:601",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/AddWageDeductionsGrid.jsx:544",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/AddWageEarningsGrid.jsx:515",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/ExportBankStatement.jsx:205",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/ExportCashStatement.jsx:189",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/ExportESIStatement.jsx:189",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/ExportFixWagesDump.jsx:162",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/ExportPFStatement.jsx:189",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/ExportWageComparission.jsx:190",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/ManageFixWages.jsx:476",
+      "path": "/manageFixWages",
+      "route": "/ManageFixWages",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/ManageFixWages.jsx:521",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/ManageProcessMonth.jsx:418",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/ManageWageProcessLock.jsx:354",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/PrintWages.jsx:217",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/ProcessWages.jsx:157",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/UploadEmpWageComp.jsx:49",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Wages/WageSlip.jsx:527",
+      "path": "/",
+      "route": "/",
+      "resolvedFrom": "literal",
+      "kind": "navigation call"
+    }
+  ],
+  "dynamicSourceNavigationReferences": [
+    {
+      "source": "src/components/Header/Header.jsx:102",
+      "expression": "menuItem.menu_url",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/Development/FeatureWorkbench.jsx:136",
+      "expression": "feature.path",
+      "kind": "link attribute"
+    },
+    {
+      "source": "src/screens/LandingPage/Dashboard.jsx:46",
+      "expression": "menuUrl",
+      "kind": "navigation call"
+    },
+    {
+      "source": "src/screens/LoginScreen/LoginScreen.jsx:94",
+      "expression": "menu.url",
+      "kind": "link attribute"
+    }
+  ],
+  "featureWorkbenchLinks": [
+    {
+      "id": "leave-exports",
+      "path": "/leave-ledger-entry",
+      "route": "/leave-ledger-entry",
+      "source": "server/modules/workspace.mjs:14"
+    },
+    {
+      "id": "records",
+      "path": "/manageEmployees",
+      "route": "/manageEmployees",
+      "source": "server/modules/workspace.mjs:15"
+    },
+    {
+      "id": "masters",
+      "path": "/masters/shifts",
+      "route": "/masters/shifts",
+      "source": "server/modules/workspace.mjs:16"
+    },
+    {
+      "id": "attendance",
+      "path": "/manageAttendance",
+      "route": "/manageAttendance",
+      "source": "server/modules/workspace.mjs:17"
+    },
+    {
+      "id": "local-processing",
+      "path": "/manualProcessAttendance",
+      "route": "/manualProcessAttendance",
+      "source": "server/modules/workspace.mjs:18"
+    },
+    {
+      "id": "adjustments",
+      "path": "/wageEarnings",
+      "route": "/wageEarnings",
+      "source": "server/modules/workspace.mjs:19"
+    },
+    {
+      "id": "accounts",
+      "path": "/manageUsers",
+      "route": "/manageUsers",
+      "source": "server/modules/workspace.mjs:20"
+    },
+    {
+      "id": "profiles",
+      "path": "/development/features",
+      "route": "/development/features",
+      "source": "server/modules/workspace.mjs:21"
+    },
+    {
+      "id": "compliance-data",
+      "path": "/compliance/form-xii-register-of-contractors",
+      "route": "/compliance/:form",
+      "source": "server/modules/workspace.mjs:22"
+    },
+    {
+      "id": "payroll",
+      "path": "/processWages",
+      "route": "/processWages",
+      "source": "server/modules/workspace.mjs:23"
+    },
+    {
+      "id": "leave-posting",
+      "path": "/leave-payroll-posting",
+      "route": "/leave-payroll-posting",
+      "source": "server/modules/workspace.mjs:24"
+    },
+    {
+      "id": "sandwich",
+      "path": "/SandwichRuleMaster",
+      "route": "/SandwichRuleMaster",
+      "source": "server/modules/workspace.mjs:25"
+    },
+    {
+      "id": "statutory-format",
+      "path": "/compliance/form-xii-register-of-contractors",
+      "route": "/compliance/:form",
+      "source": "server/modules/workspace.mjs:26"
+    },
+    {
+      "id": "biometric",
+      "path": "/manualProcessAttendance",
+      "route": "/manualProcessAttendance",
+      "source": "server/modules/workspace.mjs:27"
+    },
+    {
+      "id": "delivery",
+      "path": "/development/outbox",
+      "route": "/development/:tool",
+      "source": "server/modules/workspace.mjs:28"
+    }
+  ]
+}

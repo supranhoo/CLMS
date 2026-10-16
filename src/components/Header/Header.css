@@ -1,0 +1,56 @@
+/* Navbar dropdown background color */
+.navbar-nav .dropdown-menu {
+  background-color: #004085; /* Matches navbar color */
+}
+
+/* Navbar dropdown item text color */
+.navbar-nav .dropdown-menu .dropdown-item {
+  color: #ffffff; /* White text color */
+}
+
+/* Navbar dropdown item hover effect */
+.navbar-nav .dropdown-menu .dropdown-item:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Logo size adjustment with left margin */
+.navbar-brand {
+  margin-left: 20px; /* Adds left margin to the brand (logo) */
+}
+
+.navbar-brand img {
+  height: 40px; /* Ensure the logo height is consistent */
+}
+
+/* Margin adjustments for the navbar */
+.navbar .mr-2 {
+  margin-right: 8px;
+}
+
+.navbar .ml-auto {
+  margin-left: auto;
+}
+
+/* Search bar spacing */
+.navbar .d-flex .me-2 {
+  margin-right: 8px;
+}
+
+/* Styles for icons in the header */
+.header-icon {
+  display: flex;
+  align-items: center;
+  color: white; /* Make sure the icons and text are visible on dark background */
+  margin-left: 15px;
+  cursor: pointer; /* Pointer cursor for better UX */
+}
+
+/* Icon and text alignment */
+.header-icon svg {
+  margin-right: 5px; /* Spacing between the icon and the text */
+}
+
+/* Hover effect for header icons */
+.header-icon:hover {
+  color: #ffcc00; /* Change color on hover */
+}

@@ -1,0 +1,149 @@
+/* Container for the entire grid */
+.regularize-punch-grid-container {
+  font-size: 14px; /* Global font size to keep everything small and compact */
+  margin: 20px;
+}
+
+/* Smaller buttons across the grid */
+.small-button {
+  padding: 2px 8px; /* Smaller padding for compact button size */
+  font-size: 14px; /* Smaller font size */
+  height: auto; /* Adjust height automatically */
+  line-height: 1; /* Reduce line height for compact buttons */
+}
+
+/* Style for table in grid view */
+.compact-grid {
+  width: 100%;
+  border-collapse: collapse; /* Ensure borders collapse */
+  margin-top: 10px;
+}
+
+/* Smaller table cells */
+.compact-grid th,
+.compact-grid td {
+  padding: 2px 4px; /* Minimal padding for compact rows */
+  font-size: 14px !important; /* Ensure consistent font size across the grid */
+  text-align: center; /* Center align content */
+  height: 24px; /* Set fixed height for rows */
+}
+
+/* Table header styles */
+.compact-grid th {
+  background-color: #f2f2f2; /* Light background for headers */
+  font-weight: bold; /* Bold font for headers */
+}
+
+/* Ensure consistent font size for inputs inside table cells */
+.compact-grid td input {
+  font-size: 14px !important; /* Match the font size with the table cells */
+  padding: 2px; /* Minimal padding */
+  height: 24px;
+  box-sizing: border-box; /* Ensure the input fits within the cell */
+  width: 100%; /* Make inputs take full width of the cell */
+}
+
+/* Ensure font size consistency for text fields like remarks and approved */
+.compact-grid td select, 
+.compact-grid td textarea, 
+.compact-grid td {
+  font-size: 14px !important; /* Make all form controls consistent with table cells */
+}
+
+/* Reduce row height */
+.compact-grid td {
+  height: 24px; /* Set a minimum row height */
+}
+
+/* Legend box styles */
+.legends {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 2px;
+}
+
+/* Individual legend items */
+.legend {
+  display: flex;
+  align-items: center;
+  margin-right: 2px;
+}
+
+/* Legend box appearance */
+.legend-box {
+  width: 10px;
+  height: 14px;
+  margin-right: 5px;
+  border: 1px solid #000;
+}
+
+/* Smaller input fields with minimal padding */
+.big-input {
+  font-size: 14px;
+  padding: 2px;
+  height: 24px;
+  width: 150%; /* Adjust width as needed */
+  margin: 0;
+}
+
+/* Ensure the employee code input field takes 50% of the available space */
+.employee-code-input {
+  font-size: 14px !important; /* Ensure the font size is consistent with the table */
+  padding: 2px;
+  height: 24px;
+  margin: 0;
+  width: 50% !important; /* This forces the width property to be applied */
+  box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+/* Ensure the icon button takes a fixed width */
+.icon-button {
+  width: 40px; /* Set width to ensure the icon button is compact */
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  cursor: pointer;
+  box-sizing: border-box; /* Ensure button size fits within the cell */
+}
+
+/* Table cell styles to prevent wrapping and ensure the layout remains consistent */
+td {
+  white-space: nowrap; /* Prevent wrapping of content inside the cell */
+  overflow: hidden; /* Ensure content does not expand the cell */
+  max-width: 150px; /* Optional: set a max width for the table cell to prevent it from expanding */
+  padding: 4px; /* Minimal padding */
+}
+
+/* Left justify employee_code and display_name columns */
+.compact-grid td.left-justify {
+  text-align: left; /* Align text to the left */
+  padding-left: 8px; /* Optional: Add a little padding for better readability */
+}
+
+/* Flexbox to align label and input field on the same row */
+.inline-fields {
+  display: flex;
+  align-items: center;   /* Vertically center the items */
+  gap: 10px;             /* Space between label and input */
+  width: 100%;           /* Ensure full width of the container */
+  margin-bottom: 10px;   /* Optional margin below the row */
+}
+
+/* Increase specificity to override Bootstrap form-label */
+.regularize-punch-grid-container .field-label {
+  font-size: 14px !important;   /* Force font size */
+  margin: 0 !important;         /* Ensure no extra margin */
+  white-space: nowrap !important; /* Prevent label wrapping */
+}
+
+
+/* Date input specific styling */
+.date-input {
+  font-size: 14px  !important; 
+  padding: 2px;
+  height: 24px;
+  width: 150px;           /* Set width to a fixed size to prevent it from expanding */
+  box-sizing: border-box;  /* Ensure padding is included in the width calculation */
+}

@@ -1,0 +1,231 @@
+/* =========================================================
+   GLOBAL / EXISTING GRID STYLES (UNCHANGED BEHAVIOR)
+   ========================================================= */
+
+/* Container for the entire grid */
+.regularize-punch-grid-container {
+  font-size: 14px;
+  margin: 20px;
+}
+
+/* Smaller buttons across the grid */
+.small-button {
+  padding: 2px 8px;
+  font-size: 14px;
+  height: auto;
+  line-height: 1;
+}
+
+/* Style for table in grid view */
+.compact-grid {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.compact-grid th,
+.compact-grid td {
+  padding: 2px 4px;
+  font-size: 14px !important;
+  text-align: center;
+  height: 24px;
+}
+
+.compact-grid th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.compact-grid td input,
+.compact-grid td select,
+.compact-grid td textarea {
+  font-size: 14px !important;
+  padding: 2px;
+  height: 24px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.compact-grid td {
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 150px;
+  padding: 4px;
+}
+
+.compact-grid td.left-justify {
+  text-align: left;
+  padding-left: 8px;
+}
+
+/* =========================================================
+   LEGENDS
+   ========================================================= */
+
+.legends {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 2px;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  margin-right: 2px;
+}
+
+.legend-box {
+  width: 10px;
+  height: 14px;
+  margin-right: 5px;
+  border: 1px solid #000;
+}
+
+/* =========================================================
+   INPUTS / INLINE FIELDS
+   ========================================================= */
+
+.big-input {
+  font-size: 14px;
+  padding: 2px;
+  height: 24px;
+  width: 150%;
+  margin: 0;
+}
+
+.employee-code-input {
+  font-size: 14px !important;
+  padding: 2px;
+  height: 24px;
+  width: 50% !important;
+  box-sizing: border-box;
+}
+
+.icon-button {
+  width: 40px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.inline-fields {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.regularize-punch-grid-container .field-label {
+  font-size: 14px !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+}
+
+.date-input {
+  font-size: 14px !important;
+  padding: 2px;
+  height: 24px;
+  width: 150px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   OLD 2-COLUMN FORM GRID (LEFT AS-IS FOR OTHER SCREENS)
+   ========================================================= */
+
+.form-inline-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+}
+
+.inline-label {
+  width: 120px;
+  margin-bottom: 0;
+}
+
+.small-input {
+  flex-grow: 1;
+  max-width: 300px;
+  min-width: 150px;
+}
+
+.small-input2 {
+  flex-grow: 1;
+  max-width: 100px;
+  min-width: 50px;
+}
+
+.small-select {
+  width: 50px;
+}
+
+/* =========================================================
+   ✅ NEW: LEAVE ENTRY SCREEN (3-COLUMN ERP FORM)
+   ========================================================= */
+
+.requests-container {
+  padding: 6px 8px;
+}
+
+/* 🔑 THIS IS THE IMPORTANT PART */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr)); /* ✅ 3 columns */
+  gap: 6px 10px;
+  align-items: end;
+}
+
+/* Labels */
+.form-grid label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+/* Inputs */
+.form-grid input,
+.form-grid textarea {
+  font-size: 0.72rem;
+  padding: 3px 6px;
+  height: 26px;
+}
+
+/* React-Select compact styling */
+.form-grid .react-select__control {
+  min-height: 26px;
+  font-size: 0.72rem;
+}
+
+.form-grid .react-select__value-container {
+  padding: 0 6px;
+}
+
+.form-grid .react-select__menu {
+  font-size: 0.72rem;
+}
+
+/* Textarea */
+.form-grid textarea {
+  resize: vertical;
+}
+
+/* Full-width row (Reason) */
+.form-grid .full-row {
+  grid-column: 1 / -1;
+}
+
+/* Save button alignment */
+.form-grid button {
+  margin-top: 6px;
+  width: fit-content;
+}

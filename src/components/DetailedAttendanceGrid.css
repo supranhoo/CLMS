@@ -1,0 +1,218 @@
+.detailed-attendance-grid {
+  margin-top: 18px;
+  font-size: 10px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+/* Header title */
+.detailed-attendance-grid h4 {
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 8px;
+}
+
+/* Table */
+.detailed-attendance-grid table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: separate;
+  border-spacing: 8px;
+}
+
+/* Header Days */
+.detailed-attendance-grid th {
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  color: #111827;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px;
+  border: none;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+/* Day cells */
+.detailed-attendance-grid td {
+  width: 14.28%;
+  vertical-align: top;
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+
+/* Main card per day */
+.cell-content {
+  min-height: 170px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.18s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.cell-content:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* Day number */
+.row-1 {
+  background: #f8fafc;
+  text-align: right;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #111827;
+  border-bottom: 1px solid #eef2f7;
+}
+
+/* Shift row */
+.row-2 {
+  background: #eaf4ff;
+  padding: 5px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #0f172a;
+  border-bottom: 1px solid #dbeafe;
+}
+
+/* In / Out rows */
+.row-3,
+.row-4 {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 10px;
+  background: #f9fafb;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.time-label {
+  width: 58px;
+  font-weight: 700;
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.time-value {
+  flex-grow: 1;
+  text-align: left;
+  color: #111827;
+  font-weight: 600;
+  font-size: 10px;
+}
+
+/* Punch row */
+.row-5 {
+  margin: 4px 6px;
+  padding: 6px 6px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
+  border-radius: 8px;
+  letter-spacing: 0.2px;
+}
+
+/* Hours rows */
+.row-6,
+.row-7 {
+  padding: 5px 8px;
+  font-size: 10px;
+  color: #1f2937;
+  background: #ffffff;
+  border-top: 1px solid #f3f4f6;
+  font-weight: 600;
+}
+
+/* Empty cell */
+.cell-content:empty,
+.empty-day {
+  min-height: 170px;
+  border-radius: 12px;
+  border: 1px dashed #d1d5db;
+  background: #fafafa;
+}
+
+/* Legacy compatibility */
+.green-bg {
+  background: #198754 !important;
+  color: #fff !important;
+}
+
+.light-yellow-bg {
+  background: #fff3cd !important;
+  color: #000 !important;
+}
+
+.light-grey-bg {
+  background: #e2e3e5 !important;
+  color: #000 !important;
+}
+
+.light-red-bg {
+  background: #dc3545 !important;
+  color: #fff !important;
+}
+
+.light-white-bg {
+  background: #ffffff !important;
+  color: #000 !important;
+}
+
+/* Scrollbar */
+.detailed-attendance-grid::-webkit-scrollbar {
+  height: 10px;
+}
+
+.detailed-attendance-grid::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.detailed-attendance-grid::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.detailed-attendance-grid::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .detailed-attendance-grid {
+    padding: 8px;
+    margin-top: 10px;
+  }
+
+  .detailed-attendance-grid h4 {
+    font-size: 13px;
+  }
+
+  .detailed-attendance-grid table {
+    min-width: 900px;
+  }
+
+  .cell-content {
+    min-height: 155px;
+  }
+
+  .row-1 {
+    font-size: 12px;
+  }
+
+  .row-5 {
+    font-size: 10px;
+  }
+}

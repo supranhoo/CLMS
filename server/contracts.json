@@ -1,0 +1,2077 @@
+[
+  {
+    "path": "/api/contractor/addContractor",
+    "source": "features/userSlice.js",
+    "line": 14
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "features/userSlice.js",
+    "line": 32
+  },
+  {
+    "path": "/api/employee/addEmployee",
+    "source": "features/userSlice.js",
+    "line": 46
+  },
+  {
+    "path": "/api/users/getallusers",
+    "source": "features/userSlice.js",
+    "line": 105
+  },
+  {
+    "path": "/api/users/login",
+    "source": "features/userSlice.js",
+    "line": 86
+  },
+  {
+    "path": "/api/users/register",
+    "source": "features/userSlice.js",
+    "line": 66
+  },
+  {
+    "path": "/api/menu/getMenuUserData",
+    "source": "components/Header/Header.js",
+    "line": 32
+  },
+  {
+    "path": "/api/menu/getMenuUserData",
+    "source": "screens/LandingPage/Dashboard.js",
+    "line": 20
+  },
+  {
+    "path": "/api/menu/getMenuUserData",
+    "source": "screens/LoginScreen/LoginScreen.js",
+    "line": 38
+  },
+  {
+    "path": "/api/Users/changePassword",
+    "source": "screens/LoginScreen/ChangePassword.js",
+    "line": 55
+  },
+  {
+    "path": "/api/users/register",
+    "source": "screens/RegisterScreen/RegisterScreen.js",
+    "line": 86
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Contractor/ManageContractors.js",
+    "line": 64
+  },
+  {
+    "path": "/api/contractor/updateContractor/${selectedContractor.Contractor_ID}",
+    "source": "screens/Contractor/ManageContractors.js",
+    "line": 265
+  },
+  {
+    "path": "/api/Users/getAllUsers",
+    "source": "screens/User/ManageUsers.js",
+    "line": 54
+  },
+  {
+    "path": "/api/Users/register",
+    "source": "screens/User/ManageUsers.js",
+    "line": 223
+  },
+  {
+    "path": "/api/Users/updateUser/${selectedUser.emp_id}",
+    "source": "screens/User/ManageUsers.js",
+    "line": 210
+  },
+  {
+    "path": "/api/assignRoles/assignUserBU",
+    "source": "screens/User/AssignRoles.js",
+    "line": 389
+  },
+  {
+    "path": "/api/assignRoles/assignUserContractor",
+    "source": "screens/User/AssignRoles.js",
+    "line": 397
+  },
+  {
+    "path": "/api/assignRoles/assignUserDept",
+    "source": "screens/User/AssignRoles.js",
+    "line": 405
+  },
+  {
+    "path": "/api/assignRoles/assignUserLocation",
+    "source": "screens/User/AssignRoles.js",
+    "line": 431
+  },
+  {
+    "path": "/api/assignRoles/assignUserMenu",
+    "source": "screens/User/AssignRoles.js",
+    "line": 413
+  },
+  {
+    "path": "/api/assignRoles/assignUserMenuActivity",
+    "source": "screens/User/AssignRoles.js",
+    "line": 421
+  },
+  {
+    "path": "/api/assignRoles/getUserBU",
+    "source": "screens/User/AssignRoles.js",
+    "line": 203
+  },
+  {
+    "path": "/api/assignRoles/getUserContractor",
+    "source": "screens/User/AssignRoles.js",
+    "line": 217
+  },
+  {
+    "path": "/api/assignRoles/getUserDept",
+    "source": "screens/User/AssignRoles.js",
+    "line": 229
+  },
+  {
+    "path": "/api/assignRoles/getUserLocation",
+    "source": "screens/User/AssignRoles.js",
+    "line": 265
+  },
+  {
+    "path": "/api/assignRoles/getUserMenu",
+    "source": "screens/User/AssignRoles.js",
+    "line": 241
+  },
+  {
+    "path": "/api/assignRoles/getUserMenuActivity",
+    "source": "screens/User/AssignRoles.js",
+    "line": 253
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/User/AssignRoles.js",
+    "line": 91
+  },
+  {
+    "path": "/api/entity/getAllBU",
+    "source": "screens/User/AssignRoles.js",
+    "line": 74
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/User/AssignRoles.js",
+    "line": 108
+  },
+  {
+    "path": "/api/menu/getLocationData",
+    "source": "screens/User/AssignRoles.js",
+    "line": 142
+  },
+  {
+    "path": "/api/menu/getMenuActivityData",
+    "source": "screens/User/AssignRoles.js",
+    "line": 160
+  },
+  {
+    "path": "/api/menu/getMenuData",
+    "source": "screens/User/AssignRoles.js",
+    "line": 125
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 272
+  },
+  {
+    "path": "/api/employee/addEmployee",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 775
+  },
+  {
+    "path": "/api/employee/addEmployeePreapprove",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 775
+  },
+  {
+    "path": "/api/employee/getAllDesignation",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 266
+  },
+  {
+    "path": "/api/employee/getAllEmployees",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 214
+  },
+  {
+    "path": "/api/employee/getBankMast",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 279
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 265
+  },
+  {
+    "path": "/api/employee/getBloodGroup",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 262
+  },
+  {
+    "path": "/api/employee/getByAdhar",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 159
+  },
+  {
+    "path": "/api/employee/getByPanno",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 185
+  },
+  {
+    "path": "/api/employee/getCast",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 261
+  },
+  {
+    "path": "/api/employee/getCityMast",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 281
+  },
+  {
+    "path": "/api/employee/getEmpCategory",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 274
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 273
+  },
+  {
+    "path": "/api/employee/getGender",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 258
+  },
+  {
+    "path": "/api/employee/getLevel",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 277
+  },
+  {
+    "path": "/api/employee/getLocCode",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 275
+  },
+  {
+    "path": "/api/employee/getMaritalStatus",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 264
+  },
+  {
+    "path": "/api/employee/getNationality",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 259
+  },
+  {
+    "path": "/api/employee/getReligion",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 260
+  },
+  {
+    "path": "/api/employee/getSalutation",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 257
+  },
+  {
+    "path": "/api/employee/getSection",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 267
+  },
+  {
+    "path": "/api/employee/getSkillCategory",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 263
+  },
+  {
+    "path": "/api/employee/getStateMast",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 280
+  },
+  {
+    "path": "/api/entity/",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 268
+  },
+  {
+    "path": "/api/entity/getAllBU",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 270
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 271
+  },
+  {
+    "path": "/api/entity/getAllDivision",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 268
+  },
+  {
+    "path": "/api/entity/getCostCode",
+    "source": "screens/Employee/ManageEmployees.js",
+    "line": 276
+  },
+  {
+    "path": "/api/attendance/getAtndMusterByEmp",
+    "source": "components/DetailedAttendanceGrid.js",
+    "line": 37
+  },
+  {
+    "path": "/api/attendance/getPunchMarks",
+    "source": "components/DetailedAttendanceGrid.js",
+    "line": 19
+  },
+  {
+    "path": "/api/attendance/getPunchesDataByEmp",
+    "source": "components/PunchesGrid.js",
+    "line": 17
+  },
+  {
+    "path": "/api/attendance/printAtndReg",
+    "source": "components/PrintAtndReg.js",
+    "line": 33
+  },
+  {
+    "path": "/api/attendance/uploadManualPunches",
+    "source": "components/UploadManualPunches.js",
+    "line": 82
+  },
+  {
+    "path": "/api/assignRoles/getUserMenuActivityForSpecificMenu",
+    "source": "components/AttendanceGrid.js",
+    "line": 13
+  },
+  {
+    "path": "/api/attendance/getAtndMusterAll",
+    "source": "components/AttendanceGrid.js",
+    "line": 86
+  },
+  {
+    "path": "/api/attendance/getPunchMarks",
+    "source": "components/AttendanceGrid.js",
+    "line": 68
+  },
+  {
+    "path": "/api/attendance/addShGrpAlloc",
+    "source": "screens/Employee/ManageShGrpAlloc.js",
+    "line": 167
+  },
+  {
+    "path": "/api/attendance/getShGrpAlloc",
+    "source": "screens/Employee/ManageShGrpAlloc.js",
+    "line": 79
+  },
+  {
+    "path": "/api/attendance/getShiftGroups",
+    "source": "screens/Employee/ManageShGrpAlloc.js",
+    "line": 89
+  },
+  {
+    "path": "/api/attendance/updShGrpAlloc",
+    "source": "screens/Employee/ManageShGrpAlloc.js",
+    "line": 163
+  },
+  {
+    "path": "/api/attendance/printAtndReg2",
+    "source": "components/PrintAtndReg2.js",
+    "line": 45
+  },
+  {
+    "path": "/api/attendance/printAtndReg2",
+    "source": "components/ExportAtndToXLS.js",
+    "line": 58
+  },
+  {
+    "path": "/api/attendance/printAtndReg2",
+    "source": "components/PrintAtndReg2_pagebreak.js",
+    "line": 45
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/PrintDailyAttendance.js",
+    "line": 102
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/AttendanceMuster/PrintDailyAttendance.js",
+    "line": 155
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/AttendanceMuster/PrintDailyAttendance.js",
+    "line": 119
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/AttendanceMuster/PrintDailyAttendance.js",
+    "line": 64
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/AttendanceMuster/PrintDailyAttendance.js",
+    "line": 136
+  },
+  {
+    "path": "/api/entity/getAssignedLocCode",
+    "source": "screens/AttendanceMuster/PrintDailyAttendance.js",
+    "line": 83
+  },
+  {
+    "path": "/api/attendance/printAtndReg2",
+    "source": "components/PrintAtndRegFormat2.js",
+    "line": 43
+  },
+  {
+    "path": "/api/attendance/printAtndReg2",
+    "source": "components/ExportAtndFormat2ToXLS.js",
+    "line": 46
+  },
+  {
+    "path": "/api/attendance/printAtndReg2",
+    "source": "components/PrintAtndFormat2_pagebreak.js",
+    "line": 43
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/PrintAttendanceFormat2.js",
+    "line": 81
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/AttendanceMuster/PrintAttendanceFormat2.js",
+    "line": 134
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/AttendanceMuster/PrintAttendanceFormat2.js",
+    "line": 98
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/AttendanceMuster/PrintAttendanceFormat2.js",
+    "line": 62
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/AttendanceMuster/PrintAttendanceFormat2.js",
+    "line": 115
+  },
+  {
+    "path": "/api/attendance/printAtndReg2",
+    "source": "components/PrintMonthlyAtndSheet.js",
+    "line": 34
+  },
+  {
+    "path": "/api/attendance/printAtndReg2",
+    "source": "components/ExportMnthAtndToXLS.js",
+    "line": 146
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/MonthlyAtndSheet.js",
+    "line": 127
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/AttendanceMuster/MonthlyAtndSheet.js",
+    "line": 180
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/AttendanceMuster/MonthlyAtndSheet.js",
+    "line": 144
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/AttendanceMuster/MonthlyAtndSheet.js",
+    "line": 108
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/AttendanceMuster/MonthlyAtndSheet.js",
+    "line": 161
+  },
+  {
+    "path": "/api/entity/getAssignedLocCode",
+    "source": "screens/AttendanceMuster/MonthlyAtndSheet.js",
+    "line": 89
+  },
+  {
+    "path": "/api/attendance/getMusterDeptByContractor",
+    "source": "screens/AttendanceMuster/UpdDeptInMust.js",
+    "line": 99
+  },
+  {
+    "path": "/api/attendance/updateMusterDept",
+    "source": "screens/AttendanceMuster/UpdDeptInMust.js",
+    "line": 122
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/UpdDeptInMust.js",
+    "line": 40
+  },
+  {
+    "path": "/api/entity",
+    "source": "screens/AttendanceMuster/UpdDeptInMust.js",
+    "line": 49
+  },
+  {
+    "path": "/api/entity/divcode",
+    "source": "screens/AttendanceMuster/UpdDeptInMust.js",
+    "line": 87
+  },
+  {
+    "path": "/api/entity/divgroup",
+    "source": "screens/AttendanceMuster/UpdDeptInMust.js",
+    "line": 77
+  },
+  {
+    "path": "/api/entity/getAllBU",
+    "source": "screens/AttendanceMuster/UpdDeptInMust.js",
+    "line": 58
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/AttendanceMuster/UpdDeptInMust.js",
+    "line": 67
+  },
+  {
+    "path": "/api/attendance/addRegularisePunch",
+    "source": "screens/AttendanceMuster/RegularizePunchGrid.js",
+    "line": 275
+  },
+  {
+    "path": "/api/attendance/getAtndMusterByEmp",
+    "source": "screens/AttendanceMuster/RegularizePunchGrid.js",
+    "line": 149
+  },
+  {
+    "path": "/api/attendance/getRegularisedPunches",
+    "source": "screens/AttendanceMuster/RegularizePunchGrid.js",
+    "line": 99
+  },
+  {
+    "path": "/api/attendance/updateRegularisePunch",
+    "source": "screens/AttendanceMuster/RegularizePunchGrid.js",
+    "line": 338
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/RegularizePunchGrid.js",
+    "line": 80
+  },
+  {
+    "path": "/api/employee/getEmployeeByCode",
+    "source": "screens/AttendanceMuster/RegularizePunchGrid.js",
+    "line": 134
+  },
+  {
+    "path": "/api/employee/searchEmployees",
+    "source": "screens/AttendanceMuster/RegularizePunchGrid.js",
+    "line": 388
+  },
+  {
+    "path": "/api/attendance/printSummary",
+    "source": "components/printAtndSummary.js",
+    "line": 26
+  },
+  {
+    "path": "/api/attendance/printSummary",
+    "source": "components/printAtndSummaryToXLS.js",
+    "line": 41
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/PrintAtndSummary.js",
+    "line": 70
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/AttendanceMuster/PrintAtndSummary.js",
+    "line": 84
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/AttendanceMuster/PrintAtndSummary.js",
+    "line": 56
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/AttendanceMuster/PrintAtndSummary.js",
+    "line": 98
+  },
+  {
+    "path": "/api/attendance/regenerateMuster",
+    "source": "screens/AttendanceMuster/RegenerateMuster.js",
+    "line": 158
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/RegenerateMuster.js",
+    "line": 90
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/AttendanceMuster/RegenerateMuster.js",
+    "line": 47
+  },
+  {
+    "path": "/api/entity/",
+    "source": "screens/AttendanceMuster/RegenerateMuster.js",
+    "line": 103
+  },
+  {
+    "path": "/api/wages/getProcessMonth",
+    "source": "screens/AttendanceMuster/RegenerateMuster.js",
+    "line": 60
+  },
+  {
+    "path": "/api/wages/getProcessMonthByBillingCycle",
+    "source": "screens/AttendanceMuster/RegenerateMuster.js",
+    "line": 74
+  },
+  {
+    "path": "/api/attendance/manualProcessAttendance",
+    "source": "screens/AttendanceMuster/ManualProcessAttendance.js",
+    "line": 49
+  },
+  {
+    "path": "/api/attendance/triggerTask",
+    "source": "screens/AttendanceMuster/ManualProcessAttendance.js",
+    "line": 50
+  },
+  {
+    "path": "/api/attendance/getApprVsPresent",
+    "source": "components/ExportApprovedVsPresentToXLS.js",
+    "line": 28
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/PrintApprovedVsPresent.js",
+    "line": 72
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/AttendanceMuster/PrintApprovedVsPresent.js",
+    "line": 113
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/AttendanceMuster/PrintApprovedVsPresent.js",
+    "line": 86
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/AttendanceMuster/PrintApprovedVsPresent.js",
+    "line": 58
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/AttendanceMuster/PrintApprovedVsPresent.js",
+    "line": 100
+  },
+  {
+    "path": "/api/attendance/getApprVsPresentPeriod",
+    "source": "components/expApprVsPresentPeriodToXLS.js",
+    "line": 33
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/PrintApprVsPresentPeriod.js",
+    "line": 72
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/AttendanceMuster/PrintApprVsPresentPeriod.js",
+    "line": 114
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/AttendanceMuster/PrintApprVsPresentPeriod.js",
+    "line": 86
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/AttendanceMuster/PrintApprVsPresentPeriod.js",
+    "line": 58
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/AttendanceMuster/PrintApprVsPresentPeriod.js",
+    "line": 100
+  },
+  {
+    "path": "/api/employee/getEmpMastDump",
+    "source": "components/ExportEmpMastDumpToXLS.js",
+    "line": 23
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Employee/ExportEmpMastDump.js",
+    "line": 71
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/Employee/ExportEmpMastDump.js",
+    "line": 113
+  },
+  {
+    "path": "/api/entity/",
+    "source": "screens/Employee/ExportEmpMastDump.js",
+    "line": 57
+  },
+  {
+    "path": "/api/entity/getAllBU",
+    "source": "screens/Employee/ExportEmpMastDump.js",
+    "line": 57
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Employee/ExportEmpMastDump.js",
+    "line": 85
+  },
+  {
+    "path": "/api/wages/getFixWagesDump",
+    "source": "components/ExportFixWagesDumpToXLS.js",
+    "line": 23
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/ExportFixWagesDump.js",
+    "line": 79
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/Wages/ExportFixWagesDump.js",
+    "line": 132
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Wages/ExportFixWagesDump.js",
+    "line": 96
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/Wages/ExportFixWagesDump.js",
+    "line": 60
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/Wages/ExportFixWagesDump.js",
+    "line": 113
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/ProcessWages.js",
+    "line": 112
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/ProcessWages.js",
+    "line": 52
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/Wages/ProcessWages.js",
+    "line": 129
+  },
+  {
+    "path": "/api/wages/getProcessMonth",
+    "source": "screens/Wages/ProcessWages.js",
+    "line": 65
+  },
+  {
+    "path": "/api/wages/getProcessMonthByBillingCycle",
+    "source": "screens/Wages/ProcessWages.js",
+    "line": 80
+  },
+  {
+    "path": "/api/wages/processWages",
+    "source": "screens/Wages/ProcessWages.js",
+    "line": 249
+  },
+  {
+    "path": "/api/employee/getAllEmployees",
+    "source": "screens/Wages/ManageFixWages.js",
+    "line": 114
+  },
+  {
+    "path": "/api/employee/searchEmployees",
+    "source": "screens/Wages/ManageFixWages.js",
+    "line": 450
+  },
+  {
+    "path": "/api/wages/addFixWages",
+    "source": "screens/Wages/ManageFixWages.js",
+    "line": 391
+  },
+  {
+    "path": "/api/wages/getFixWagesDump",
+    "source": "screens/Wages/ManageFixWages.js",
+    "line": 93
+  },
+  {
+    "path": "/api/wages/updateFixWages",
+    "source": "screens/Wages/ManageFixWages.js",
+    "line": 324
+  },
+  {
+    "path": "/api/wages/getProcessMonthDates",
+    "source": "components/ExportWagesToXLS.js",
+    "line": 35
+  },
+  {
+    "path": "/api/wages/getWageRegister",
+    "source": "components/ExportWagesToXLS.js",
+    "line": 56
+  },
+  {
+    "path": "/api/wages/getProcessMonthDates",
+    "source": "components/ExportWagesToXLSSingleSheet.js",
+    "line": 35
+  },
+  {
+    "path": "/api/wages/getWageRegister",
+    "source": "components/ExportWagesToXLSSingleSheet.js",
+    "line": 56
+  },
+  {
+    "path": "/api/wages/getWageRegister",
+    "source": "components/PrintWagesPDF.js",
+    "line": 34
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/PrintWages.js",
+    "line": 132
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/PrintWages.js",
+    "line": 64
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/Wages/PrintWages.js",
+    "line": 185
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Wages/PrintWages.js",
+    "line": 149
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/Wages/PrintWages.js",
+    "line": 113
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/Wages/PrintWages.js",
+    "line": 166
+  },
+  {
+    "path": "/api/wages/getAllProcessMonthByBillingCycle",
+    "source": "screens/Wages/PrintWages.js",
+    "line": 92
+  },
+  {
+    "path": "/api/wages/getProcessMonth",
+    "source": "screens/Wages/PrintWages.js",
+    "line": 77
+  },
+  {
+    "path": "/api/wages/uploadDeductions",
+    "source": "components/UploadDeductions.js",
+    "line": 75
+  },
+  {
+    "path": "/api/assignRoles/getUserMenuActivityForSpecificMenu",
+    "source": "screens/Wages/AddWageDeductionsGrid.js",
+    "line": 16
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/AddWageDeductionsGrid.js",
+    "line": 326
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/AddWageDeductionsGrid.js",
+    "line": 335
+  },
+  {
+    "path": "/api/employee/getEmployeeByCode",
+    "source": "screens/Wages/AddWageDeductionsGrid.js",
+    "line": 198
+  },
+  {
+    "path": "/api/employee/searchEmployees",
+    "source": "screens/Wages/AddWageDeductionsGrid.js",
+    "line": 502
+  },
+  {
+    "path": "/api/wages/addWageDeductions",
+    "source": "screens/Wages/AddWageDeductionsGrid.js",
+    "line": 261
+  },
+  {
+    "path": "/api/wages/deleteWageDeductions",
+    "source": "screens/Wages/AddWageDeductionsGrid.js",
+    "line": 456
+  },
+  {
+    "path": "/api/wages/getDedCodes",
+    "source": "screens/Wages/AddWageDeductionsGrid.js",
+    "line": 348
+  },
+  {
+    "path": "/api/wages/getProcessMonth",
+    "source": "screens/Wages/AddWageDeductionsGrid.js",
+    "line": 361
+  },
+  {
+    "path": "/api/wages/getProcessMonthByBillingCycle",
+    "source": "screens/Wages/AddWageDeductionsGrid.js",
+    "line": 374
+  },
+  {
+    "path": "/api/wages/getWageDeductions",
+    "source": "screens/Wages/AddWageDeductionsGrid.js",
+    "line": 310
+  },
+  {
+    "path": "/api/wages/updateWageDeductions",
+    "source": "screens/Wages/AddWageDeductionsGrid.js",
+    "line": 415
+  },
+  {
+    "path": "/api/wages/uploadEarnings",
+    "source": "components/UploadEarnings.js",
+    "line": 85
+  },
+  {
+    "path": "/api/assignRoles/getUserMenuActivityForSpecificMenu",
+    "source": "screens/Wages/AddWageEarningsGrid.js",
+    "line": 18
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/AddWageEarningsGrid.js",
+    "line": 323
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/AddWageEarningsGrid.js",
+    "line": 332
+  },
+  {
+    "path": "/api/employee/getEmployeeByCode",
+    "source": "screens/Wages/AddWageEarningsGrid.js",
+    "line": 184
+  },
+  {
+    "path": "/api/employee/searchEmployees",
+    "source": "screens/Wages/AddWageEarningsGrid.js",
+    "line": 474
+  },
+  {
+    "path": "/api/wages/addWageEarnings",
+    "source": "screens/Wages/AddWageEarningsGrid.js",
+    "line": 251
+  },
+  {
+    "path": "/api/wages/deleteWageEarnings",
+    "source": "screens/Wages/AddWageEarningsGrid.js",
+    "line": 440
+  },
+  {
+    "path": "/api/wages/getErnCodes",
+    "source": "screens/Wages/AddWageEarningsGrid.js",
+    "line": 345
+  },
+  {
+    "path": "/api/wages/getProcessMonth",
+    "source": "screens/Wages/AddWageEarningsGrid.js",
+    "line": 358
+  },
+  {
+    "path": "/api/wages/getProcessMonthByBillingCycle",
+    "source": "screens/Wages/AddWageEarningsGrid.js",
+    "line": 371
+  },
+  {
+    "path": "/api/wages/getWageEarnings",
+    "source": "screens/Wages/AddWageEarningsGrid.js",
+    "line": 298
+  },
+  {
+    "path": "/api/wages/updateWageEarnings",
+    "source": "screens/Wages/AddWageEarningsGrid.js",
+    "line": 403
+  },
+  {
+    "path": "/api/wages/uploadArrears",
+    "source": "components/UploadArrears.js",
+    "line": 71
+  },
+  {
+    "path": "/api/assignRoles/getUserMenuActivityForSpecificMenu",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 16
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 393
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 402
+  },
+  {
+    "path": "/api/employee/getEmployeeByCode",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 197
+  },
+  {
+    "path": "/api/employee/searchEmployees",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 556
+  },
+  {
+    "path": "/api/wages/addWageArrears",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 321
+  },
+  {
+    "path": "/api/wages/deleteWageArrears",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 503
+  },
+  {
+    "path": "/api/wages/getArrearCodes",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 415
+  },
+  {
+    "path": "/api/wages/getArrearProcessMonth",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 440
+  },
+  {
+    "path": "/api/wages/getProcessMonth",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 428
+  },
+  {
+    "path": "/api/wages/getProcessMonthByBillingCycle",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 458
+  },
+  {
+    "path": "/api/wages/getWageArrears",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 377
+  },
+  {
+    "path": "/api/wages/updateWageArrears",
+    "source": "screens/Wages/AddWageArrearsGrid.js",
+    "line": 248
+  },
+  {
+    "path": "/api/employee/getEmployeeByCode",
+    "source": "screens/Wages/WageSlip.js",
+    "line": 98
+  },
+  {
+    "path": "/api/employee/searchEmployees",
+    "source": "screens/Wages/WageSlip.js",
+    "line": 129
+  },
+  {
+    "path": "/api/wages/getAllProcessMonth",
+    "source": "screens/Wages/WageSlip.js",
+    "line": 52
+  },
+  {
+    "path": "/api/wages/getAllProcessMonthByBillingCycle",
+    "source": "screens/Wages/WageSlip.js",
+    "line": 68
+  },
+  {
+    "path": "/api/wages/wageSlip",
+    "source": "screens/Wages/WageSlip.js",
+    "line": 172
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/PrintWageSlips.js",
+    "line": 134
+  },
+  {
+    "path": "/api/employee/getAllEmployees",
+    "source": "screens/Wages/PrintWageSlips.js",
+    "line": 209
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/PrintWageSlips.js",
+    "line": 99
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Wages/PrintWageSlips.js",
+    "line": 175
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/Wages/PrintWageSlips.js",
+    "line": 157
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/Wages/PrintWageSlips.js",
+    "line": 145
+  },
+  {
+    "path": "/api/entity/getAssignedLocCode",
+    "source": "screens/Wages/PrintWageSlips.js",
+    "line": 191
+  },
+  {
+    "path": "/api/payslip/progress/${jobId}",
+    "source": "screens/Wages/PrintWageSlips.js",
+    "line": 383
+  },
+  {
+    "path": "/api/wages/generateWageSlips",
+    "source": "screens/Wages/PrintWageSlips.js",
+    "line": 269
+  },
+  {
+    "path": "/api/wages/getAllProcessMonth",
+    "source": "screens/Wages/PrintWageSlips.js",
+    "line": 109
+  },
+  {
+    "path": "/api/wages/getAllProcessMonthByBillingCycle",
+    "source": "screens/Wages/PrintWageSlips.js",
+    "line": 120
+  },
+  {
+    "path": "/api/wages/getBankStatement",
+    "source": "components/ExportBankStatementToXLS.js",
+    "line": 73
+  },
+  {
+    "path": "/api/wages/getProcessMonthDates",
+    "source": "components/ExportBankStatementToXLS.js",
+    "line": 51
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/ExportBankStatement.js",
+    "line": 120
+  },
+  {
+    "path": "/api/employee/getBankMast",
+    "source": "screens/Wages/ExportBankStatement.js",
+    "line": 178
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/ExportBankStatement.js",
+    "line": 60
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/Wages/ExportBankStatement.js",
+    "line": 162
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Wages/ExportBankStatement.js",
+    "line": 134
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/Wages/ExportBankStatement.js",
+    "line": 106
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/Wages/ExportBankStatement.js",
+    "line": 148
+  },
+  {
+    "path": "/api/wages/getProcessMonth",
+    "source": "screens/Wages/ExportBankStatement.js",
+    "line": 73
+  },
+  {
+    "path": "/api/wages/getProcessMonthByBillingCycle",
+    "source": "screens/Wages/ExportBankStatement.js",
+    "line": 87
+  },
+  {
+    "path": "/api/wages/getPFStatement",
+    "source": "components/ExportPFStatementToXLS.js",
+    "line": 56
+  },
+  {
+    "path": "/api/wages/getProcessMonthDates",
+    "source": "components/ExportPFStatementToXLS.js",
+    "line": 35
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/ExportPFStatement.js",
+    "line": 118
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/ExportPFStatement.js",
+    "line": 58
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/Wages/ExportPFStatement.js",
+    "line": 160
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Wages/ExportPFStatement.js",
+    "line": 132
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/Wages/ExportPFStatement.js",
+    "line": 104
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/Wages/ExportPFStatement.js",
+    "line": 146
+  },
+  {
+    "path": "/api/wages/getAllProcessMonth",
+    "source": "screens/Wages/ExportPFStatement.js",
+    "line": 71
+  },
+  {
+    "path": "/api/wages/getAllProcessMonthByBillingCycle",
+    "source": "screens/Wages/ExportPFStatement.js",
+    "line": 85
+  },
+  {
+    "path": "/api/wages/getESIStatement",
+    "source": "components/ExportESIStatementToXLS.js",
+    "line": 56
+  },
+  {
+    "path": "/api/wages/getProcessMonthDates",
+    "source": "components/ExportESIStatementToXLS.js",
+    "line": 35
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/ExportESIStatement.js",
+    "line": 118
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/ExportESIStatement.js",
+    "line": 58
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/Wages/ExportESIStatement.js",
+    "line": 160
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Wages/ExportESIStatement.js",
+    "line": 132
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/Wages/ExportESIStatement.js",
+    "line": 104
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/Wages/ExportESIStatement.js",
+    "line": 146
+  },
+  {
+    "path": "/api/wages/getAllProcessMonth",
+    "source": "screens/Wages/ExportESIStatement.js",
+    "line": 71
+  },
+  {
+    "path": "/api/wages/getAllProcessMonthByBillingCycle",
+    "source": "screens/Wages/ExportESIStatement.js",
+    "line": 85
+  },
+  {
+    "path": "/api/wages/getCashStatement",
+    "source": "components/ExportCashStatementToXLS.js",
+    "line": 72
+  },
+  {
+    "path": "/api/wages/getProcessMonthDates",
+    "source": "components/ExportCashStatementToXLS.js",
+    "line": 50
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/ExportCashStatement.js",
+    "line": 118
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/ExportCashStatement.js",
+    "line": 58
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/Wages/ExportCashStatement.js",
+    "line": 160
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Wages/ExportCashStatement.js",
+    "line": 132
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/Wages/ExportCashStatement.js",
+    "line": 104
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/Wages/ExportCashStatement.js",
+    "line": 146
+  },
+  {
+    "path": "/api/wages/getProcessMonth",
+    "source": "screens/Wages/ExportCashStatement.js",
+    "line": 71
+  },
+  {
+    "path": "/api/wages/getProcessMonthByBillingCycle",
+    "source": "screens/Wages/ExportCashStatement.js",
+    "line": 85
+  },
+  {
+    "path": "/api/wages/uploadWageComponents",
+    "source": "components/UploadEmpWageComp.js",
+    "line": 119
+  },
+  {
+    "path": "/api/assignRoles/getUserMenuActivityForSpecificMenu",
+    "source": "screens/Wages/UploadEmpWageComp.js",
+    "line": 15
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/ManageProcessMonth.js",
+    "line": 289
+  },
+  {
+    "path": "/api/wages/addProcessMonth",
+    "source": "screens/Wages/ManageProcessMonth.js",
+    "line": 305
+  },
+  {
+    "path": "/api/wages/deleteProcessMonth",
+    "source": "screens/Wages/ManageProcessMonth.js",
+    "line": 388
+  },
+  {
+    "path": "/api/wages/getAllProcessMonth",
+    "source": "screens/Wages/ManageProcessMonth.js",
+    "line": 345
+  },
+  {
+    "path": "/api/wages/updateProcessMonth",
+    "source": "screens/Wages/ManageProcessMonth.js",
+    "line": 363
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/ManageWageProcessLock.js",
+    "line": 163
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/ManageWageProcessLock.js",
+    "line": 195
+  },
+  {
+    "path": "/api/entity",
+    "source": "screens/Wages/ManageWageProcessLock.js",
+    "line": 179
+  },
+  {
+    "path": "/api/wages/addWageProcessLock",
+    "source": "screens/Wages/ManageWageProcessLock.js",
+    "line": 270
+  },
+  {
+    "path": "/api/wages/deleteWageProcessLock",
+    "source": "screens/Wages/ManageWageProcessLock.js",
+    "line": 323
+  },
+  {
+    "path": "/api/wages/getAllProcessMonth",
+    "source": "screens/Wages/ManageWageProcessLock.js",
+    "line": 211
+  },
+  {
+    "path": "/api/wages/getProcessMonthByBillingCycle",
+    "source": "screens/Wages/ManageWageProcessLock.js",
+    "line": 227
+  },
+  {
+    "path": "/api/wages/getWageProcessLock",
+    "source": "screens/Wages/ManageWageProcessLock.js",
+    "line": 305
+  },
+  {
+    "path": "/api/attendance/printAtndReg2",
+    "source": "components/ExportMnthAtndRegTimesToXLS.js",
+    "line": 114
+  },
+  {
+    "path": "/api/attendance/printAtndReg2",
+    "source": "components/ExportMnthAtndRegTimesToXLSSingleSheet.js",
+    "line": 114
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/MonthlyAtndRegTimes.js",
+    "line": 127
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/AttendanceMuster/MonthlyAtndRegTimes.js",
+    "line": 180
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/AttendanceMuster/MonthlyAtndRegTimes.js",
+    "line": 144
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/AttendanceMuster/MonthlyAtndRegTimes.js",
+    "line": 108
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/AttendanceMuster/MonthlyAtndRegTimes.js",
+    "line": 161
+  },
+  {
+    "path": "/api/entity/getAssignedLocCode",
+    "source": "screens/AttendanceMuster/MonthlyAtndRegTimes.js",
+    "line": 89
+  },
+  {
+    "path": "/api/attendance/uploadManualMuster",
+    "source": "components/UploadManualMuster.js",
+    "line": 73
+  },
+  {
+    "path": "/api/assignRoles/getUserMenuActivityForSpecificMenu",
+    "source": "screens/AttendanceMuster/ManualMuster.js",
+    "line": 119
+  },
+  {
+    "path": "/api/attendance/addManualPunchMark",
+    "source": "screens/AttendanceMuster/ManualMuster.js",
+    "line": 349
+  },
+  {
+    "path": "/api/attendance/deleteManualPunchMark",
+    "source": "screens/AttendanceMuster/ManualMuster.js",
+    "line": 531
+  },
+  {
+    "path": "/api/attendance/getManualMuster",
+    "source": "screens/AttendanceMuster/ManualMuster.js",
+    "line": 407
+  },
+  {
+    "path": "/api/attendance/getShift",
+    "source": "screens/AttendanceMuster/ManualMuster.js",
+    "line": 469
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/ManualMuster.js",
+    "line": 422
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/AttendanceMuster/ManualMuster.js",
+    "line": 431
+  },
+  {
+    "path": "/api/employee/getEmployeeByCode",
+    "source": "screens/AttendanceMuster/ManualMuster.js",
+    "line": 250
+  },
+  {
+    "path": "/api/employee/searchEmployees",
+    "source": "screens/AttendanceMuster/ManualMuster.js",
+    "line": 575
+  },
+  {
+    "path": "/api/wages/getArrearCodes",
+    "source": "screens/AttendanceMuster/ManualMuster.js",
+    "line": 444
+  },
+  {
+    "path": "/api/wages/getProcessMonth",
+    "source": "screens/AttendanceMuster/ManualMuster.js",
+    "line": 457
+  },
+  {
+    "path": "/api/wages/getProcessMonthByBillingCycle",
+    "source": "screens/AttendanceMuster/ManualMuster.js",
+    "line": 485
+  },
+  {
+    "path": "/api/attendance/addEmpRequest",
+    "source": "screens/AttendanceMuster/EmpRequest.js",
+    "line": 66
+  },
+  {
+    "path": "/api/attendance/getEmpRequest",
+    "source": "screens/AttendanceMuster/EmpRequest.js",
+    "line": 48
+  },
+  {
+    "path": "/api/employee/getAllEmployees",
+    "source": "screens/AttendanceMuster/EmpRequest.js",
+    "line": 35
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/ManageServiceCharges.js",
+    "line": 46
+  },
+  {
+    "path": "/api/entity/",
+    "source": "screens/Wages/ManageServiceCharges.js",
+    "line": 64
+  },
+  {
+    "path": "/api/entity/getAllBU",
+    "source": "screens/Wages/ManageServiceCharges.js",
+    "line": 82
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Wages/ManageServiceCharges.js",
+    "line": 73
+  },
+  {
+    "path": "/api/wages/addServiceCharges",
+    "source": "screens/Wages/ManageServiceCharges.js",
+    "line": 111
+  },
+  {
+    "path": "/api/wages/deleteServiceCharges",
+    "source": "screens/Wages/ManageServiceCharges.js",
+    "line": 137
+  },
+  {
+    "path": "/api/wages/deleteServiceCharges/${ruleID}",
+    "source": "screens/Wages/ManageServiceCharges.js",
+    "line": 137
+  },
+  {
+    "path": "/api/wages/getAllProcessMonth",
+    "source": "screens/Wages/ManageServiceCharges.js",
+    "line": 55
+  },
+  {
+    "path": "/api/wages/getServiceCharges",
+    "source": "screens/Wages/ManageServiceCharges.js",
+    "line": 91
+  },
+  {
+    "path": "/api/entity/getEntityName",
+    "source": "components/ExportWageComparissionToXLS.js",
+    "line": 26
+  },
+  {
+    "path": "/api/wages/getProcessMonthDates",
+    "source": "components/ExportWageComparissionToXLS.js",
+    "line": 9
+  },
+  {
+    "path": "/api/wages/getWageComparision",
+    "source": "components/ExportWageComparissionToXLS.js",
+    "line": 34
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/ExportWageComparission.js",
+    "line": 119
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/ExportWageComparission.js",
+    "line": 59
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/Wages/ExportWageComparission.js",
+    "line": 161
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Wages/ExportWageComparission.js",
+    "line": 133
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/Wages/ExportWageComparission.js",
+    "line": 105
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/Wages/ExportWageComparission.js",
+    "line": 147
+  },
+  {
+    "path": "/api/wages/getAllProcessMonth",
+    "source": "screens/Wages/ExportWageComparission.js",
+    "line": 72
+  },
+  {
+    "path": "/api/wages/getAllProcessMonthByBillingCycle",
+    "source": "screens/Wages/ExportWageComparission.js",
+    "line": 86
+  },
+  {
+    "path": "/api/employee/uploadInActiveEmp",
+    "source": "components/UploadInActiveEmp.js",
+    "line": 60
+  },
+  {
+    "path": "/api/assignRoles/getUserMenuActivityForSpecificMenu",
+    "source": "screens/Employee/InActiveEmp.js",
+    "line": 109
+  },
+  {
+    "path": "/api/employee/getEmployeeByCode",
+    "source": "screens/Employee/InActiveEmp.js",
+    "line": 203
+  },
+  {
+    "path": "/api/users/generateResetToken",
+    "source": "screens/LoginScreen/ResetPasswd.js",
+    "line": 42
+  },
+  {
+    "path": "/api/users/resetPassword",
+    "source": "screens/LoginScreen/ResetPasswd.js",
+    "line": 82
+  },
+  {
+    "path": "/api/attendance/ExpRegPunchDet",
+    "source": "components/ExpRegPunchDetToXLS.js",
+    "line": 56
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/ExpRegPunchDet.js",
+    "line": 70
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/AttendanceMuster/ExpRegPunchDet.js",
+    "line": 112
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/AttendanceMuster/ExpRegPunchDet.js",
+    "line": 84
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/AttendanceMuster/ExpRegPunchDet.js",
+    "line": 56
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/AttendanceMuster/ExpRegPunchDet.js",
+    "line": 98
+  },
+  {
+    "path": "/api/employee/approveOrRejectEmpRec",
+    "source": "screens/Employee/ApproveEmployeeChanges.js",
+    "line": 44
+  },
+  {
+    "path": "/api/employee/getUnapprovedEmpRec",
+    "source": "screens/Employee/ApproveEmployeeChanges.js",
+    "line": 27
+  },
+  {
+    "path": "/api/attendance/addApprovedManpower",
+    "source": "screens/AttendanceMuster/ManageApprovedManpower.js",
+    "line": 61
+  },
+  {
+    "path": "/api/attendance/deleteApprovedManpower",
+    "source": "screens/AttendanceMuster/ManageApprovedManpower.js",
+    "line": 62
+  },
+  {
+    "path": "/api/attendance/listApprovedManpower",
+    "source": "screens/AttendanceMuster/ManageApprovedManpower.js",
+    "line": 60
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/ManageApprovedManpower.js",
+    "line": 63
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/AttendanceMuster/ManageApprovedManpower.js",
+    "line": 66
+  },
+  {
+    "path": "/api/entity/getAllBU",
+    "source": "screens/AttendanceMuster/ManageApprovedManpower.js",
+    "line": 65
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/AttendanceMuster/ManageApprovedManpower.js",
+    "line": 64
+  },
+  {
+    "path": "/api/employee/getAllEmployees",
+    "source": "screens/Leave/LeaveEntryTimeKeeper.js",
+    "line": 70
+  },
+  {
+    "path": "/api/leave/addLeave",
+    "source": "screens/Leave/LeaveEntryTimeKeeper.js",
+    "line": 180
+  },
+  {
+    "path": "/api/leave/deleteLeave",
+    "source": "screens/Leave/LeaveEntryTimeKeeper.js",
+    "line": 206
+  },
+  {
+    "path": "/api/leave/getActiveLeavePeriods",
+    "source": "screens/Leave/LeaveEntryTimeKeeper.js",
+    "line": 80
+  },
+  {
+    "path": "/api/leave/getLeaveTypes",
+    "source": "screens/Leave/LeaveEntryTimeKeeper.js",
+    "line": 90
+  },
+  {
+    "path": "/api/leave/getRecentLeaves",
+    "source": "screens/Leave/LeaveEntryTimeKeeper.js",
+    "line": 100
+  },
+  {
+    "path": "/api/attendance/runSandwich",
+    "source": "screens/AttendanceMuster/ProcessSandwich.js",
+    "line": 132
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/AttendanceMuster/ProcessSandwich.js",
+    "line": 85
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/AttendanceMuster/ProcessSandwich.js",
+    "line": 53
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/AttendanceMuster/ProcessSandwich.js",
+    "line": 96
+  },
+  {
+    "path": "/api/wages/getProcessMonth",
+    "source": "screens/AttendanceMuster/ProcessSandwich.js",
+    "line": 63
+  },
+  {
+    "path": "/api/wages/getProcessMonthByBillingCycle",
+    "source": "screens/AttendanceMuster/ProcessSandwich.js",
+    "line": 73
+  },
+  {
+    "path": "/api/attendance/addSandwichRule",
+    "source": "screens/AttendanceMuster/SandwichRuleMaster.js",
+    "line": 154
+  },
+  {
+    "path": "/api/attendance/deleteSandwichRule",
+    "source": "screens/AttendanceMuster/SandwichRuleMaster.js",
+    "line": 200
+  },
+  {
+    "path": "/api/attendance/getPunchMarks",
+    "source": "screens/AttendanceMuster/SandwichRuleMaster.js",
+    "line": 40
+  },
+  {
+    "path": "/api/attendance/getSandwichRules",
+    "source": "screens/AttendanceMuster/SandwichRuleMaster.js",
+    "line": 27
+  },
+  {
+    "path": "/api/attendance/updateSandwichRule",
+    "source": "screens/AttendanceMuster/SandwichRuleMaster.js",
+    "line": 182
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/PTReport.js",
+    "line": 86
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/Wages/PTReport.js",
+    "line": 113
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Wages/PTReport.js",
+    "line": 97
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/Wages/PTReport.js",
+    "line": 78
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/Wages/PTReport.js",
+    "line": 105
+  },
+  {
+    "path": "/api/wages/getAllFinYear",
+    "source": "screens/Wages/PTReport.js",
+    "line": 66
+  },
+  {
+    "path": "/api/wages/getPTReport",
+    "source": "screens/Wages/PTReport.js",
+    "line": 241
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/PTMonthReport.js",
+    "line": 101
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/Wages/PTMonthReport.js",
+    "line": 134
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Wages/PTMonthReport.js",
+    "line": 112
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/Wages/PTMonthReport.js",
+    "line": 90
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/Wages/PTMonthReport.js",
+    "line": 123
+  },
+  {
+    "path": "/api/wages/getAllProcessMonth",
+    "source": "screens/Wages/PTMonthReport.js",
+    "line": 73
+  },
+  {
+    "path": "/api/wages/getPTMonthWiseReport",
+    "source": "screens/Wages/PTMonthReport.js",
+    "line": 245
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Leave/LeaveLedgerEntry.js",
+    "line": 66
+  },
+  {
+    "path": "/api/employee/getAllEmployees",
+    "source": "screens/Leave/LeaveLedgerEntry.js",
+    "line": 63
+  },
+  {
+    "path": "/api/leave/delete",
+    "source": "screens/Leave/LeaveLedgerEntry.js",
+    "line": 256
+  },
+  {
+    "path": "/api/leave/getLeaveTypes",
+    "source": "screens/Leave/LeaveLedgerEntry.js",
+    "line": 64
+  },
+  {
+    "path": "/api/leave/getTransTypes",
+    "source": "screens/Leave/LeaveLedgerEntry.js",
+    "line": 65
+  },
+  {
+    "path": "/api/leave/query",
+    "source": "screens/Leave/LeaveLedgerEntry.js",
+    "line": 151
+  },
+  {
+    "path": "/api/leave/save-bulk",
+    "source": "screens/Leave/LeaveLedgerEntry.js",
+    "line": 227
+  },
+  {
+    "path": "/api/wages/getAllProcessMonth",
+    "source": "screens/Leave/LeaveLedgerEntry.js",
+    "line": 62
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Leave/LeavePayrollPosting.js",
+    "line": 45
+  },
+  {
+    "path": "/api/leave/payroll-posting",
+    "source": "screens/Leave/LeavePayrollPosting.js",
+    "line": 79
+  },
+  {
+    "path": "/api/wages/getProcessMonth",
+    "source": "screens/Leave/LeavePayrollPosting.js",
+    "line": 44
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Leave/LeaveLedgerSummaryReport.js",
+    "line": 31
+  },
+  {
+    "path": "/api/employee/getAllEmployees",
+    "source": "screens/Leave/LeaveLedgerSummaryReport.js",
+    "line": 29
+  },
+  {
+    "path": "/api/leave/getLeaveTypes",
+    "source": "screens/Leave/LeaveLedgerSummaryReport.js",
+    "line": 30
+  },
+  {
+    "path": "/api/leave/report/summary",
+    "source": "screens/Leave/LeaveLedgerSummaryReport.js",
+    "line": 73
+  },
+  {
+    "path": "/api/wages/getAllProcessMonth",
+    "source": "screens/Leave/LeaveLedgerSummaryReport.js",
+    "line": 28
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Leave/LeaveBalanceReport.js",
+    "line": 38
+  },
+  {
+    "path": "/api/employee/getAllEmployees",
+    "source": "screens/Leave/LeaveBalanceReport.js",
+    "line": 37
+  },
+  {
+    "path": "/api/leave/report/balance",
+    "source": "screens/Leave/LeaveBalanceReport.js",
+    "line": 71
+  },
+  {
+    "path": "/api/wages/getAllProcessMonth",
+    "source": "screens/Leave/LeaveBalanceReport.js",
+    "line": 36
+  },
+  {
+    "path": "/api/contractor/getAllContractors",
+    "source": "screens/Wages/BonusReport.jsx",
+    "line": 29
+  },
+  {
+    "path": "/api/employee/getBillingType",
+    "source": "screens/Wages/BonusReport.jsx",
+    "line": 27
+  },
+  {
+    "path": "/api/employee/getEmpType",
+    "source": "screens/Wages/BonusReport.jsx",
+    "line": 28
+  },
+  {
+    "path": "/api/entity/getAllDept",
+    "source": "screens/Wages/BonusReport.jsx",
+    "line": 32
+  },
+  {
+    "path": "/api/entity/getAssignedBU",
+    "source": "screens/Wages/BonusReport.jsx",
+    "line": 30
+  },
+  {
+    "path": "/api/entity/getAssignedEntity",
+    "source": "screens/Wages/BonusReport.jsx",
+    "line": 31
+  },
+  {
+    "path": "/api/entity/getAssignedLocCode",
+    "source": "screens/Wages/BonusReport.jsx",
+    "line": 33
+  },
+  {
+    "path": "/api/wages/getAllProcessMonthByBillingCycle",
+    "source": "screens/Wages/BonusReport.jsx",
+    "line": 49
+  },
+  {
+    "path": "/api/wages/getBonusReport",
+    "source": "screens/Wages/BonusReport.jsx",
+    "line": 83
+  },
+  {
+    "path": "/api/master-data/${master}",
+    "source": "screens/MasterData/MasterDataManager.jsx",
+    "line": 34
+  },
+  {
+    "path": "/api/master-data/lookups",
+    "source": "screens/MasterData/MasterDataManager.jsx",
+    "line": 48
+  }
+]

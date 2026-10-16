@@ -1,0 +1,25 @@
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 0.8em;  /* Smaller font */
+    text-align: left;
+    border: 1px solid #dddddd;
+}
+
+.styled-table th, .styled-table td {
+    padding: 6px 10px;  /* Reduced padding */
+    height: 30px;  /* Reduced row height */
+}
+
+.styled-table tbody tr.even {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr.odd {
+    background-color: #ffffff;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #e0e0e0;  /* Slight hover effect */
+}

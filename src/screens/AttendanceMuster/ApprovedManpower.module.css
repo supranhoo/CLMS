@@ -1,0 +1,75 @@
+/* Container + title */
+.container { padding: 10px 12px; font-size: 12px; background:#fafafa; }
+.title { font-size: 14px; margin: 4px 0 8px; font-weight: 600; color:#1f2937; }
+
+/* Alerts */
+.alert { padding: 6px 8px; margin: 6px 0; font-size: 12px; }
+
+/* Card wrappers (Filters / Add) */
+.card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+
+/* Two-row grid (4 columns) */
+.gridBar {
+  display: grid;
+  gap: 8px 10px; /* row gap / col gap */
+  align-items: end;
+}
+.gridCols4 { grid-template-columns: repeat(4, minmax(160px, 1fr)); }
+
+/* Items */
+.item { min-width: 0; }
+.itemNum { min-width: 120px; }
+.itemNarrow { min-width: 150px; }
+.itemBtns { display:flex; gap:6px; align-items: end; min-width: 150px; }
+.itemSpacer { min-height: 1px; }
+
+/* Labels + compact inputs */
+.lbl { display:block; font-size: 11px; line-height: 1; color:#374151; margin-bottom: 2px; }
+.xsControl {
+  height: 28px !important;
+  padding: 2px 6px !important;
+  font-size: 12px !important;
+  border-color: #d1d5db;
+}
+
+/* Buttons (extra small) */
+.btnXs, .btnXsPrimary {
+  padding: 2px 10px !important;
+  height: 28px !important;
+  line-height: 24px !important;
+  font-size: 12px !important;
+  border-radius: 6px !important;
+}
+.btnXsPrimary { background:#2563eb !important; border-color:#2563eb !important; }
+
+/* Data grid */
+.gridWrap {
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:6px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04);
+}
+.table :global(th), .table :global(td) { vertical-align: middle; white-space: nowrap; }
+.table :global(th) { background:#f3f4f6; font-weight:600; font-size:12px; text-align:center; }
+.table :global(td) { font-size:12px; }
+.table :global(td:nth-child(5)), .table :global(td:nth-child(6)) { text-align:right; }
+
+/* Small text helper */
+.smallTxt { font-size: 12px; }
+
+/* Responsive:
+   - On narrower screens, let it wrap to more rows for usability */
+@media (max-width: 992px) {
+  .gridCols4 { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
+}
+@media (max-width: 576px) {
+  .gridCols4 { grid-template-columns: 1fr; }
+}

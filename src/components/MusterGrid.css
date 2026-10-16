@@ -1,0 +1,17 @@
+.attendance-container {
+  display: block; /* Stacks the grids vertically */
+}
+
+.detailed-grid-wrapper,
+.punches-grid-wrapper {
+  width: 100%; /* Both grids take full width */
+  margin-bottom: 20px; /* Add space between the two grids */
+}
+
+.detailed-grid-wrapper {
+  /* Add specific styles for the DetailedAttendanceGrid if needed */
+}
+
+.punches-grid-wrapper {
+  overflow-x: auto; /* Enable horizontal scrolling for the punches grid */
+}

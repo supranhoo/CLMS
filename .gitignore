@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.local-demo/
+.env*
+!.env.example
+screenshots/
+qa-artifacts/
+*.log

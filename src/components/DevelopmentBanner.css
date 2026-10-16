@@ -1,0 +1,21 @@
+.development-replica-banner {
+  position: sticky;
+  top: 0;
+  z-index: 11000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  padding: 0.5rem 1rem;
+  color: #493505;
+  background: #fff2c1;
+  border-bottom: 2px solid #d29700;
+  font-size: 0.85rem;
+}
+.development-replica-banner strong { letter-spacing: 0.05em; }
+.development-replica-banner a { color: #493505; text-decoration: underline; }
+@media print {
+  .development-replica-banner { position: static; color: #000; background: #fff; }
+  .development-replica-banner a { display: none; }
+}

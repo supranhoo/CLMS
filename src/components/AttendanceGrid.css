@@ -1,0 +1,226 @@
+.attendance-grid {
+  margin: 18px;
+  font-size: 10px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+/* Table */
+.attendance-grid table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: inherit;
+  min-width: 900px;
+}
+
+/* Cells */
+.attendance-grid th,
+.attendance-grid td {
+  padding: 5px 6px;
+  text-align: center;
+  border-bottom: 1px solid #e9ecef;
+  border-right: 1px solid #f3f3f3;
+  vertical-align: middle;
+}
+
+/* Header */
+.attendance-grid th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  color: #1f2937;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+/* Left columns */
+.attendance-grid td.left-justify {
+  text-align: left;
+  padding-left: 10px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+}
+
+/* Zebra rows */
+.attendance-grid tbody tr:nth-child(even) {
+  background: #fcfcfd;
+}
+
+/* Row hover */
+.attendance-grid tbody tr:hover {
+  background: #f5f9ff;
+  transition: 0.15s ease-in-out;
+}
+
+/* Punch cells */
+.attendance-grid td.punch-mark {
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  padding: 4px 2px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.05;
+  white-space: nowrap;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.attendance-grid td.punch-mark:hover {
+  transform: scale(1.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Legacy fallback */
+.green-bg {
+  background: #198754 !important;
+  color: #fff !important;
+}
+
+.light-yellow-bg {
+  background: #fff3cd !important;
+  color: #000 !important;
+}
+
+.light-grey-bg {
+  background: #e2e3e5 !important;
+  color: #000 !important;
+}
+
+.light-red-bg {
+  background: #dc3545 !important;
+  color: #fff !important;
+}
+
+.light-white-bg {
+  background: #ffffff !important;
+  color: #000 !important;
+}
+
+/* Action row */
+.action-pagination-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+/* Search box */
+.action-pagination-row input,
+.action-pagination-row .form-control {
+  border-radius: 8px !important;
+  border: 1px solid #ced4da !important;
+  box-shadow: none !important;
+  font-size: 10px !important;
+}
+
+/* Buttons */
+button.btn {
+  border-radius: 8px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  padding: 4px 10px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+button.btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Pagination */
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.pagination-controls .form-control {
+  width: 62px;
+  padding: 2px 4px;
+  font-size: 10px;
+}
+
+/* Legends Premium */
+.legends {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+  border: 1px solid #dee2e6;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #212529;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.legend:hover {
+  transform: translateY(-1px);
+  transition: 0.15s ease;
+}
+
+.legend-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  flex-shrink: 0;
+}
+
+/* Scrollbar */
+.attendance-grid::-webkit-scrollbar {
+  height: 10px;
+}
+
+.attendance-grid::-webkit-scrollbar-track {
+  background: #f1f3f5;
+  border-radius: 10px;
+}
+
+.attendance-grid::-webkit-scrollbar-thumb {
+  background: #adb5bd;
+  border-radius: 10px;
+}
+
+.attendance-grid::-webkit-scrollbar-thumb:hover {
+  background: #868e96;
+}
+
+/* Mobile safe */
+@media (max-width: 768px) {
+  .attendance-grid {
+    margin: 8px;
+    padding: 8px;
+  }
+
+  .legend {
+    font-size: 9px;
+    padding: 4px 8px;
+  }
+
+  .attendance-grid td.punch-mark {
+    width: 38px;
+    min-width: 38px;
+    font-size: 10px;
+  }
+}

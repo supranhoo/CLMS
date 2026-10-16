@@ -1,0 +1,88 @@
+.loginContainer {
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+}
+.submit-button {
+  margin-top: 20px; /* Adjust the value as needed */
+}
+.formGroup {
+  margin-bottom: 20px;
+}
+.main-screen-title {
+  font-size: 20px; /* Adjust the value as needed */
+  font-weight: bold;
+}
+.form-frame {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.form-section-heading {
+  font-size: 1rem;
+  text-transform: lowercase;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.875rem;
+}
+
+.submit-button {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.form-frame {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.form-section-heading {
+  font-size: 1rem;
+  text-transform: lowercase;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.submit-button {
+  text-align: center;
+  margin-top: 20px;
+}
+.form-frame .formGroup {
+  flex: 1; /* Ensures equal width for both form controls */
+  margin-right: 10px; /* Adds some space between the fields */
+}
+
+.form-frame .formGroup:last-child {
+  margin-right: 0; /* Removes margin for the last field */
+}
+.form-frame {
+  height: 100%; /* Ensures the form frame fills the full height of the column */
+  display: flex;
+  flex-direction: column; /* Ensures child elements are stacked vertically */
+  justify-content: space-between; /* Optional: Adjusts space between elements */
+
+}
+.mandatory {
+  color: red;
+  font-weight: bold;
+}

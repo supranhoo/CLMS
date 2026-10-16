@@ -1,0 +1,82 @@
+/* Full-width header */
+.header {
+    width: 100%;
+    background-color: #007BFF;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  /* Centered container */
+  .container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  /* Heading styles */
+  .heading {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Form group for aligning labels and inputs */
+  .formGroup {
+    display: flex;
+    align-items: center; /* Vertically align label and input */
+    margin-bottom: 15px;
+  }
+  
+  .formGroup label {
+    width: 100px; /* Align labels to the left and give consistent width */
+    text-align: left;
+    margin-right: 10px; /* Reduce gap between label and input */
+  }
+  
+  .formGroup input {
+    width: 200px; /* Reduced width for date inputs */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: left; /* Left-align the text in the input fields */
+  }
+  
+  /* Dropdown styles */
+  .selectContainer {
+    min-width: 200px;
+    max-width: 400px;
+    margin-bottom: 20px;
+  }
+  
+  /* Checkbox and label styles */
+  .checkboxContainer {
+    margin-top: 20px;
+  }
+  
+  .checkboxLabel {
+    margin-right: 30px;
+    margin-right: 30px;
+  }
+  
+  /* Button styles */
+  .buttonContainer {
+    margin-top: 40px;
+    text-align: center;
+  }
+  
+  .button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+  }
+  

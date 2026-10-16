@@ -1,0 +1,42 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+
+.paginated-table {
+  padding: 10px;
+}
+
+.pagination-controls {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+.pagination-buttons {
+  display: flex;
+  gap: 5px; /* Add gap between buttons */
+  background-color: lightskyblue;
+}
+.table {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.table thead {
+  background-color: lightskyblue;
+  vertical-align: middle;
+}
+.table td {
+  vertical-align: middle;
+  height: 7px;
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflow text */
+  text-overflow: ellipsis; /* Display ellipsis for overflow text */
+}
+.error-message {
+  color: red;
+  font-size: 0.875em; /* Adjust the size as needed */
+  margin-top: 0.25em; /* Adjust the spacing as needed */
+}

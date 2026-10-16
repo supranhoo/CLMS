@@ -1,0 +1,125 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.heading {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 25px; /* You can adjust this as needed */
+}
+
+.formGroup {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  background-color: #f0f0f0; /* Temporary background color */
+  border: 1px solid red; /* Temporary border to visualize */
+
+}
+
+.formGroup label {
+  width: 200px; /* Increased width to fit larger labels */
+  margin-right: 10px;
+}
+
+.formGroup input {
+  width: 250px; /* Adjusted input width for more readability */
+  padding: 5px;
+}
+
+.parallelSection {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.section {
+  width: 48%;
+  border: 1px solid #ddd;
+  padding:10px;
+  border-radius: 10px;
+}
+
+.section h3 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 15px; /* Reduced font size for section headings */
+}
+
+.listContainer {
+  margin-top: 10px;
+}
+
+.listBoxWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.listBoxWrapper div {
+  text-align: center;
+  flex: 1; /* This will make the listBox take up more space */
+}
+
+.listBox {
+  width: 100%;
+  height: 150px;
+  font-size: 12px;
+}
+
+.arrowButtons {
+  width:50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 5px;
+}
+
+.arrowButtons button {
+  margin: 5px;
+}
+
+.arrowButtons button:disabled {
+  opacity: 0.5; /* Visually indicate the button is disabled */
+  cursor: not-allowed; /* Change cursor to indicate button is not clickable */
+}
+
+.listBoxWrapper h4 {
+  font-size: 14px; /* Reduced font size for "Roles Assigned" and "Roles Available" */
+  margin-bottom: 5px;
+}
+
+.buttonContainer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.button {
+  padding: 5px 20px;
+}
+
+.inlineGroup {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+}
+
+.inlineGroup label {
+  margin-right: 10px;
+}
+
+.inlineGroup input {
+  margin-right: 10px;
+  padding: 3px;  /* Reduce padding to reduce height */
+  width: 120px;  /* Reduce width of input */
+  font-size: 14px;  /* Adjust font size for better fit */
+}
+
+.inlineGroup .button {
+  padding: 3px 10px;  /* Reduce padding to reduce height */
+  font-size: 14px;  /* Adjust font size to match input */
+}
+

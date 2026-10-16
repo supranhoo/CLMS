@@ -1,0 +1,46 @@
+.main {
+  height: 100vh;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  align-items: start;
+  background-image: url("../../assets/background.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.title {
+  font-size: 60px;
+  font: bolder;
+  color: white;
+  text-align: center;
+  vertical-align: top;
+}
+.subtitle {
+  font-size: 25px;
+  font: bold;
+  color: bisque;
+  padding-top: 10px;
+  text-align: center;
+}
+.intro-text {
+  width: 100%;
+  text-align: center;
+}
+.buttonContainer {
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-evenly;
+}
+.landingbutton {
+  width: 150px;
+  height: 45px;
+}
+@media only screen and (min-width: 1200px) {
+  .buttonContainer {
+    padding: 0 100px;
+  }
+  .title {
+    padding: 0 100px;
+  }
+}
