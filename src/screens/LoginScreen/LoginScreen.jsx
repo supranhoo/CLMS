@@ -163,6 +163,7 @@ const LoginScreen = () => {
       <Modal
         show={showErrorModal}
         onHide={() => setShowErrorModal(false)}
+        dialogClassName="login-error-modal"
         centered
         backdrop="static"
       >

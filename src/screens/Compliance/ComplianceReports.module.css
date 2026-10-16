@@ -14,7 +14,7 @@
 .footnote { font-size: .8rem; color: #697b8e; }
 @media (max-width: 720px) { .filters { grid-template-columns: 1fr; } .titleRow { flex-direction: column; margin-bottom: 14px; } }
 @media print {
-  :global(body *) { visibility: hidden; }
+  :global(:where(body.printing-compliance-report) *) { visibility: hidden; }
   .printArea, .printArea * { visibility: visible; }
   .printArea { position: absolute; left: 0; top: 0; width: 100%; padding: 12px; }
   .noPrint { display: none !important; }

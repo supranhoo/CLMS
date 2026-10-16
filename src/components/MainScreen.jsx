@@ -1,8 +1,9 @@
 import { Container, Row } from "react-bootstrap";
 
-const MainScreen = ({ title, children }) => {
+// `scope` opts a screen into a legacy stylesheet that is scoped by that class (see docs/ui-redesign/w0).
+const MainScreen = ({ title, scope, children }) => {
   return (
-    <div className="mainback">
+    <div className={scope ? `mainback ${scope}` : "mainback"}>
       <Container>
         <Row>
           <div className="page">

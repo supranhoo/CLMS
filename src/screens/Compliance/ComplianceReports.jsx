@@ -19,6 +19,12 @@ export default function ComplianceReports() {
   const params = useParams();
   const form = params.form || params.module;
   const requiresMonth = ['form-xvi-muster-roll', 'form-xviii-wages-cum-muster-roll', 'form-xxiii-register-of-overtime'].includes(form);
+  // The print stylesheet hides everything except the report. That rule is keyed to this body class so it can only
+  // apply while a compliance report is mounted; other screens print normally (W0/U02, gate A03).
+  useEffect(() => {
+    document.body.classList.add("printing-compliance-report");
+    return () => document.body.classList.remove("printing-compliance-report");
+  }, []);
   const [months, setMonths] = useState([]);
   const [contractors, setContractors] = useState([]);
   const [pmonth, setPmonth] = useState("");

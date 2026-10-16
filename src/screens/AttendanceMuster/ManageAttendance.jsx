@@ -43,7 +43,7 @@ const ManageAttendance = () => {
   }
 
   return (
-    <div>
+    <div className="legacy-attendance">
       <h1>Manage Attendance</h1>
       <div>
         <label>From Date: </label>

@@ -109,7 +109,7 @@
 }
 
 /* Table cell styles to prevent wrapping and ensure the layout remains consistent */
-td {
+:where(.regularize-punch-grid-container, .compact-grid) td {
   white-space: nowrap; /* Prevent wrapping of content inside the cell */
   overflow: hidden; /* Ensure content does not expand the cell */
   max-width: 150px; /* Optional: set a max width for the table cell to prevent it from expanding */

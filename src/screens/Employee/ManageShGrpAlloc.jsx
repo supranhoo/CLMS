@@ -198,7 +198,7 @@ const ManageEmployees = () => {
   /* ===================== UI ===================== */
 
   return (
-    <MainScreen title="Manage Shift Group Allocation">
+    <MainScreen scope="legacy-paginated" title="Manage Shift Group Allocation">
       {loading && <Loading />}
       {message && <ErrorMessage variant="danger">{message}</ErrorMessage>}
 

@@ -292,7 +292,7 @@ const ManageUsers = () => {
   };
 
   return (
-    <MainScreen title="Manage Users">
+    <MainScreen scope="legacy-paginated" title="Manage Users">
       <div className="User-list">
         <div className="Paginated1">
           <Table responsive striped bordered hover>

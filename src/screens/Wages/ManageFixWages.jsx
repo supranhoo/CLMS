@@ -551,7 +551,7 @@ const ManageFixWages = () => {
   };
 
   return (
-    <MainScreen title={<span className="main-screen-title">Manage Wages</span>}>
+    <MainScreen scope="legacy-paginated" title={<span className="main-screen-title">Manage Wages</span>}>
       <div className="employee-list">
         <div ref={gridRef} tabIndex="-1" style={{ outline: "none" }}></div>{" "}
         {/* Hidden focusable element */}

@@ -1101,6 +1101,7 @@ const ManageEmployees = () => {
 
   return (
     <MainScreen
+      scope="legacy-paginated"
       title={<span className="main-screen-title">Manage Employees</span>}
     >
       <div className="employee-list">

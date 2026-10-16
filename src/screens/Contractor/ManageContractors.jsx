@@ -375,7 +375,7 @@ const ManageContractors = () => {
   };
 
   return (
-    <MainScreen title="Manage Contractors">
+    <MainScreen scope="legacy-paginated" title="Manage Contractors">
       <div className="contractor-list">
         <div className="Paginated1">
           <Table responsive striped bordered hover>

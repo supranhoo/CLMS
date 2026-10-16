@@ -86,21 +86,21 @@
   margin-top: 20px;
 }
 
-.modal-content {
+:where(.login-error-modal) .modal-content {
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.modal-header {
+:where(.login-error-modal) .modal-header {
   border-bottom: none;
 }
 
-.modal-body {
+:where(.login-error-modal) .modal-body {
   font-size: 1.1rem;
   color: #333;
 }
 
-.modal-footer {
+:where(.login-error-modal) .modal-footer {
   border-top: none;
 }
 .forgot-password-btn {

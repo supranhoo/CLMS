@@ -1,33 +1,29 @@
-body,
-html {
-  margin: 0;
-  padding: 0;
-}
-
-.paginated-table {
+/* Legacy pagination/table skin. Scoped to screens that import a Paginated*.css file (they opt in with
+   <MainScreen scope="legacy-paginated">). It used to be global and restyled every Bootstrap table, W0/U02. */
+:where(.legacy-paginated) .paginated-table {
   padding: 10px;
   font-size: 12px; /* Set a smaller font size for the entire grid */
 }
 
-.pagination-container {
+:where(.legacy-paginated) .pagination-container {
   background-color: lightskyblue; /* Change to your desired color */
   padding: 10px; /* Add some padding if needed */
 }
-.pagination-controls {
+:where(.legacy-paginated) .pagination-controls {
   width: 100%;
   display: flex;
   justify-content: center;
   gap: 10px;
   margin: 0px;
 }
-.pagination-buttons {
+:where(.legacy-paginated) .pagination-buttons {
   display: flex;
   gap: 20px; /* Adjust the gap between buttons */
   justify-content: center;
   margin-top: 0%;
 }
 
-.pagination-buttons button {
+:where(.legacy-paginated) .pagination-buttons button {
   background-color: #007bff; /* Primary color for the buttons */
   color: white; /* Text color */
   border: none;
@@ -37,42 +33,42 @@ html {
   transition: background-color 0.3s ease;
 }
 
-.pagination-buttons button:disabled {
+:where(.legacy-paginated) .pagination-buttons button:disabled {
   background-color: #cccccc; /* Disabled state color */
   cursor: not-allowed;
 }
 
-.pagination-buttons button:not(:disabled):hover {
+:where(.legacy-paginated) .pagination-buttons button:not(:disabled):hover {
   background-color: #0056b3; /* Hover state color */
 }
 
-.table {
+:where(.legacy-paginated) .table {
   margin-top: 0;
   margin-bottom: 0;
   font-size: 12px; /* Set a smaller font size for the entire grid */
 }
-.table thead {
+:where(.legacy-paginated) .table thead {
   background-color: lightgoldenrodyellow;
 }
-.table th {
+:where(.legacy-paginated) .table th {
   background-color: lightblue;
   margin-top: 0%;
   margin-bottom: 0%;
 }
-.table thead {
+:where(.legacy-paginated) .table thead {
   background-color: lightskyblue;
   margin-top: 0%;
   margin-bottom: 0%;
 }
-.table td {
+:where(.legacy-paginated) .table td {
   vertical-align: middle;
   margin-top: 0%;
   margin-bottom: 0%;
 }
-.button-cell {
+:where(.legacy-paginated) .button-cell {
   text-align: right;
 }
-.selected-contractor-details {
+:where(.legacy-paginated) .selected-contractor-details {
   margin-top: 20px;
   padding: 20px;
   background-color: #f8f9fa;
