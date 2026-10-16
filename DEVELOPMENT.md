@@ -49,12 +49,18 @@ The shared Axios client rejects remote request destinations. A browser content-s
 | `scripts/dev.mjs` | Combined local launcher and shutdown handling |
 | `scripts/check-isolation.mjs` | Isolation validation |
 | `tools/recover-frontend.py` | Source recovery provenance/tooling |
+| `server/actor.mjs` | The signed-in user for the request being handled, so audit columns record who acted |
+| `scripts/erd.mjs`, `scripts/lib/erd-*.mjs` | Generate the ERD and data dictionary in `docs/erd` and check the model against live data |
+| `scripts/test-matrix.mjs` | Generate the test-case matrix in `docs/testing` |
+| `scripts/reset-local-state.mjs` | `npm run reset` |
+| `tests/ui/smoke.mjs` | Browser smoke suite (`npm run test:ui`) |
+| `src/utils/apiError.js`, `src/utils/escapeHtml.js` | Show a failed request's real reason; escape text before it is written into generated HTML |
 
 ## Coverage boundaries
 
 The frontend preserves the available application routes. Local API support is intentionally separate from frontend recovery: an available screen does not prove that its original production calculations have been reproduced. Inspect `/api/dev/capabilities` for simulator coverage and `server/contracts.json` for the recovered endpoint inventory.
 
-Demo sessions remain valid for the lifetime of the API process. If it restarts, a rejected authenticated request returns the browser to demo sign-in. Contractor creation does not replace the saved demo login.
+Sessions are held in memory: they end on sign-out (`POST /api/users/logout`), after 8 hours (set `CLMS_SESSION_TTL_MS` to change it), when the account is deactivated or its password or role changes, on `POST /api/dev/reset`, and when the API restarts. A rejected authenticated request returns the browser to demo sign-in. Every route except health, capabilities, features, sign-in, sign-out, password recovery and the menu bootstrap needs a session, reads included. Ten wrong passwords in a row lock that user ID for a minute. Contractor creation does not replace the saved demo login.
 
 Worker and contractor records, reference data, wage inputs, attendance, leave reports, account management and approvals use fictional fixtures and local persistence. Validated batch imports reject erroneous workbooks before committing records. Wage locks prevent affected input changes. Local passwords are hashed; menu, write-activity and worker-scope checks support development of local account workflows. These controls are not a production security certification.
 

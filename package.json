@@ -11,7 +11,11 @@
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1 --port 5173 --strictPort",
     "test": "node --test",
-    "check": "node scripts/check-isolation.mjs"
+    "check": "node scripts/check-isolation.mjs",
+    "test:ui": "node tests/ui/smoke.mjs",
+    "erd": "node scripts/erd.mjs",
+    "docs": "node scripts/erd.mjs && node scripts/test-matrix.mjs",
+    "reset": "node scripts/reset-local-state.mjs"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",

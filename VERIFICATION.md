@@ -2,6 +2,8 @@
 
 Updated on 16 October 2026 on this Windows computer. These checks apply to the local development replica, not the live CLMS application. Automated coverage and browser observations are recorded separately.
 
+> **Superseded in part (16 October 2026).** The test count and coverage below describe the state before the full-application audit. Current results, the audit findings and the test plan are in [docs/testing](docs/testing/README.md); see [READINESS.md](docs/testing/READINESS.md) for the current numbers.
+
 ## Automated checks
 
 - **56 tests pass, zero failures.** Coverage includes local login/menu contracts, contractor and master persistence, employee approvals, leave operations, explicit payroll blocking, HTTP origin/host restrictions and the shared frontend request guard.

@@ -1,0 +1,76 @@
+# Checks for the CLMS development replica. Everything runs on GitHub's runners against fictional data; nothing connects
+# to the live CLMS. The replica has no secrets and needs none.
+name: CI
+
+on:
+  push:
+    branches: [main, 'claude/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Contract tests, isolation check, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Isolation check (no remote URLs, no copied production config)
+        run: npm run check
+      - name: Contract, regression, API-sweep and data-model tests
+        run: node --test --experimental-test-coverage
+      - name: Generated documents are current (ERD, test-case matrix)
+        run: |
+          node scripts/erd.mjs --check
+          node scripts/test-matrix.mjs --check
+      - name: Build
+        run: npm run build
+      - name: Known vulnerabilities in production dependencies
+        run: npm audit --omit=dev
+
+  ui:
+    name: Browser smoke suite (Chromium, ${{ matrix.tz }})
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # Asia/Kolkata is the target zone; America/New_York is west of UTC, where date text parsed in local time shows the previous day
+        tz: [Asia/Kolkata, America/New_York]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright and Chromium (not a project dependency)
+        run: |
+          npm i --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: UI smoke suite (starts its own in-memory API and Vite on 5001/5173)
+        env:
+          TZ: ${{ matrix.tz }}
+        run: npm run test:ui -- --json ui-results.json
+      - name: Keep results and failure screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-results-${{ strategy.job-index }}
+          path: |
+            ui-results.json
+            /tmp/clms-ui-*.png
+          if-no-files-found: ignore

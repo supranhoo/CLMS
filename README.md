@@ -61,7 +61,16 @@ The [whole-app UI redesign plan](docs/ui-redesign/UI_REDESIGN_PLAN.md) defines t
 | `npm.cmd test` | Run local workflow, export, API and isolation tests |
 | `npm.cmd run check` | Check application files for remote URLs and copied production configuration |
 | `npm.cmd run build` | Build the editable frontend into `dist/` |
+| `npm.cmd run test:ui` | Browser smoke suite (needs Playwright and Chromium; starts and stops its own servers; see [docs/testing](docs/testing/README.md)) |
+| `npm.cmd run reset` | Return to the seed fixtures (through the running API, or by deleting the saved state file) |
+| `npm.cmd run docs` | Regenerate the ERD and the test-case matrix after changing the data model or the routes |
+
+On macOS and Linux write `npm` wherever this document says `npm.cmd`.
 
 The `.local-demo/` directory contains only local sample state and is excluded from version control. Original deployment files outside this replica directory are not edited.
 
-Current automated verification: **56 tests pass**, the isolation check passes, and the frontend build succeeds. See [VERIFICATION.md](VERIFICATION.md) for the distinction between automated checks, earlier browser checks and current release browser QA.
+## Testing
+
+Everything a tester needs is in [docs/testing](docs/testing/README.md): the [test plan](docs/testing/TEST-PLAN.md), a [case matrix](docs/testing/TEST-CASES.md) covering every route and workflow, the [audit report](docs/testing/AUDIT-REPORT.md), [known issues](docs/testing/KNOWN-ISSUES.md) and the [readiness assessment](docs/testing/READINESS.md). The data model is in [docs/erd](docs/erd/ERD.md).
+
+Current automated verification is recorded in [READINESS.md](docs/testing/READINESS.md) (contract tests, a browser suite, the isolation check and the build). [VERIFICATION.md](VERIFICATION.md) keeps the earlier record of automated checks, browser checks and release QA.
