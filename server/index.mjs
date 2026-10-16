@@ -6,8 +6,9 @@ import { randomBytes } from 'node:crypto';
 import { DEMO_USER, DEMO_PASSWORD, MENUS, MASTER_KEYS, seedState, referenceData } from './seed.mjs';
 import { registerAttendanceRoutes, applyAttendanceOverrides } from './modules/attendance.mjs';
 import { registerPayrollRoutes } from './modules/payroll.mjs';
-import { registerAdministrationRoutes, authorizeLocalRequest, scopeLocalResult } from './modules/administration.mjs';
+import { registerAdministrationRoutes, authorizeLocalRequest, scopeLocalResult, canSeeEmployee } from './modules/administration.mjs';
 import { registerWorkspaceRoutes } from './modules/workspace.mjs';
+import { actorId, runAsActor } from './actor.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const MAX_BODY = 1024 * 1024;
@@ -23,8 +24,24 @@ const transTypes = [
 const punchMarks = [
   ['P', 'Present', '#d1e7dd', '✓'], ['AB', 'Absent', '#f8d7da', '×'], ['WO', 'Weekly Off', '#e2e3e5', '○'],
   ['CL', 'Casual Leave', '#cff4fc', 'L'], ['EL', 'Earned Leave', '#cff4fc', 'L'], ['SL', 'Sick Leave', '#cff4fc', 'L'],
+  // The manual-muster API also accepts these marks (see punchMarks in modules/attendance.mjs); a screen must be able to offer them.
+  ['HLD', 'Holiday', '#fff3cd', 'H'], ['OD', 'On Duty', '#d1e7dd', 'D'], ['WFH', 'Work From Home', '#d1e7dd', 'W'],
+  ['HD', 'Half Day', '#fff3cd', '½'], ['LOP', 'Loss of Pay', '#f8d7da', '₹'],
 ].map(([punch_mark, punch_mark_desc, bg_color, icon]) => ({ punch_mark, punch_mark_desc, bg_color, text_color: '#212529', border_color: '#ddd', icon }));
 
+/** Sessions expire (absolute lifetime) so a leaked token does not live until the process restarts. */
+class SessionStore extends Map {
+  constructor(ttlMs) { super(); this.ttlMs = ttlMs; this.issued = new Map(); }
+  set(token, user) { this.issued.set(token, Date.now()); return super.set(token, user); }
+  get(token) {
+    const user = super.get(token);
+    if (user !== undefined && Date.now() - this.issued.get(token) > this.ttlMs) { this.delete(token); return undefined; }
+    return user;
+  }
+  delete(token) { this.issued.delete(token); return super.delete(token); }
+  clear() { this.issued.clear(); super.clear(); }
+}
+const decodeParam = value => { try { return decodeURIComponent(value); } catch { fail(400, 'The request path contains a malformed percent-encoded sequence.'); } };
 function fail(status, message) { const error = new Error(message); error.status = status; throw error; }
 const present = value => value !== undefined && value !== null && String(value).trim() !== '';
 const dateOnly = value => String(value || '').slice(0, 10);
@@ -39,8 +56,10 @@ function localOrigin(req) {
 
 async function readBody(req) {
   if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) return {};
-  let body = ''; let size = 0;
-  for await (const chunk of req) { size += chunk.length; if (size > MAX_BODY) fail(413, 'Local demo request body exceeds 1 MB.'); body += chunk; }
+  const chunks = []; let size = 0;
+  for await (const chunk of req) { size += chunk.length; if (size > MAX_BODY) fail(413, 'Local demo request body exceeds 1 MB.'); chunks.push(chunk); }
+  // Decode the whole body at once: converting chunk by chunk corrupts a multi-byte character that spans two network chunks.
+  const body = Buffer.concat(chunks).toString('utf8');
   if (!body.trim()) return {};
   if (!String(req.headers['content-type'] || '').includes('application/json')) fail(415, 'Only JSON is supported by the local demo API; file uploads are unavailable.');
   try { const parsed = JSON.parse(body); if (!parsed || typeof parsed !== 'object') fail(400, 'A JSON object is required.'); return parsed; } catch { fail(400, 'Invalid JSON request body.'); }
@@ -91,7 +110,7 @@ function leaveSummary(state, filter) {
 }
 
 /** Isolated, dependency-free demo API. This module imports no network client or database driver. */
-export function createServer({ dataDir = resolve(here, '../.local-demo'), persist = true } = {}) {
+export function createServer({ dataDir = resolve(here, '../.local-demo'), persist = true, sessionTtlMs = Number(process.env.CLMS_SESSION_TTL_MS) || 8 * 3600_000 } = {}) {
   const filename = resolve(dataDir, 'state.json');
   let state = seedState();
   if (persist && existsSync(filename)) {
@@ -99,7 +118,7 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
     if (saved.environment !== 'LOCAL_SYNTHETIC_DEMO' || saved.schemaVersion !== 1) throw new Error('Unrecognised local demo state; move it aside or use a fresh data directory.');
     state = { ...seedState(), ...saved };
   }
-  const sessions = new Map();
+  const sessions = new SessionStore(sessionTtlMs);
   const routes = []; const capabilities = [];
   const save = () => { if (persist) { mkdirSync(dataDir, { recursive: true }); const temporary = filename + '.tmp'; writeFileSync(temporary, JSON.stringify(state, null, 2) + '\n', 'utf8'); renameSync(temporary, filename); } };
   function route(method, path, handler, { mutation = false, status = 'implemented', notes = 'Local synthetic demo data only.' } = {}) {
@@ -115,7 +134,8 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
   route('GET', '/api/dev/health', () => ({ ok: true, environment: 'LOCAL_SYNTHETIC_DEMO', productionConnected: false, persistence: persist, version: 1 }));
   route('GET', '/api/dev/capabilities', () => ({ environment: 'LOCAL_SYNTHETIC_DEMO', productionConnected: false, payrollEngine: 'unavailable', statutoryCalculations: 'unavailable', endpoints: capabilities, unknownEndpoints: '501 - explicit unsupported response' }));
   route('POST', '/api/dev/reset', () => { state = seedState(); sessions.clear(); save(); return success('Local demo fixtures restored. Local sessions were revoked. Production was not contacted.'); }, { mutation: true });
-  route('GET', '/api/dev/state', () => state, { mutation: true, notes: 'Authenticated local demo fixture export.' });
+  // Fixture export for inspection. Credential material (password hashes, reset tokens) is never part of it.
+  route('GET', '/api/dev/state', () => ({ ...state, authUsers: (state.authUsers || []).map(({ passwordHash, passwordSalt, ...account }) => account), recoveryOutbox: (state.recoveryOutbox || []).map(row => ({ ...row, token: '[withheld]' })) }), { mutation: true, notes: 'Authenticated local demo fixture export; password hashes and reset tokens are withheld.' });
   route('POST', '/api/users/login', body => {
     if (body.emp_id !== DEMO_USER.emp_id || body.password !== DEMO_PASSWORD) fail(401, 'Use local demo credentials: demo / demo123.');
     const token = 'local-demo-' + randomBytes(24).toString('hex'); sessions.set(token, { ...DEMO_USER, role: 'LOCAL_DEMO_ADMIN' });
@@ -131,11 +151,12 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
   route('POST', '/api/contractor/addContractor', body => {
     required(body, ['Contractor_ID', 'Contractor_Name']);
     if (state.contractors.some(c => c.Contractor_ID === body.Contractor_ID)) fail(409, 'Contractor ID already exists in the local demo.');
-    state.contractors.push({ ...body, Created_By: 'demo', Created_Date: new Date().toISOString() }); save(); return success();
+    state.contractors.push({ ...body, Created_By: actorId(), Created_Date: new Date().toISOString() }); save(); return success();
   }, { mutation: true });
   route('PUT', '/api/contractor/updateContractor/:id', (body, params) => {
     const index = state.contractors.findIndex(c => c.Contractor_ID === params.id); if (index < 0) fail(404, 'Local demo contractor not found.');
-    state.contractors[index] = { ...state.contractors[index], ...body, Contractor_ID: params.id, Modified_By: 'demo', Modified_Date: new Date().toISOString() }; save(); return success();
+    const { Created_By, Created_Date, Modified_By, Modified_Date, ...changes } = body; // audit columns are never taken from the client
+    state.contractors[index] = { ...state.contractors[index], ...changes, Contractor_ID: params.id, Modified_By: actorId(), Modified_Date: new Date().toISOString() }; save(); return success();
   }, { mutation: true });
   both('/api/employee/getAllEmployees', () => state.employees);
   both('/api/employee/getEmpMastDump', () => state.employees);
@@ -144,10 +165,22 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
   both('/api/employee/getByAdhar', body => body.Adhar_No ? state.employees.filter(e => e.Adhar_No === body.Adhar_No) : []);
   both('/api/employee/getByPanno', body => body.panno ? state.employees.filter(e => e.panno === body.panno) : []);
   for (const key of Object.keys(referenceData(state))) both('/api/employee/get' + key, () => referenceData(state)[key]);
-  function employeeRecord(body) {
+  // Codes are text everywhere (lookups compare strictly), so a numeric cell or JSON number is stored as its text.
+  const CODE_FIELDS = ['Employee_Code', 'employee_code', 'contractor_id', 'dept', 'bu', 'entity_code', 'loc_code', 'division', 'design_code', 'section', 'cost_code'];
+  const asText = row => { const copy = { ...row }; for (const field of CODE_FIELDS) if (typeof copy[field] === 'number') copy[field] = String(copy[field]); return copy; };
+  function checkEmployeeReferences(row) {
+    const known = (value, list, label) => { if (present(value) && !list.includes(String(value))) fail(400, `Unknown ${label} "${value}". Create it first or choose an existing one.`); };
+    known(row.contractor_id, state.contractors.map(c => c.Contractor_ID), 'contractor_id');
+    known(row.dept, departments.map(d => d.dept_code), 'dept');
+    known(row.bu, state.masters['business-units'].map(b => b.bu_code), 'bu');
+    known(row.entity_code, entities.map(e => e.entity_code), 'entity_code');
+  }
+  function employeeRecord(input) {
+    const body = asText(input);
     required(body, ['Employee_Code', 'display_name']);
     const index = state.employees.findIndex(e => e.Employee_Code === body.Employee_Code);
     const row = { ...(index >= 0 ? state.employees[index] : {}), ...body, employee_code: body.Employee_Code };
+    checkEmployeeReferences(row);
     return { index, row };
   }
   route('POST', '/api/employee/addEmployee', body => {
@@ -157,17 +190,24 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
   route('POST', '/api/employee/addEmployeePreapprove', body => {
     const { index, row } = employeeRecord(body);
     state.pendingEmployees = state.pendingEmployees.filter(e => e.Employee_Code !== row.Employee_Code);
-    state.pendingEmployees.push({ ...row, record_id: nextId(state.pendingEmployees, 'record_id'), source: 'Modified', demo: true });
+    state.pendingEmployees.push({ ...row, record_id: nextId(state.pendingEmployees, 'record_id'), source: 'Modified', demo: true, ...(index >= 0 ? { base_snapshot: structuredClone(state.employees[index]) } : {}) });
     save(); return success(index >= 0 ? 'Employee change saved for approval in the local demo.' : 'New employee saved for approval in the local demo.');
   }, { mutation: true });
   both('/api/employee/getUnapprovedEmpRec', () => state.pendingEmployees.flatMap(row => {
     const current = state.employees.find(e => e.Employee_Code === row.Employee_Code);
-    return current ? [{ ...current, source: 'Original' }, row] : [row];
+    const { base_snapshot, ...pending } = row;
+    return current ? [{ ...current, source: 'Original' }, pending] : [pending];
   }));
-  route('POST', '/api/employee/approveOrRejectEmpRec', body => {
+  route('POST', '/api/employee/approveOrRejectEmpRec', (body, params, request) => {
     const row = state.pendingEmployees.find(e => e.record_id === Number(body.record_id)); if (!row) fail(404, 'Pending local demo employee not found.');
     if (!['approve', 'reject'].includes(body.action)) fail(400, 'Action must be approve or reject.');
-    if (body.action === 'approve') { const index = state.employees.findIndex(e => e.Employee_Code === row.Employee_Code); const { record_id, source, ...employee } = row; if (index >= 0) state.employees[index] = employee; else state.employees.push(employee); }
+    if (!canSeeEmployee(state, request.user, row.Employee_Code)) fail(403, 'This worker is outside the assigned local scope.');
+    if (body.action === 'approve') {
+      const index = state.employees.findIndex(e => e.Employee_Code === row.Employee_Code); const { record_id, source, demo, ...employee } = row;
+      // Apply only the fields the submitter changed. Replacing the whole record would undo anything done to the worker since (for example an inactivation).
+      if (index >= 0) { const current = state.employees[index]; const base = row.base_snapshot || {}; const changed = Object.fromEntries(Object.entries(employee).filter(([key, value]) => key !== 'base_snapshot' && JSON.stringify(value) !== JSON.stringify(base[key]))); state.employees[index] = { ...current, ...changed }; }
+      else { const { base_snapshot, ...fresh } = employee; state.employees.push(fresh); }
+    }
     state.pendingEmployees = state.pendingEmployees.filter(e => e !== row); save(); return success();
   }, { mutation: true });
 
@@ -194,11 +234,37 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
   }
   both('/api/assignRoles/getUserMenuActivityForSpecificMenu', () => []);
 
+  // Which records point at a master row. Deleting or re-keying a row that is still in use would leave dangling references.
+  const MASTER_USES = {
+    'business-units': [['employees', 'bu', 'bu_code'], ['approvedManpower', 'bu_code', 'bu_code'], ['musterDepartments', 'bu_code', 'bu_code']],
+    locations: [['employees', 'loc_code', 'loc_code']],
+    divisions: [['employees', 'division', 'Div_code']],
+    'cost-centres': [['employees', 'cost_code', 'COST_CODE']],
+    'shift-groups': [['shiftAllocations', 'sh_group', 'sh_group'], ['masters:shift-times', 'sh_group', 'sh_group']],
+    cities: [['employees', 'local_city', 'city_code'], ['employees', 'pmt_city', 'city_code']],
+  };
+  function masterInUse(master, row) {
+    for (const [collection, field, keyField] of MASTER_USES[master] || []) {
+      const rows = collection.startsWith('masters:') ? state.masters[collection.slice(8)] : state[collection] || [];
+      const count = rows.filter(other => present(row[keyField]) && String(other[field] ?? '') === String(row[keyField])).length;
+      if (count) return `${count} ${collection.replace('masters:', '')} record(s) still use ${keyField} ${row[keyField]}`;
+    }
+    return '';
+  }
   for (const master of Object.keys(MASTER_KEYS)) {
     route('GET', '/api/master-data/' + master, () => state.masters[master]);
     route('POST', '/api/master-data/' + master, body => { const keys = MASTER_KEYS[master]; required(body, keys); const identity = Object.fromEntries(keys.map(k => [k, body[k]])); if (state.masters[master].some(row => sameKeys(row, identity))) fail(409, 'This master record already exists in the local demo.'); state.masters[master].push(body); save(); return success(); }, { mutation: true });
-    route('PUT', '/api/master-data/' + master, body => { required(body, ['keys', 'data']); required(body.keys, MASTER_KEYS[master]); required(body.data, MASTER_KEYS[master]); const index = state.masters[master].findIndex(row => sameKeys(row, body.keys)); if (index < 0) fail(404, 'Local demo master record not found.'); state.masters[master][index] = { ...state.masters[master][index], ...body.data }; save(); return success(); }, { mutation: true });
-    route('DELETE', '/api/master-data/' + master, body => { required(body.keys || {}, MASTER_KEYS[master]); const before = state.masters[master].length; state.masters[master] = state.masters[master].filter(row => !sameKeys(row, body.keys)); if (before === state.masters[master].length) fail(404, 'Local demo master record not found.'); save(); return success(); }, { mutation: true });
+    route('PUT', '/api/master-data/' + master, body => { required(body, ['keys', 'data']); required(body.keys, MASTER_KEYS[master]); required(body.data, MASTER_KEYS[master]); const index = state.masters[master].findIndex(row => sameKeys(row, body.keys)); if (index < 0) fail(404, 'Local demo master record not found.');
+      const next = { ...state.masters[master][index], ...body.data }; const identity = Object.fromEntries(MASTER_KEYS[master].map(k => [k, next[k]]));
+      if (!sameKeys(state.masters[master][index], identity)) {
+        // The key is being changed: it must not collide with another record, and nothing may still point at the old one.
+        if (state.masters[master].some((row, i) => i !== index && sameKeys(row, identity))) fail(409, 'Another master record already uses this key.');
+        const inUse = masterInUse(master, state.masters[master][index]); if (inUse) fail(409, `The key cannot change: ${inUse}.`);
+      }
+      state.masters[master][index] = next; save(); return success(); }, { mutation: true });
+    route('DELETE', '/api/master-data/' + master, body => { required(body.keys || {}, MASTER_KEYS[master]); const target = state.masters[master].find(row => sameKeys(row, body.keys)); if (!target) fail(404, 'Local demo master record not found.');
+      const inUse = masterInUse(master, target); if (inUse) fail(409, `Cannot delete: ${inUse}.`);
+      state.masters[master] = state.masters[master].filter(row => row !== target); save(); return success(); }, { mutation: true });
   }
   route('GET', '/api/master-data/lookups', () => ({ entities: entities.map(r => ({ value: r.entity_code, label: r.entity_name })), contractors: state.contractors.map(r => ({ value: r.Contractor_ID, label: r.Contractor_Name })), shiftGroups: state.masters['shift-groups'].map(r => ({ value: r.sh_group, label: `${r.sh_group} - ${r.sh_group_desc}` })) }));
 
@@ -246,7 +312,10 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
   both('/api/leave/getTransTypes', () => transTypes);
   both('/api/leave/getActiveLeavePeriods', () => [{ leave_period_id: 1, period_name: '2026 Demo Leave Year', start_date: '2026-01-01', end_date: '2026-12-31' }]);
   both('/api/leave/getRecentLeaves', () => state.leaves.map(row => ({ ...row, display_name: state.employees.find(e => e.Employee_Code === row.employee_code)?.display_name || '', leave_type_name: leaveTypes.find(t => t.leave_type_code === row.leave_type_code)?.leave_type_name || row.leave_type_code })));
-  route('POST', '/api/leave/addLeave', body => { required(body, ['employee_code', 'leave_type_code', 'from_date', 'to_date']); if (!state.employees.some(e => e.Employee_Code === body.employee_code)) fail(400, 'Select a local demo employee.'); if (!leaveTypes.some(t => t.leave_type_code === body.leave_type_code)) fail(400, 'Select a valid local demo leave type.'); if (!goodDate(body.from_date) || !goodDate(body.to_date) || body.from_date > body.to_date || !(Number(body.total_days) > 0)) fail(400, 'Valid dates and positive leave days are required.'); const id = nextId(state.leaves, 'leave_id'); state.leaves.push({ ...body, leave_id: id, leave_app_id: id, leave_entry_id: id, status: 'APPROVED', demo: true }); state.ledger.push({ trans_id: nextId(state.ledger, 'trans_id'), employee_code: body.employee_code, leave_type_code: body.leave_type_code, trans_type: 'AVAILED', leave_days: Number(body.total_days), pmonth: body.from_date.slice(0, 7) + '-01', trans_date: new Date().toISOString(), ref_type: 'LEAVE', ref_no: String(id), remarks: body.reason || '' }); save(); return success(); }, { mutation: true });
+  route('POST', '/api/leave/addLeave', body => { required(body, ['employee_code', 'leave_type_code', 'from_date', 'to_date']); if (!state.employees.some(e => e.Employee_Code === body.employee_code)) fail(400, 'Select a local demo employee.'); if (!leaveTypes.some(t => t.leave_type_code === body.leave_type_code)) fail(400, 'Select a valid local demo leave type.'); if (!goodDate(body.from_date) || !goodDate(body.to_date) || body.from_date > body.to_date || !(Number(body.total_days) > 0)) fail(400, 'Valid dates and positive leave days are required.');
+    const span = Math.round((Date.parse(dateOnly(body.to_date)) - Date.parse(dateOnly(body.from_date))) / 86400000) + 1;
+    if (Number(body.total_days) > span || (Number(body.total_days) * 2) % 1 !== 0) fail(400, `total_days must be a whole or half number of days and cannot exceed the ${span} day(s) between the dates.`);
+    if (state.leaves.some(old => old.employee_code === body.employee_code && dateOnly(old.from_date) <= dateOnly(body.to_date) && dateOnly(old.to_date) >= dateOnly(body.from_date))) fail(409, 'This worker already has leave recorded in that date range.'); const id = nextId(state.leaves, 'leave_id'); state.leaves.push({ ...body, leave_id: id, leave_app_id: id, leave_entry_id: id, status: 'APPROVED', demo: true }); state.ledger.push({ trans_id: nextId(state.ledger, 'trans_id'), employee_code: body.employee_code, leave_type_code: body.leave_type_code, trans_type: 'AVAILED', leave_days: Number(body.total_days), pmonth: body.from_date.slice(0, 7) + '-01', trans_date: new Date().toISOString(), ref_type: 'LEAVE', ref_no: String(id), remarks: body.reason || '' }); save(); return success(); }, { mutation: true });
   route('POST', '/api/leave/deleteLeave', body => { const id = Number(body.leave_app_id || body.leave_id || body.leave_entry_id); if (!id) fail(400, 'leave_app_id is required.'); state.leaves = state.leaves.filter(r => r.leave_id !== id); state.ledger = state.ledger.filter(r => !(r.ref_type === 'LEAVE' && r.ref_no === String(id))); save(); return success(); }, { mutation: true });
   route('GET', '/api/leave/query', body => ({ demo: true, data: ledgerRows(state, body) }));
   route('POST', '/api/leave/save-bulk', body => {
@@ -267,7 +336,7 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
       if (hasId) editedIds.add(id);
       if (!state.employees.some(e => e.Employee_Code === row.employee_code) || !leaveTypes.some(t => t.leave_type_code === row.leave_type_code) || !transTypes.some(t => t.trans_type === row.trans_type) || !Number.isFinite(Number(row.leave_days)) || !(Number(row.leave_days) > 0)) fail(400, 'Select valid local employee, leave type, transaction type, and positive leave days.');
       // Store business fields explicitly: UI flags and derived display fields do not belong to the ledger.
-      return { trans_id: id || newId++, employee_code: row.employee_code, leave_type_code: row.leave_type_code, trans_type: row.trans_type, leave_days: Number(row.leave_days), pmonth: dateOnly(row.pmonth), trans_date: timestamp, ref_type: 'MANUAL', ref_no: String(row.ref_no ?? previous?.ref_no ?? ''), remarks: String(row.remarks || ''), created_by: previous?.created_by || 'demo', created_date: previous?.created_date || previous?.trans_date || timestamp, ...(previous ? { modified_by: 'demo', modified_date: timestamp } : {}) };
+      return { trans_id: id || newId++, employee_code: row.employee_code, leave_type_code: row.leave_type_code, trans_type: row.trans_type, leave_days: Number(row.leave_days), pmonth: dateOnly(row.pmonth), trans_date: timestamp, ref_type: 'MANUAL', ref_no: String(row.ref_no ?? previous?.ref_no ?? ''), remarks: String(row.remarks || ''), created_by: previous?.created_by || actorId(), created_date: previous?.created_date || previous?.trans_date || timestamp, ...(previous ? { modified_by: actorId(), modified_date: timestamp } : {}) };
     });
     const updated = [...state.ledger];
     for (const record of records) { const index = updated.findIndex(old => Number(old.trans_id) === record.trans_id); if (index >= 0) updated[index] = record; else updated.push(record); }
@@ -314,7 +383,7 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
       if (req.method === 'OPTIONS') { res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type'); res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); res.writeHead(204); res.end(); return; }
       const url = new URL(req.url, 'http://127.0.0.1'); const pathname = url.pathname.replace(/\/$/, '');
       if (url.protocol !== 'http:' || !LOCAL_HOSTS.has(url.hostname)) fail(403, 'Only local request targets are allowed.');
-      const match = routes.map(route => { const keys = []; const pattern = route.path.split('/').map(piece => piece.startsWith(':') ? (keys.push(piece.slice(1)), '([^/]+)') : piece.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('/'); const parts = pathname.match(new RegExp('^' + pattern + '$', 'i')); return route.method === req.method && parts ? { route, params: Object.fromEntries(keys.map((key, i) => [key, decodeURIComponent(parts[i + 1])])) } : null; }).find(Boolean);
+      const match = routes.map(route => { const keys = []; const pattern = route.path.split('/').map(piece => piece.startsWith(':') ? (keys.push(piece.slice(1)), '([^/]+)') : piece.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('/'); const parts = pathname.match(new RegExp('^' + pattern + '$', 'i')); return route.method === req.method && parts ? { route, params: Object.fromEntries(keys.map((key, i) => [key, decodeParam(parts[i + 1])])) } : null; }).find(Boolean);
       if (!match) fail(501, `Unsupported local demo API: ${req.method} ${url.pathname}. No request was sent to production.`);
       const token = String(req.headers.authorization || '').replace(/^Bearer /i, '');
       const actor = sessions.get(token);
@@ -323,7 +392,7 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
       const body = Array.isArray(payload) ? payload : { ...Object.fromEntries(url.searchParams), ...payload };
       const requestContext = { user: actor, token, method: req.method, path: pathname, isMutation: match.route.mutation, headers: req.headers };
       authorizeLocalRequest(getStateSafe(), requestContext, body, fail);
-      const result = await match.route.handler(body, match.params, requestContext);
+      const result = await runAsActor(actor, () => match.route.handler(body, match.params, requestContext));
       res.writeHead(200); res.end(JSON.stringify(scopeLocalResult(getStateSafe(), result, requestContext)));
     } catch (error) {
       res.writeHead(error.status || 500);

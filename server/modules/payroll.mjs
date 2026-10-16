@@ -1,4 +1,5 @@
 import { INDIAN_STATES, newRuleProfile, mergeRuleSections, payrollReadiness } from './payroll-rules.mjs';
+import { actorId } from '../actor.mjs';
 
 const present = value => value !== null && value !== undefined && String(value).trim() !== '';
 const same = (a, b) => String(a ?? '') === String(b ?? '');
@@ -53,7 +54,7 @@ export function registerPayrollRoutes(ctx) {
   const assertPeriodUnlocked = row => {
     if (state().wageLocks.some(lock => date(lock.pmonth) === date(row.pmonth) && billing(lock) === billing(row))) fail(423, 'WAGE_PERIOD_LOCKED: Remove the period locks before changing this process month.');
   };
-  const stamp = row => ({ ...row, modified_by: 'demo', modified_at: new Date().toISOString() });
+  const stamp = row => ({ ...row, modified_by: actorId(), modified_at: new Date().toISOString() });
 
   // Process-month maintenance is calendar input validation, never a pay-day divisor policy.
   const normalizeMonth = input => {
@@ -335,7 +336,7 @@ export function registerPayrollRoutes(ctx) {
     for (const row of state().ledger.filter(inScope)) assertUnlocked(pmonth, billing(row), employee(row.employee_code));
     const previous = new Map(state().ledger.filter(inScope).map(row => [row.source_key, row]));
     const retained = state().ledger.filter(row => !inScope(row)); let id = nextId(state().ledger, 'trans_id');
-    const posted = outputs.map(row => ({ ...row, trans_id: previous.get(row.source_key)?.trans_id || id++, trans_date: previous.get(row.source_key)?.trans_date || new Date().toISOString(), created_by: 'demo' }));
+    const posted = outputs.map(row => ({ ...row, trans_id: previous.get(row.source_key)?.trans_id || id++, trans_date: previous.get(row.source_key)?.trans_date || new Date().toISOString(), created_by: actorId() }));
     state().ledger = [...retained, ...posted]; save();
     return { ...success('Calculated local payroll leave outputs posted. Manual and leave-owned transactions were preserved.'), data: [{ posted_rows: posted.length }], postedRows: posted.length };
   }, { mutation: true, status: 'rules-required', notes: '422 without explicit CALCULATED payroll leave outputs. Atomic scoped and idempotent PAYROLL ledger posting; no fixture-to-payroll inference.' });

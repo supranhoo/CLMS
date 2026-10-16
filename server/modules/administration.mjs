@@ -16,16 +16,17 @@ function isScopedEmployee(state, user, employee) {
 }
 export function authorizeLocalRequest(state, request, body, fail) {
   const path = request.path.toLowerCase();
-  const publicPath = ['/api/users/login', '/api/users/generateresettoken', '/api/users/resetpassword', '/api/dev/health', '/api/dev/capabilities', '/api/dev/features'];
+  const publicPath = ['/api/users/login', '/api/users/logout', '/api/users/generateresettoken', '/api/users/resetpassword', '/api/dev/health', '/api/dev/capabilities', '/api/dev/features'];
   if (publicPath.includes(path)) return;
   if (!request.user) {
     if (request.token) fail(401, 'The local session has expired. Sign in to the demo workspace again.');
     if (path === '/api/menu/getmenuuserdata') return;
-    // Reference lists remain available for the recovered login and form bootstrap.
-    if (request.method === 'GET' && !path.startsWith('/api/dev/')) return;
+    // Every other read needs a session too: worker records hold identity numbers and the account list holds contact details.
     fail(401, 'A local login is required.');
   }
   if (admin(request.user)) return;
+  // Changing your own password is self-service; the handler itself refuses any other account.
+  if (path === '/api/users/changepassword') return;
   if (/^\/api\/(?:dev|assignroles|users|compliance\/profiles|payroll\/rules)/.test(path)) fail(403, 'Local administrator access is required.');
   const code = body.employee_code || body.Employee_Code || body.EmployeeCode;
   if (code) { const employee = state.employees.find(row => row.Employee_Code === code); if (employee && !isScopedEmployee(state, request.user, employee)) fail(403, 'This worker is outside the assigned local scope.'); }
@@ -47,20 +48,30 @@ export function authorizeLocalRequest(state, request, body, fail) {
     if (!activities.some(row => ['WRITE', 'ALL', 'LOCAL_DEMO'].includes(String(row.activity_name || row.activity_id || row)))) fail(403, 'A write activity must be assigned before changing local data.');
   }
 }
+export function canSeeEmployee(state, user, employeeCode) {
+  if (!user || admin(user)) return true;
+  const employee = state.employees.find(row => row.Employee_Code === employeeCode);
+  return Boolean(employee) && isScopedEmployee(state, user, employee);
+}
 export function scopeLocalResult(state, result, request) {
   if (!request.user || admin(request.user)) return result;
   const workers = new Set(state.employees.filter(row => isScopedEmployee(state, request.user, row)).map(row => row.Employee_Code));
   const contractors = new Set(selectionValues(state.roles?.[request.user.emp_id]?.Contractor, 'contractor_code'));
-  const filter = rows => rows.filter(row => {
+  const keep = row => {
     if (!row || typeof row !== 'object') return true;
     const code = row.Employee_Code || row.employee_code || row.EmployeeCode || row.emp_code;
     if (code) return workers.has(code);
     if (row.Contractor_ID || row.contractor_id || row.contractor_code) return contractors.has(String(row.Contractor_ID || row.contractor_id || row.contractor_code));
     return true;
-  });
-  if (Array.isArray(result)) return filter(result);
-  if (result && typeof result === 'object') return Object.fromEntries(Object.entries(result).map(([key, value]) => [key, Array.isArray(value) ? filter(value) : value]));
-  return result;
+  };
+  // Lists are filtered at every depth, so a report that nests its rows (accounting inputs, compliance data) is scoped too.
+  const scope = (value, depth) => {
+    if (depth > 4) return value;
+    if (Array.isArray(value)) return value.filter(keep).map(item => (item && typeof item === 'object' ? scope(item, depth + 1) : item));
+    if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, inner]) => [key, scope(inner, depth + 1)]));
+    return value;
+  };
+  return scope(result, 0);
 }
 
 export function registerAdministrationRoutes(ctx) {
@@ -74,12 +85,26 @@ export function registerAdministrationRoutes(ctx) {
   function validatePassword(value) { if (typeof value !== 'string' || value.length < 8 || value.length > 128 || !/[A-Za-z]/.test(value) || !/\d/.test(value)) fail(400, 'Use 8–128 characters with letters and numbers for the local account.'); }
   function publicAccount(row) { return { ...cleanUser(row), environment: 'LOCAL_SYNTHETIC_DEMO', demo: true }; }
   function invalidate(code) { for (const [token, user] of sessions) if (user.emp_id === code) sessions.delete(token); }
+  // Failed sign-ins are counted per user ID (known or not): ten in a row lock that ID for a minute.
+  const failedLogins = new Map(); const MAX_FAILED_LOGINS = 10; const LOGIN_LOCK_MS = 60_000;
+  const DUMMY_ACCOUNT = { passwordSalt: '00'.repeat(16), passwordHash: '00'.repeat(32) };
   route('POST', '/api/users/login', body => {
+    const id = typeof body.emp_id === 'string' ? body.emp_id.slice(0, 64) : '';
+    const attempts = failedLogins.get(id);
+    if (attempts?.lockedUntil > Date.now()) fail(429, `Too many failed sign-ins for this user ID. Try again in ${Math.ceil((attempts.lockedUntil - Date.now()) / 1000)} seconds.`);
     const row = state().authUsers.find(user => user.emp_id === body.emp_id && user.Is_Active !== 'N');
-    if (!passwordMatches(row, body.password)) fail(401, 'Invalid local user ID or password. Demo access: demo / demo123.');
+    // An unknown ID still pays for one password hash, so response time does not reveal which IDs exist.
+    if (!passwordMatches(row || DUMMY_ACCOUNT, body.password) || !row) {
+      if (failedLogins.size > 5000) failedLogins.clear();
+      const count = (attempts?.lockedUntil > 0 ? 0 : attempts?.count || 0) + 1;
+      failedLogins.set(id, { count, lockedUntil: count >= MAX_FAILED_LOGINS ? Date.now() + LOGIN_LOCK_MS : 0 });
+      fail(401, 'Invalid local user ID or password. Demo access: demo / demo123.');
+    }
+    failedLogins.delete(id);
     const token = 'local-demo-' + randomBytes(24).toString('hex'); sessions.set(token, cleanUser(row));
     return { ...publicAccount(row), token };
   });
+  route('POST', '/api/users/logout', (body, params, request) => { if (request?.token) sessions.delete(request.token); return success('Signed out of the local session.'); });
   both('/api/users/getAllUsers', () => state().authUsers.map(publicAccount));
   route('POST', '/api/users/register', (body, params, request) => {
     required(body, ['emp_id', 'Name', 'password']); validatePassword(body.password);
@@ -95,6 +120,7 @@ export function registerAdministrationRoutes(ctx) {
     if (body.password) { validatePassword(body.password); Object.assign(row, hashPassword(body.password)); invalidate(row.emp_id); }
     for (const key of ['Name', 'email_id', 'mobile_no', 'Is_Active']) if (body[key] !== undefined) row[key] = body[key];
     if (body.role) { row.role = body.role; invalidate(row.emp_id); }
+    if (body.Is_Active === 'N') invalidate(row.emp_id);
     audit('USER_UPDATED', row.emp_id, request?.user); return publicAccount(row);
   }, { mutation: true });
   route('POST', '/api/users/changePassword', (body, params, request) => {

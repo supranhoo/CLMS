@@ -1,3 +1,5 @@
+import { actorId } from '../actor.mjs';
+import { canSeeEmployee } from './administration.mjs';
 const FORMS = {
   'form-xii-register-of-contractors': ['Form XII — Register of contractors', 'contractors'],
   'form-xiii-register-of-workmen': ['Form XIII — Register of workmen', 'workers'],
@@ -38,6 +40,8 @@ export function registerWorkspaceRoutes(ctx) {
     const seen = new Set(); const errors = [];
     const accepted = rows.map((raw, index) => {
       const row = { ...raw, [key]: String(raw[key] || '').trim(), [name]: String(raw[name] || '').trim() };
+      // Workbook number cells arrive as numbers; codes are text everywhere else and compared strictly.
+      for (const field of ['contractor_id', 'dept', 'bu', 'entity_code', 'loc_code', 'division', 'design_code', 'section', 'cost_code', 'Adhar_No', 'contact_no']) if (typeof row[field] === 'number') row[field] = String(row[field]);
       if (!row[key] || !row[name]) errors.push({ row: index + 2, message: `${key} and ${name} are required.` });
       if (seen.has(row[key])) errors.push({ row: index + 2, message: 'Duplicate code in workbook.' }); seen.add(row[key]);
       if (kind === 'employees' && row.contractor_id && !s.contractors.some(c => c.Contractor_ID === String(row.contractor_id))) errors.push({ row: index + 2, message: 'Unknown contractor_id.' });
@@ -46,7 +50,7 @@ export function registerWorkspaceRoutes(ctx) {
     });
     if (errors.length) return { success: false, valid: false, errors, insertedCount: 0, notInsertedRecords: errors };
     if (body.dryRun !== false) return { success: true, valid: true, preview: accepted, count: accepted.length, message: 'Validation only. No records were changed.' };
-    for (const row of accepted) { const index = s[kind].findIndex(old => old[key] === row[key]); if (index >= 0) s[kind][index] = { ...s[kind][index], ...row, Modified_By: 'demo', Modified_Date: new Date().toISOString() }; else s[kind].push({ ...row, Created_By: 'demo', Created_Date: new Date().toISOString() }); }
+    for (const row of accepted) { const index = s[kind].findIndex(old => old[key] === row[key]); if (index >= 0) s[kind][index] = { ...s[kind][index], ...row, Modified_By: actorId(), Modified_Date: new Date().toISOString() }; else s[kind].push({ ...row, Created_By: actorId(), Created_Date: new Date().toISOString() }); }
     save(); return { ...success('Local workbook rows saved.'), insertedCount: accepted.length, notInsertedRecords: [] };
   }
   route('POST', '/api/employee/import', body => importRecords(body, 'employees'), mutation);
@@ -59,8 +63,8 @@ export function registerWorkspaceRoutes(ctx) {
     save(); return { ...success('Selected local workers marked inactive.'), insertedCount: body.muster.length, notInsertedRecords: [] };
   }, mutation);
 
-  route('GET', '/api/accounting/input-summary', body => {
-    const s = getState(); const scoped = rows => rows.filter(row => (!body.pmonth || dateOnly(row.pmonth) === dateOnly(body.pmonth)) && (!body.contractor_id || s.employees.find(e => e.Employee_Code === (row.employee_code || row.EmployeeCode))?.contractor_id === body.contractor_id));
+  route('GET', '/api/accounting/input-summary', (body, params, request) => {
+    const s = getState(); const scoped = rows => rows.filter(row => canSeeEmployee(s, request?.user, row.employee_code || row.EmployeeCode) && (!body.pmonth || dateOnly(row.pmonth) === dateOnly(body.pmonth)) && (!body.contractor_id || s.employees.find(e => e.Employee_Code === (row.employee_code || row.EmployeeCode))?.contractor_id === body.contractor_id));
     const sums = Object.fromEntries(['earnings', 'deductions', 'arrears'].map(key => [key, scoped(s[key] || []).reduce((total, row) => total + Number(row.amount ?? row.ernValue ?? row.dedValue ?? row.arrearValue ?? row.ern_amount ?? row.ded_amount ?? row.arrear_amount ?? 0), 0)]));
     return { demo: true, ...sums, note: 'Recorded input amounts only. These are not gross wages, net pay or statutory dues.', rows: Object.fromEntries(['earnings', 'deductions', 'arrears'].map(key => [key, scoped(s[key] || [])])) };
   });

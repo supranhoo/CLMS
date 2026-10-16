@@ -1,3 +1,4 @@
+import { actorId } from '../actor.mjs';
 // Local attendance inputs and reports. No biometric/device/OS services are called.
 const DAY = 86400000;
 const key = row => `${row.employee_code || row.Employee_Code || row.EMPLOYEE_CODE}|${String(row.attendance_date || '').slice(0, 10)}`;
@@ -69,7 +70,7 @@ export function registerAttendanceRoutes(ctx) {
     const shift = raw.shift || raw.sh_code;
     if (!state().masters['shift-times'].some(s => s.sh_code === shift)) fail(400, 'Select a valid local shift.');
     if (!punchMarks.has(raw.punch_mark)) fail(400, 'Select a valid local punch mark.');
-    return { employee_code: employee.Employee_Code, attendance_date: day, display_name: employee.display_name, shift, sh_code: shift, punch_mark: raw.punch_mark, working_hours: duration(raw.working_hours || raw.work_hours, 'working_hours'), work_hours: duration(raw.working_hours || raw.work_hours, 'working_hours'), ot_hours: duration(raw.ot_hours, 'ot_hours'), in_punch: null, out_punch: null, remarks: String(raw.remarks || ''), created_by: 'demo', created_date: now(), attendance_source: 'LOCAL_MANUAL_MUSTER' };
+    return { employee_code: employee.Employee_Code, attendance_date: day, display_name: employee.display_name, shift, sh_code: shift, punch_mark: raw.punch_mark, working_hours: duration(raw.working_hours || raw.work_hours, 'working_hours'), work_hours: duration(raw.working_hours || raw.work_hours, 'working_hours'), ot_hours: duration(raw.ot_hours, 'ot_hours'), in_punch: null, out_punch: null, remarks: String(raw.remarks || ''), created_by: actorId(), created_date: now(), attendance_source: 'LOCAL_MANUAL_MUSTER' };
   };
   const uniqueBatch = rows => { const keys = new Set(); for (const row of rows) { if (keys.has(key(row))) fail(409, 'The batch contains duplicate employee/date records.'); keys.add(key(row)); } };
 
@@ -87,7 +88,7 @@ export function registerAttendanceRoutes(ctx) {
   }, mutation);
   route('POST', '/api/attendance/updateManualPunchMark', body => {
     const row = manualRecord(body.updatedArrear || body); const index = state().manualPunches.findIndex(old => key(old) === key(row)); if (index < 0) fail(404, 'Local manual muster entry not found.');
-    state().manualPunches[index] = { ...state().manualPunches[index], ...row, modified_date: now(), modified_by: 'demo' }; save(); return success('Manual muster updated locally.');
+    state().manualPunches[index] = { ...state().manualPunches[index], ...row, modified_date: now(), modified_by: actorId() }; save(); return success('Manual muster updated locally.');
   }, mutation);
   route('POST', '/api/attendance/deleteManualPunchMark', body => {
     emp(body.employee_code); checkDay(body.attendance_date); const index = state().manualPunches.findIndex(old => key(old) === key(body)); if (index < 0) fail(404, 'Local manual muster entry not found.');
@@ -111,7 +112,7 @@ export function registerAttendanceRoutes(ctx) {
     if (outPunch && (ymd(outPunch) < day || Date.parse(ymd(outPunch)) - Date.parse(day) > DAY)) fail(400, 'The OUT punch must be on the attendance date or following day.');
     if (inPunch && outPunch && Date.parse(outPunch) <= Date.parse(inPunch)) fail(400, 'The OUT punch must be after the IN punch.');
     const approved = raw.approved ?? previous?.approved ?? 'N'; if (!['Y', 'N'].includes(approved)) fail(400, 'approved must be Y or N.');
-    return { ...previous, employee_code: employee.Employee_Code, attendance_date: day, contractor_id: employee.contractor_id, display_name: employee.display_name, in_punch_actual: previous?.in_punch_actual ?? actual?.in_punch ?? null, out_punch_actual: previous?.out_punch_actual ?? actual?.out_punch ?? null, in_punch: inPunch, out_punch: outPunch, elapsed_hours: inPunch && outPunch ? minutesText(Math.floor((Date.parse(outPunch) - Date.parse(inPunch)) / 60000)) : null, approved, approved_by: approved === 'Y' ? 'demo' : '', remarks: String(raw.remarks ?? previous?.remarks ?? ''), created_by: previous?.created_by || 'demo', created_date: previous?.created_date || now(), modified_by: previous ? 'demo' : '', modified_date: previous ? now() : null, demo: true };
+    return { ...previous, employee_code: employee.Employee_Code, attendance_date: day, contractor_id: employee.contractor_id, display_name: employee.display_name, in_punch_actual: previous?.in_punch_actual ?? actual?.in_punch ?? null, out_punch_actual: previous?.out_punch_actual ?? actual?.out_punch ?? null, in_punch: inPunch, out_punch: outPunch, elapsed_hours: inPunch && outPunch ? minutesText(Math.floor((Date.parse(outPunch) - Date.parse(inPunch)) / 60000)) : null, approved, approved_by: approved === 'Y' ? actorId() : '', remarks: String(raw.remarks ?? previous?.remarks ?? ''), created_by: previous?.created_by || actorId(), created_date: previous?.created_date || now(), modified_by: previous ? actorId() : '', modified_date: previous ? now() : null, demo: true };
   };
   both('/api/attendance/getRegularisedPunches', body => {
     const day = body.attendance_date ? checkDay(body.attendance_date) : null;
@@ -123,12 +124,13 @@ export function registerAttendanceRoutes(ctx) {
   }, mutation);
   route('POST', '/api/attendance/updateRegularisePunch', body => {
     const day = checkDay(body.attendance_date); const index = state().regularisedPunches.findIndex(old => key(old) === key({ ...body, attendance_date: day })); if (index < 0) fail(404, 'Local regularisation entry not found.');
+    if (state().regularisedPunches[index].approved === 'Y') fail(409, 'An approved regularisation cannot be edited. Withdraw the approval first.');
     const row = regularisedRecord(body, state().regularisedPunches[index]); state().regularisedPunches[index] = row; save(); return { ...success('Punch regularisation updated locally.'), record: row };
   }, mutation);
   route('POST', '/api/attendance/approveRegularisePunch', body => {
     checkDay(body.attendance_date); if (!['Y', 'N'].includes(body.approved)) fail(400, 'approved must be Y or N.');
     const row = state().regularisedPunches.find(old => key(old) === key(body)); if (!row) fail(404, 'Local regularisation entry not found.');
-    row.approved = body.approved; row.approved_by = row.approved === 'Y' ? 'demo' : ''; row.modified_by = 'demo'; row.modified_date = now(); save(); return success('Local regularisation approval recorded.');
+    row.approved = body.approved; row.approved_by = row.approved === 'Y' ? actorId() : ''; row.modified_by = actorId(); row.modified_date = now(); save(); return success('Local regularisation approval recorded.');
   }, mutation);
   route('POST', '/api/attendance/deleteRegularisePunch', body => {
     checkDay(body.attendance_date); const index = state().regularisedPunches.findIndex(old => key(old) === key(body)); if (index < 0) fail(404, 'Local regularisation entry not found.'); state().regularisedPunches.splice(index, 1); save(); return success();
@@ -143,10 +145,10 @@ export function registerAttendanceRoutes(ctx) {
     const rows = inputRows(arr(body), 'Department update').map(raw => {
       const employee = emp(raw.employee_code || raw.EMPLOYEE_CODE); const day = checkDay(raw.attendance_date);
       const dept = raw.dept_code || raw.dept; const bu = raw.bu_code || raw.bu; const division = raw.div_code || raw.division;
-      if (!state().employees.some(e => e.dept === dept) && !state().masters.departments?.some(d => d.dept_code === dept)) fail(400, 'Select a valid local department.');
+      if (!state().employees.some(e => e.dept === dept) && !(ctx.departments || []).some(d => d.dept_code === dept)) fail(400, 'Select a valid local department.');
       if (!state().masters['business-units'].some(b => b.bu_code === bu && (!raw.entity_code || b.entity_code === raw.entity_code))) fail(400, 'Select a valid local business unit and entity combination.');
       if (division && !state().masters.divisions.some(d => d.Div_code === division && (!raw.entity_code || d.entity_code === raw.entity_code))) fail(400, 'Select a valid local division and entity combination.');
-      return { employee_code: employee.Employee_Code, attendance_date: day, dept_code: dept, dept, bu_code: bu, bu, entity_code: raw.entity_code || employee.entity_code, div_code: division || employee.division, modified_by: 'demo', modified_date: now() };
+      return { employee_code: employee.Employee_Code, attendance_date: day, dept_code: dept, dept, bu_code: bu, bu, entity_code: raw.entity_code || employee.entity_code, div_code: division || employee.division, modified_by: actorId(), modified_date: now() };
     }); uniqueBatch(rows);
     const updated = [...state().musterDepartments]; for (const row of rows) { const index = updated.findIndex(old => key(old) === key(row)); if (index < 0) updated.push(row); else updated[index] = row; }
     state().musterDepartments = updated; save(); return { ...success('Daily muster departments updated locally.'), updatedCount: rows.length, notInsertedRecords: [] };
@@ -159,7 +161,7 @@ export function registerAttendanceRoutes(ctx) {
     if (body.weekly_off && !['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].includes(body.weekly_off)) fail(400, 'weekly_off must be a weekday name.');
     const index = state().shiftAllocations.findIndex(r => r.employee_code === body.employee_code);
     if (update && index < 0) fail(404, 'Local employee shift allocation not found.'); if (!update && index >= 0) fail(409, 'Employee already has a local shift allocation; edit it instead.');
-    const row = { ...(index >= 0 ? state().shiftAllocations[index] : {}), employee_code: body.employee_code, sh_group: body.sh_group, sh_group_eff_from: date, weekly_off: body.weekly_off || '', ...(update ? { modified_by: 'demo', modified_date: now() } : { created_by: 'demo', created_date: now() }) };
+    const row = { ...(index >= 0 ? state().shiftAllocations[index] : {}), employee_code: body.employee_code, sh_group: body.sh_group, sh_group_eff_from: date, weekly_off: body.weekly_off || '', ...(update ? { modified_by: actorId(), modified_date: now() } : { created_by: actorId(), created_date: now() }) };
     if (index >= 0) state().shiftAllocations[index] = row; else state().shiftAllocations.push(row); save(); return success('Shift allocation saved locally.');
   };
   route('POST', '/api/attendance/addShGrpAlloc', body => allocation(body, false), mutation);
@@ -175,7 +177,7 @@ export function registerAttendanceRoutes(ctx) {
   route('POST', '/api/attendance/addApprovedManpower', body => {
     required(body, manpowerKeys); if (!state().contractors.some(c => c.Contractor_ID === body.contractor_id)) fail(400, 'Select a valid local contractor.');
     if (!state().masters['business-units'].some(b => b.bu_code === body.bu_code)) fail(400, 'Select a valid local business unit.');
-    if (!state().employees.some(e => e.dept === body.dept_code) && !state().masters.departments?.some(d => d.dept_code === body.dept_code)) fail(400, 'Select a valid local department.');
+    if (!state().employees.some(e => e.dept === body.dept_code) && !(ctx.departments || []).some(d => d.dept_code === body.dept_code)) fail(400, 'Select a valid local department.');
     if (!['SL', 'US', 'PR'].includes(body.emp_type)) fail(400, 'Select a valid local employee type.');
     const values = [body.approved_day, body.approved_night].map(Number); if (values.some(n => !Number.isSafeInteger(n) || n < 0)) fail(400, 'Approved manpower must be non-negative whole numbers.');
     if (state().approvedManpower.some(r => manpowerMatch(r, body))) fail(409, 'Approved manpower already exists for this contractor, department, business unit and type.');
@@ -221,11 +223,11 @@ export function registerAttendanceRoutes(ctx) {
     const employee = emp(body.employee_code); required(body, ['request_type', 'reason']); const requestDate = checkDay(body.request_date, 'request_date'); const range = checkRange({ from_date: body.start_date, to_date: body.end_date });
     if (!['OD', 'WFH'].includes(body.request_type)) fail(400, 'request_type must be OD or WFH.');
     if (state().employeeRequests.some(r => r.employee_code === employee.Employee_Code && r.status !== 'REJECTED' && r.start_date <= range.to_date && r.end_date >= range.from_date)) fail(409, 'An overlapping local employee request already exists.');
-    const row = { employee_code: employee.Employee_Code, request_id: nextId(state().employeeRequests, 'request_id'), request_date: requestDate, request_type: body.request_type, start_date: range.from_date, end_date: range.to_date, reason: String(body.reason).trim(), approver_id: body.approver_id || 'demo', status: 'PENDING', created_by: 'demo', created_date: now(), demo: true }; state().employeeRequests.push(row); save(); return row;
+    const row = { employee_code: employee.Employee_Code, request_id: nextId(state().employeeRequests, 'request_id'), request_date: requestDate, request_type: body.request_type, start_date: range.from_date, end_date: range.to_date, reason: String(body.reason).trim(), approver_id: body.approver_id || actorId(), status: 'PENDING', created_by: actorId(), created_date: now(), demo: true }; state().employeeRequests.push(row); save(); return row;
   }, mutation);
   route('POST', '/api/attendance/approveOrRejectEmpRequest', body => {
     if (!['approve', 'reject'].includes(body.action)) fail(400, 'action must be approve or reject.'); const row = state().employeeRequests.find(r => r.request_id === Number(body.request_id)); if (!row) fail(404, 'Local employee request not found.'); if (row.status !== 'PENDING') fail(409, 'This employee request has already been reviewed.');
-    row.status = body.action === 'approve' ? 'APPROVED' : 'REJECTED'; row.reviewed_by = 'demo'; row.reviewed_date = now(); row.review_remarks = String(body.remarks || ''); save(); return { ...success('Employee request reviewed locally. Attendance credit awaits BFCL rules.'), record: row };
+    row.status = body.action === 'approve' ? 'APPROVED' : 'REJECTED'; row.reviewed_by = actorId(); row.reviewed_date = now(); row.review_remarks = String(body.remarks || ''); save(); return { ...success('Employee request reviewed locally. Attendance credit awaits BFCL rules.'), record: row };
   }, mutation);
 
   route('POST', '/api/attendance/uploadManualPunches', body => {
@@ -270,7 +272,7 @@ export function registerAttendanceRoutes(ctx) {
     const a = String(body.present_pattern || '').split('-'); const b = String(body.converted_pattern || '').split('-');
     if (a.length < 2 || a.length !== b.length || [...a, ...b].some(m => !punchMarks.has(m))) fail(400, 'Sandwich patterns require the same number of valid punch marks, at least two each.');
     if (state().sandwichRules.some(r => r.rule_id !== previous.rule_id && r.present_pattern === body.present_pattern)) fail(409, 'A local draft rule for this present pattern already exists.');
-    return { ...previous, rule_id: previous.rule_id || nextId(state().sandwichRules, 'rule_id'), present_pattern: body.present_pattern, converted_pattern: body.converted_pattern, created_by: previous.created_by || 'demo', created_date: previous.created_date || now(), status: 'DRAFT_AWAITING_BFCL_RULES', demo: true };
+    return { ...previous, rule_id: previous.rule_id || nextId(state().sandwichRules, 'rule_id'), present_pattern: body.present_pattern, converted_pattern: body.converted_pattern, token_count: a.length, is_active: ['Y', 'N'].includes(body.is_active) ? body.is_active : previous.is_active || 'Y', created_by: previous.created_by || actorId(), created_date: previous.created_date || now(), status: 'DRAFT_AWAITING_BFCL_RULES', demo: true };
   };
   route('POST', '/api/attendance/addSandwichRule', body => { const row = sandwichRecord(body); state().sandwichRules.push(row); save(); return success('Draft sandwich rule saved locally; processing awaits BFCL policy.'); }, mutation);
   route('POST', '/api/attendance/updateSandwichRule', body => { const index = state().sandwichRules.findIndex(r => r.rule_id === Number(body.rule_id)); if (index < 0) fail(404, 'Local sandwich rule not found.'); const row = sandwichRecord(body, state().sandwichRules[index]); state().sandwichRules[index] = row; save(); return success(); }, mutation);
