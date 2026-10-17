@@ -32,6 +32,8 @@ test('shell source keeps required navigation and public-shell contracts', async 
   assert.match(appShell, /Search screens/);
   assert.match(appShell, /aria-expanded/);
   assert.match(appShell, /Escape/);
+  assert.match(appShell, /ArrowDown/);
+  assert.match(appShell, /aria-activedescendant/);
   assert.match(shellCss, /@media \(max-width: 1000px\)/);
   assert.match(shellCss, /\.bfcl-drawer-backdrop/);
   assert.match(app, /PublicShell/);

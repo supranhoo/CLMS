@@ -92,15 +92,37 @@ function ShellNavigation({ groups, onNavigate, onClose, mobile }) {
 }
 
 function SearchBox({ items, onNavigate }) {
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const [activeIndex, setActiveIndex] = useState(-1);
   const matches = query.trim().length < 2 ? [] : items.filter((item) => item.menu_name.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 8);
+  const selectResult = (item) => {
+    if (!item) return;
+    setQuery("");
+    setActiveIndex(-1);
+    navigate(item.menu_url);
+    onNavigate();
+  };
   return (
     <div className="bfcl-screen-search">
       <FaSearch aria-hidden="true" />
-      <input aria-label="Search screens" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search screens" />
+      <input
+        aria-label="Search screens"
+        aria-controls="bfcl-search-results"
+        aria-activedescendant={activeIndex >= 0 ? `bfcl-search-result-${matches[activeIndex]?.menu_id}` : undefined}
+        value={query}
+        onChange={(event) => { setQuery(event.target.value); setActiveIndex(-1); }}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowDown" && matches.length) { event.preventDefault(); setActiveIndex((index) => Math.min(index + 1, matches.length - 1)); }
+          if (event.key === "ArrowUp" && matches.length) { event.preventDefault(); setActiveIndex((index) => Math.max(index - 1, 0)); }
+          if (event.key === "Enter" && activeIndex >= 0) { event.preventDefault(); selectResult(matches[activeIndex]); }
+          if (event.key === "Escape") { setQuery(""); setActiveIndex(-1); }
+        }}
+        placeholder="Search screens"
+      />
       {query.trim().length >= 2 && (
-        <div className="bfcl-search-results" role="listbox" aria-label="Screen search results">
-          {matches.length ? matches.map((item) => <Link role="option" key={`${item.menu_id}-${item.menu_url}`} to={item.menu_url} onClick={() => { setQuery(""); onNavigate(); }}>{item.menu_name}<span>{routeLabel(item.menu_url)}</span></Link>) : <p>No permitted screens match “{query}”.</p>}
+        <div className="bfcl-search-results" id="bfcl-search-results" role="listbox" aria-label="Screen search results">
+          {matches.length ? matches.map((item, index) => <Link role="option" id={`bfcl-search-result-${item.menu_id}`} aria-selected={index === activeIndex} key={`${item.menu_id}-${item.menu_url}`} to={item.menu_url} onClick={(event) => { event.preventDefault(); selectResult(item); }}>{item.menu_name}<span>{routeLabel(item.menu_url)}</span></Link>) : <p>No permitted screens match “{query}”.</p>}
         </div>
       )}
     </div>
