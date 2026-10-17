@@ -113,6 +113,8 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
   const both = (path, handler, options) => { route('GET', path, handler, options); route('POST', path, handler, options); };
   const success = message => ({ success: true, demo: true, message: message || 'Saved in the local synthetic demo only.' });
 
+  route('GET', '/api/runtime', () => ({ mode: 'demo', demo: true }));
+
   route('GET', '/api/dev/health', () => ({ ok: true, environment: 'LOCAL_SYNTHETIC_DEMO', productionConnected: false, persistence: persist, version: 1 }));
   route('GET', '/api/dev/capabilities', () => ({ environment: 'LOCAL_SYNTHETIC_DEMO', productionConnected: false, payrollEngine: 'unavailable', statutoryCalculations: 'unavailable', endpoints: capabilities, unknownEndpoints: '501 - explicit unsupported response' }));
   route('POST', '/api/dev/reset', () => { state = seedState(); sessions.clear(); save(); return success('Local demo fixtures restored. Local sessions were revoked. Production was not contacted.'); }, { mutation: true });
@@ -340,16 +342,18 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   let config;
   try {
     config = readServerConfig();
-    if (!config.isDemo) {
-      throw new Error(`The ${config.mode} server adapter is not implemented yet. Configure the SQL repository and authentication adapter before enabling server mode; synthetic data is blocked outside demo mode.`);
-    }
   } catch (error) {
     console.error(`CLMS server configuration error: ${error.message}`);
     process.exitCode = 1;
     process.exit();
   }
+  if (!config.isDemo) {
+    try { const { startProduction } = await import('./production/start.mjs'); await startProduction(config); }
+    catch { console.error('CLMS SQL server startup failed. Verify database access, migrations, adapter and HTTPS origin configuration. No synthetic fallback was started.'); process.exitCode = 1; }
+  } else {
   const server = createServer({ dataDir: config.dataDir, persist: config.persist });
   server.on('error', error => { console.error('Local demo API could not start:', error.message); process.exitCode = 1; });
   server.listen(config.port, config.host, () => console.log(`CLMS synthetic demo API listening on ${config.host}:${config.port} (demo / demo123). No production connection.`));
   for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => server.close(() => process.exit(0)));
+  }
 }

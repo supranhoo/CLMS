@@ -51,9 +51,9 @@ See [DEVELOPMENT.md](DEVELOPMENT.md) for the architecture, recovery provenance, 
 
 ## Server deployment foundation
 
-The approved Windows and Docker implementation plan is documented in [docs/SERVER_IMPLEMENTATION_PLAN.md](docs/SERVER_IMPLEMENTATION_PLAN.md). The repository now includes a validated environment schema, a web/API container split, a Compose deployment skeleton and a production safety gate. Demo mode remains the only runnable mode until the SQL repository and production authentication adapter are implemented; server modes deliberately refuse to start with the synthetic adapter.
+The approved Windows and Docker implementation plan is documented in [docs/SERVER_IMPLEMENTATION_PLAN.md](docs/SERVER_IMPLEMENTATION_PLAN.md). A separate SQL Server adapter now supplies migrations, secure persistent accounts/sessions and core worker, contractor and master operations for staging/production. Server modes require explicit SQL configuration and never fall back to fictional data. This is a core server release; attendance, leave, payroll and statutory workflows still run only in the demo or remain pending. Follow [the server runbook](deploy/SERVER_RUNBOOK.md) for separate database provisioning, migrations, bootstrap, HTTPS and verification.
 
-Copy `.env.example` to a secret-managed server configuration when preparing an environment. Do not commit `.env.server` or put database credentials into frontend variables. The Compose files are packaging foundations for staging and production, not evidence that the missing original database schema or payroll rules have been recovered.
+Use `deploy/server.env.example` and a restricted connection-string secret file when preparing a server. Do not commit `.env.server` or put database credentials into frontend variables. The original database schema and payroll rules have not been recovered; these new migrations target a separate database.
 
 The [whole-app UI redesign plan](docs/ui-redesign/UI_REDESIGN_PLAN.md) defines the selected Modern BFCL direction, complete route coverage, delivery waves and acceptance checks. Its visual proposal is a planning artifact; the application has not yet been migrated to that design.
 
@@ -70,4 +70,4 @@ The [whole-app UI redesign plan](docs/ui-redesign/UI_REDESIGN_PLAN.md) defines t
 
 The `.local-demo/` directory contains only local sample state and is excluded from version control. Original deployment files outside this replica directory are not edited.
 
-Current automated verification: **56 tests pass**, the isolation check passes, and the frontend build succeeds. See [VERIFICATION.md](VERIFICATION.md) for the distinction between automated checks, earlier browser checks and current release browser QA.
+Current automated verification: **70 tests pass**, with the dedicated SQL case skipped by default; separate real SQL and Docker-stack checks pass. The isolation check and frontend build pass. See [VERIFICATION.md](VERIFICATION.md) for scope and remaining staging acceptance, and [the server runbook](deploy/SERVER_RUNBOOK.md) for reproducible SQL/container commands.

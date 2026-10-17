@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+dist
+.git
+.local-demo
+.env*
+!.env.example
+secrets
+**/*.secret
+**/*.log
+qa
+qa-artifacts
+screenshots
+docs/ui-redesign/evidence

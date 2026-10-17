@@ -107,6 +107,7 @@ export default function MasterDataManager({ master }) {
         await axios.put(`/api/master-data/${master}`, {
           keys: keysOf(editing),
           data: form,
+          version: editing.version,
         });
       setEditing(null);
       setNotice({ type: "success", text: "Record saved successfully." });
@@ -123,7 +124,7 @@ export default function MasterDataManager({ master }) {
   const remove = async () => {
     try {
       await axios.delete(`/api/master-data/${master}`, {
-        data: { keys: keysOf(confirmRow) },
+        data: { keys: keysOf(confirmRow), version: confirmRow.version },
       });
       setConfirmRow(null);
       setNotice({ type: "success", text: "Record deleted successfully." });

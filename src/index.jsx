@@ -5,12 +5,13 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
+import RuntimeEnvironment from './components/RuntimeEnvironment';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <RuntimeEnvironment><App /></RuntimeEnvironment>
     </Provider>
   </React.StrictMode>
   // <React.StrictMode>

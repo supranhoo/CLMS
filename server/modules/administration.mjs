@@ -16,7 +16,7 @@ function isScopedEmployee(state, user, employee) {
 }
 export function authorizeLocalRequest(state, request, body, fail) {
   const path = request.path.toLowerCase();
-  const publicPath = ['/api/users/login', '/api/users/generateresettoken', '/api/users/resetpassword', '/api/dev/health', '/api/dev/capabilities', '/api/dev/features'];
+  const publicPath = ['/api/runtime', '/api/users/login', '/api/users/generateresettoken', '/api/users/resetpassword', '/api/dev/health', '/api/dev/capabilities', '/api/dev/features'];
   if (publicPath.includes(path)) return;
   if (!request.user) {
     if (request.token) fail(401, 'The local session has expired. Sign in to the demo workspace again.');

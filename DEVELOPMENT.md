@@ -106,6 +106,10 @@ The authenticated local `POST /api/dev/reset` operation restores fictional fixtu
 
 Keep this sandbox isolated. A future integration should add an explicit test adapter and separate test configuration, with a non-production database and verified API contracts. The replica currently has no production connection switch.
 
+### Approved standalone server adapter
+
+The approved server conversion now adds a separate `server/production/` SQL adapter and `deploy/SERVER_RUNBOOK.md`. The default demo remains isolated and uses its existing fixtures. Explicit staging/production configuration selects the new SQL API, verifies pre-applied migrations and never loads `.local-demo` or synthetic record generators. This is a new transitional schema, not compatibility with the installed backend. Core accounts, workers, contractors and masters have server screens; remaining route migrations and calculation engines are still pending. The earlier statements above describing absent SQL support refer to demo mode and recovery provenance.
+
 ## Dependency maintenance
 
 Dependencies were reconstructed from imports rather than an original lockfile. PDF and routing libraries were updated after an npm audit. SheetJS is vendored as the official `xlsx-0.20.3.tgz` distribution because the public npm package is outdated; see the [official installation guidance](https://docs.sheetjs.com/docs/getting-started/installation/nodejs/). The tarball is a build dependency, not an external browser script. The lockfile records its integrity. ExcelJS uses a compatible patched UUID dependency override.

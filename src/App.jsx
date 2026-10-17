@@ -79,6 +79,7 @@ import BonusReport from "../src/screens/Wages/BonusReport.jsx";
 import MasterDataManager from "./screens/MasterData/MasterDataManager.jsx";
 import ShiftSetup from "./screens/MasterData/ShiftSetup.jsx";
 import DevelopmentBanner from "./components/DevelopmentBanner";
+import ServerWorkspace from './screens/Administration/ServerWorkspace';
 import DevelopmentUnavailable from "./screens/Development/Unavailable";
 import FeatureWorkbench from "./screens/Development/FeatureWorkbench";
 import ComplianceReports from "./screens/Compliance/ComplianceReports";
@@ -302,6 +303,11 @@ function RoutedApplication() {
         path="/masters/cost-centres"
         element={<MasterDataManager master="cost-centres" />}
       />
+      <Route path="/administration/server" element={<ServerWorkspace />} />
+      <Route path="/masters/entities" element={<MasterDataManager master="entities" />} />
+      <Route path="/masters/departments" element={<MasterDataManager master="departments" />} />
+      <Route path="/server/workers" element={<ServerWorkspace kind="workers" />} />
+      <Route path="/server/contractors" element={<ServerWorkspace kind="contractors" />} />
       <Route path="/development/unavailable/:module" element={<DevelopmentUnavailable />} />
       <Route path="/development/features" element={<FeatureWorkbench />} />
       <Route path="/development/:tool" element={<LocalWorkspace />} />

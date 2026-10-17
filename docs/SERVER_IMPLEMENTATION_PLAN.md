@@ -2,6 +2,8 @@
 
 Prepared: 17 October 2026. Status: proposed implementation plan, not a deployed release.
 
+Implementation update (17 October 2026): approved. The repository now contains the first standalone SQL adapter, core migrations, account/session lifecycle, scoped and paged core records, runtime-aware UI and deployment runbook. Real SQL repository tests and an API/Nginx/SQL container smoke test pass. This advances P1/P2 but does not complete them: full domain validation, target infrastructure, HTTPS browser UAT and staging acceptance are still required. P3–P7 and remaining UI waves remain pending. See `deploy/SERVER_RUNBOOK.md` and `VERIFICATION.md` for exact scope and evidence; this is not a production deployment claim.
+
 ## 1. Intended outcome and agreed direction
 
 Convert the recovered CLMS frontend and local workflows into a persistent, authenticated application suitable for use on a Windows-hosted server. Deploy a separate staging installation before production. Retain the Modern BFCL workspace and existing screen destinations while replacing simulator-only behavior with tested business operations.

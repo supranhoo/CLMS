@@ -1,0 +1,15 @@
+.server-records { max-width: 1200px; margin: auto; }
+.server-records h1 { font-size: 1.8rem; }
+.server-records input:not([type=checkbox]), .server-records select { display: block; width: 100%; min-height: 40px; border: 1px solid #b9c6d4; border-radius: 6px; padding: 8px; }
+.server-records button { min-height: 40px; border: 1px solid #9caec0; border-radius: 6px; padding: 8px 16px; background: white; color: #123b64; }
+.server-records-toolbar { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin: 24px 0; }
+.server-records-toolbar label { flex: 1; min-width: 150px; }
+.server-records-form { padding: 24px; background: white; border: 1px solid #cbd5e1; border-radius: 10px; margin: 24px 0; }
+.server-records-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px; margin-bottom: 20px; }
+.server-records-table { overflow: auto; max-width: 100%; margin-top: 20px; }
+.server-records table { width: 100%; border-collapse: collapse; }
+.server-records th, .server-records td { padding: 12px; border-bottom: 1px solid #dce3eb; text-align: left; overflow-wrap: anywhere; }
+.server-records fieldset { border: 1px solid #cbd5e1; padding: 12px; margin: 12px 0; }
+.server-records legend { font-size: 1rem; }
+.server-records-checkbox { display: inline-flex; align-items: center; gap: 8px; margin-right: 20px; }
+.server-records :focus-visible { outline: 3px solid #2c73cc; outline-offset: 2px; }

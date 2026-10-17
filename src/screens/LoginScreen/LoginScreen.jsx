@@ -8,10 +8,12 @@ import ErrorMessage from "../../components/ErrorMessage";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../features/userSlice";
 import "./LoginScreen.css";
+import { useRuntime } from '../../components/RuntimeEnvironment';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const runtime = useRuntime();
 
   /* ---------------- LOCAL STATE ---------------- */
   const [emp_id, setEmpId] = useState("");
@@ -60,7 +62,7 @@ const LoginScreen = () => {
       setIsLoggedIn(true);
       setEmpId("");
       setPassword("");
-      navigate("/dashboard");
+      navigate(result.payload.mustChangePassword ? '/change-password' : '/dashboard');
       return;
     }
 
@@ -102,7 +104,7 @@ const LoginScreen = () => {
         ) : (
           /* ---------------- LOGIN FORM ---------------- */
           <Form onSubmit={submitHandler} className="login-form">
-            <div className="alert alert-warning" role="note">
+            {runtime.demo && <div className="alert alert-warning" role="note">
               <strong>Local sample workspace</strong>
               <p className="mb-2">Use the demo account to explore synthetic records and develop new features.</p>
               <Button
@@ -114,7 +116,7 @@ const LoginScreen = () => {
                 Enter demo workspace
               </Button>
               <div className="small mt-2">Demo credentials: demo / demo123</div>
-            </div>
+            </div>}
             <Form.Group className="mb-4">
               <Form.Label>User ID</Form.Label>
               <Form.Control
@@ -146,7 +148,7 @@ const LoginScreen = () => {
             </div>
 
             {/* 🔐 FORGOT PASSWORD (RESTORED) */}
-            <div className="text-center mt-3">
+            {runtime.demo ? <div className="text-center mt-3">
               <Button
                 variant="link"
                 className="forgot-password-btn"
@@ -154,7 +156,7 @@ const LoginScreen = () => {
               >
                 Forgot Password?
               </Button>
-            </div>
+            </div> : <p className="small mt-3">Contact your system administrator if you cannot sign in. Self-service recovery is not enabled.</p>}
           </Form>
         )}
       </div>

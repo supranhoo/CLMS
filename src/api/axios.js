@@ -14,7 +14,10 @@ api.interceptors.request.use((config) => {
   config.url = target.pathname + target.search;
   try {
     const savedUser = JSON.parse(localStorage.getItem("user") || "null");
-    if (savedUser?.token) config.headers.Authorization = `Bearer ${savedUser.token}`;
+    if (savedUser?.sessionAuth === 'cookie') {
+      delete config.headers.Authorization;
+      if (savedUser.csrfToken) config.headers['X-CSRF-Token'] = savedUser.csrfToken;
+    } else if (savedUser?.token) config.headers.Authorization = `Bearer ${savedUser.token}`;
   } catch {
     localStorage.removeItem("user");
   }

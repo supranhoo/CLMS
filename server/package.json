@@ -1,0 +1,13 @@
+{
+  "name": "clms-server-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "clms-development-replica": "file:..",
+    "mssql": "12.7.9"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}
