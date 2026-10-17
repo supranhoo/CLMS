@@ -4,15 +4,7 @@ import Col from "react-bootstrap/Col";
 
 const Footer = () => {
   return (
-    <footer
-      style={{
-        width: "100%",
-        position: "relative",
-        bottom: 0,
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
+    <footer className="workspace-footer">
       <Container>
         <Row>
           <Col className="text-center py-3">

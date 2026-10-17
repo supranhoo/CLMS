@@ -2,7 +2,7 @@
 
 **Direction:** Modern BFCL workspace, selected by the user on 16 October 2026.  
 **Scope:** The isolated development replica in `D:\CLMS\replica`.  
-**Status:** Implementation plan and visual proposal. The application has not been redesigned by this planning task.
+**Status:** W1 shell and dashboard implementation completed on feature branch `ui/modern-bfcl-shell-dashboard`; W2–W6 route-family migration remains pending. The application still uses the original screen implementations inside the new shell.
 
 ## Read this first
 

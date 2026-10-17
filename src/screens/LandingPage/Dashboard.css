@@ -1,74 +1,59 @@
-.dashboard-container {
-  padding: 20px;
-  background-color: #f8f9fa;
-}
-
-.dashboard-title {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.0rem; /* Slightly smaller title */
-  color: #343a40;
-}
-
-.menu-section {
-  margin-bottom: 5px; /* Reduced space between sections */
-}
-
-.section-title {
-  margin-bottom: 5px; /* Slightly reduced margin */
-  font-size: 1rem; /* Smaller section title */
-  color: #007bff;
-  text-align: left;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 5px;
-}
-
-.menu-tile-btn {
-  width: 100% !important;; /* Use full column width */
-  height: 60px !important;; /* Smaller tile height */
-  font-size: 0.8rem !important; /* Updated to even smaller text */
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #ffffff;
-  border-radius: 6px; /* Smaller rounded corners */
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1); /* Reduced shadow for compact look */
-  transition: transform 0.3s ease-in-out;
-  margin: 1px !important; 
-  padding: 5px 5px; /* Adjust padding for smaller tile */
-  text-transform: capitalize !important; /* Ensure only the first letter of each word is capitalized */
-}
-
-.menu-tile-btn:hover {
-  transform: scale(1.05);
-}
-
-.menu-tile-link {
-  text-decoration: none;
-  color: #007bff;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.menu-tile-link:hover {
-  color: #0056b3;
-}
-
-@media (max-width: 768px) {
-  .menu-tile-btn {
-      height: 40px; /* Even smaller for mobile */
-      font-size: 0.35rem; /* Smaller text for mobile */
-      padding: 6px 8px; /* Adjust padding for mobile */
-  }
-}
-
-/* Additional media query to fit more tiles in a row */
-@media (min-width: 1200px) {
-  .menu-section .col-lg-2 {
-      max-width: 12.00%; /* Fit 6 tiles per row on larger screens */
-  }
-}
+.bfcl-dashboard { max-width: 1440px; margin: 0 auto; }
+.bfcl-dashboard-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+.bfcl-eyebrow { color: #59708d; font-size: 11px; font-weight: 700; letter-spacing: .13em; }
+.bfcl-dashboard h1 { margin: 7px 0 0; color: #1f2d3d; font-size: 30px; font-weight: 700; }
+.bfcl-dashboard-heading p { max-width: 700px; margin: 8px 0 0; color: #66758a; font-size: 15px; }
+.bfcl-dashboard-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.bfcl-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 9px 15px; border: 1px solid #dbe3ed; border-radius: 7px; color: #1f2d3d; background: #fff; font-size: 14px; font-weight: 600; text-decoration: none; }
+.bfcl-button-primary { color: #fff; background: #1d4ed8; border-color: #1d4ed8; }
+.bfcl-button-primary:hover { color: #fff; background: #1e40af; }
+.bfcl-button svg, .bfcl-panel-link svg { width: 12px; }
+.bfcl-dashboard-notice { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; margin-bottom: 24px; border: 1px solid #d5e2f6; border-radius: 7px; color: #294b7c; background: #f2f7ff; font-size: 14px; }
+.bfcl-dashboard-notice strong, .bfcl-dashboard-notice span { display: block; }
+.bfcl-dashboard-notice span { margin-top: 3px; }
+.bfcl-notice-icon { display: grid !important; place-items: center; width: 20px; height: 20px; margin-top: 1px; border: 1px solid #86a9d8; border-radius: 50%; font-size: 12px; font-weight: 700; }
+.bfcl-dashboard-layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(280px, .9fr); gap: 24px; }
+.bfcl-dashboard-main, .bfcl-dashboard-side { min-width: 0; }
+.bfcl-dashboard-side { display: grid; align-content: start; gap: 24px; }
+.bfcl-section-heading { margin-bottom: 14px; }
+.bfcl-section-heading h2, .bfcl-panel-heading h2 { margin: 0; color: #1f2d3d; font-size: 18px; font-weight: 700; }
+.bfcl-section-heading p, .bfcl-panel-heading p { margin: 4px 0 0; color: #66758a; font-size: 13px; }
+.bfcl-task-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 24px; }
+.bfcl-task-card { display: flex; align-items: flex-start; gap: 13px; min-height: 118px; padding: 18px; border: 1px solid #dbe3ed; border-radius: 8px; color: #1f2d3d; background: #fff; box-shadow: 0 4px 16px rgba(16,39,68,.04); text-decoration: none; transition: border-color .15s ease, background .15s ease; }
+.bfcl-task-card:hover { border-color: #8caee6; background: #f8fbff; }
+.bfcl-task-card > span:nth-child(2) { display: grid; gap: 5px; }
+.bfcl-task-card strong { font-size: 15px; }
+.bfcl-task-card small { max-width: 250px; color: #66758a; font-size: 13px; line-height: 1.5; }
+.bfcl-task-icon, .bfcl-module-icon { display: grid; place-items: center; flex: 0 0 auto; width: 36px; height: 36px; border-radius: 8px; color: #315fa1; background: #edf3ff; }
+.bfcl-task-icon svg, .bfcl-module-icon svg { width: 18px; height: 18px; }
+.bfcl-task-arrow { width: 12px; margin: auto 0 auto auto; color: #7c8faa; }
+.bfcl-panel { overflow: hidden; border: 1px solid #dbe3ed; border-radius: 8px; background: #fff; box-shadow: 0 4px 16px rgba(16,39,68,.04); }
+.bfcl-panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 19px 21px; border-bottom: 1px solid #e6ebf2; }
+.bfcl-module-panel { margin-bottom: 24px; }
+.bfcl-module-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 18px 21px 21px; }
+.bfcl-module-card { min-width: 0; padding: 15px; border: 1px solid #e3e9f1; border-radius: 7px; }
+.bfcl-module-title { display: flex; align-items: center; gap: 9px; }
+.bfcl-module-title strong { font-size: 14px; }
+.bfcl-module-icon { width: 30px; height: 30px; border-radius: 6px; }
+.bfcl-module-icon svg { width: 14px; height: 14px; }
+.bfcl-module-links { display: grid; gap: 5px; margin-top: 12px; }
+.bfcl-module-links a, .bfcl-module-more { overflow: hidden; color: #315fa1; font-size: 12px; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; text-decoration: none; }
+.bfcl-module-links a:hover { color: #1e40af; text-decoration: underline; }
+.bfcl-module-more { color: #66758a; }
+.bfcl-status-pill { display: inline-flex; align-items: center; min-height: 24px; padding: 3px 8px; border: 1px solid #cfe0ff; border-radius: 5px; color: #1e4d9a; background: #eff6ff; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.bfcl-status-info { color: #1e4d9a; background: #eff6ff; }
+.bfcl-summary-list { display: grid; gap: 0; padding: 4px 21px 8px; margin: 0; }
+.bfcl-summary-list div { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 13px 0; border-bottom: 1px solid #edf1f5; }
+.bfcl-summary-list div:last-child { border-bottom: 0; }
+.bfcl-summary-list dt { color: #66758a; font-size: 13px; }
+.bfcl-summary-list dd { margin: 0; color: #1f2d3d; font-size: 13px; font-weight: 650; text-align: right; }
+.bfcl-panel-link { display: inline-flex; align-items: center; gap: 8px; padding: 0 21px 20px; color: #1d4ed8; font-size: 13px; font-weight: 600; text-decoration: none; }
+.bfcl-boundary-list { display: grid; gap: 0; padding: 4px 21px 8px; margin: 0; list-style: none; }
+.bfcl-boundary-list li { display: flex; align-items: center; gap: 9px; padding: 12px 0; border-bottom: 1px solid #edf1f5; color: #44556b; font-size: 13px; }
+.bfcl-boundary-list li:last-child { border-bottom: 0; }
+.bfcl-boundary-dot { width: 8px; height: 8px; border-radius: 50%; }
+.bfcl-dot-warning { background: #d59b2b; }
+.bfcl-dot-muted { background: #94a3b8; }
+.bfcl-empty-card { grid-column: 1 / -1; padding: 26px; color: #66758a; background: #fff; border: 1px dashed #bdcbdc; border-radius: 8px; text-align: center; }
+@media (max-width: 1100px) { .bfcl-dashboard-layout { grid-template-columns: 1fr; } .bfcl-dashboard-side { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .bfcl-dashboard-heading { flex-direction: column; gap: 16px; } .bfcl-dashboard h1 { font-size: 26px; } .bfcl-dashboard-actions, .bfcl-dashboard-actions a { width: 100%; } .bfcl-task-grid, .bfcl-module-grid, .bfcl-dashboard-side { grid-template-columns: 1fr; } .bfcl-panel-heading { padding: 17px 16px; } .bfcl-module-grid { padding: 16px; } .bfcl-summary-list, .bfcl-boundary-list { padding-left: 16px; padding-right: 16px; } .bfcl-panel-link { padding-left: 16px; padding-right: 16px; } }

@@ -35,6 +35,12 @@ These are explicit implementation acceptance tasks, not reasons to reduce the re
 
 The standalone `design-preview.html` was opened through the existing local Vite server and checked separately from the current app. It embeds its logo, has no external asset links, API connection or network-call code, and stores no business records. Its fixture names and values are illustrative, not live queries or a claim that all app fields are reproduced in the mock-up.
 
+## W1 implementation verification — 17 October 2026
+
+The feature branch `ui/modern-bfcl-shell-dashboard` was verified against the running local replica at `http://127.0.0.1:5173/dashboard`. The authenticated demo view showed the navy sidebar, active dashboard route, grouped menu rows, task cards, module inventory and capability status. Screen search for `worker` returned the permitted Worker Management destination and navigated to `/manageEmployees`, where the existing worker table still rendered inside the shell. The user menu exposed Change password and Sign out; signing out returned to the public login shell with no operational navigation. Desktop accessibility inspection found a skip link, main landmark, named search field, menu disclosure buttons, active links and named account actions.
+
+The mobile drawer and 390px layout remain an explicit follow-up verification item. No save, import, approval, password change or record deletion was performed.
+
 | Proposal check | Observed result |
 | --- | --- |
 | Desktop shell | Navy sidebar, white topbar, readable task panels; mobile drawer controls hidden at desktop after correcting a prototype CSS specificity issue |
