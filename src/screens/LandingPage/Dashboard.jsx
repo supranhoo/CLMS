@@ -1,97 +1,81 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { FaArrowRight, FaCalendarCheck, FaClipboardList, FaCogs, FaFileAlt, FaUsers, FaWallet } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Row, Col, Button, Container } from "react-bootstrap";
-import axios from "../../api/axios.js";
-import { selectUser } from "../../features/userSlice"; // Adjust based on your Redux setup
-import "./Dashboard.css"; // Custom CSS for the dashboard
+import api from "../../api/axios.js";
+import { selectUser } from "../../features/userSlice";
+import { useNavigation } from "../../components/layout/AppShell";
+import "./Dashboard.css";
 
-const Dashboard = () => {
-  const [menuOptions, setMenuOptions] = useState([]);
-  const user = useSelector(selectUser); // Get user info from Redux
-  const emp_id = user?.emp_id;
-  const token = user?.token;
+const TASKS = [
+  { label: "Manage workers", description: "Review worker records, assignments and approvals.", path: "/manageEmployees", icon: FaUsers },
+  { label: "Review attendance", description: "Open the attendance calendar and recorded local inputs.", path: "/manageAttendance", icon: FaCalendarCheck },
+  { label: "Enter wage inputs", description: "Maintain earnings, deductions and arrears for the selected period.", path: "/wageEarnings", icon: FaWallet },
+  { label: "Review leave", description: "Inspect saved leave ledger data and available previews.", path: "/leave-ledger-entry", icon: FaClipboardList },
+];
+
+const ICONS = [FaCogs, FaUsers, FaCalendarCheck, FaWallet, FaClipboardList, FaFileAlt];
+
+export default function Dashboard() {
+  const user = useSelector(selectUser);
   const navigate = useNavigate();
+  const { groups, items, loading: menuLoading } = useNavigation();
+  const [features, setFeatures] = useState([]);
 
   useEffect(() => {
-    if (token && emp_id) {
-      const fetchMenuOptions = async () => {
-        try {
-          const menuResponse = await axios.post("/api/menu/getMenuUserData", { emp_id });
-          
-          // Filter and organize the menu options
-          const parentMenus = menuResponse.data.filter(menu => menu.parent_menu_id === 0);
-          const childMenus = menuResponse.data.filter(menu => menu.parent_menu_id !== 0);
+    if (!user?.token) navigate("/login");
+  }, [navigate, user?.token]);
 
-          const groupedMenuOptions = parentMenus.map(parent => ({
-            ...parent,
-            children: childMenus.filter(child => child.parent_menu_id === parent.menu_id)
-          }));
-          
-          setMenuOptions(groupedMenuOptions); // Store the organized menu
-        } catch (error) {
-          console.log("Error fetching menu options:", error);
-        }
-      };
+  useEffect(() => {
+    if (!user?.token) return undefined;
+    let active = true;
+    api.get("/api/dev/features")
+      .then((response) => { if (active) setFeatures(response.data?.data || []); })
+      .catch(() => { if (active) setFeatures([]); });
+    return () => { active = false; };
+  }, [user?.token]);
 
-      fetchMenuOptions();
-    } else {
-      navigate("/login"); // Redirect to login if not authenticated
-    }
-  }, [token, emp_id, navigate]);
-
-  const handleTileClick = (menuUrl) => {
-    if (menuUrl) {
-      console.log("Navigating to:", menuUrl);
-      navigate(menuUrl);
-    } else {
-      console.error("No URL for this menu item.");
-    }
-  };
+  const permitted = useMemo(() => new Set(items.map((item) => item.menu_url.toLowerCase())), [items]);
+  const taskCards = TASKS.filter((task) => permitted.has(task.path.toLowerCase()));
+  const completeCount = features.filter((feature) => feature.status === "complete").length;
+  const gatedCount = features.filter((feature) => feature.status !== "complete").length;
 
   return (
-    <div className="dashboard-container">
-      <Container fluid> {/* Changed to fluid to utilize more space */}
-        <h1 className="dashboard-title">Welcome to Your CLMS</h1> {/* Updated title */}
-        
-        {/* Loop through each parent menu */}
-        {menuOptions.map((parentMenu, index) => (
-          parentMenu.menu_url ? (
-            <Row key={index} className="mb-3">
-              <Col xs={6} sm={4} md={3} lg={2}> {/* Adjusted column size */}
-                <Button
-                  variant="outline-primary"
-                  className="menu-tile-btn w-100"
-                  onClick={() => handleTileClick(parentMenu.menu_url)} // Handle tile click
-                  style={{ textTransform: 'capitalize', fontSize: '0.8rem' }}
-                >
-                  {parentMenu.menu_name}
-                </Button>
-              </Col>
-            </Row>
-          ) : (
-            <div key={index} className="menu-section">
-              <h2 className="section-title">{parentMenu.menu_name}</h2>
-              <Row>
-                {parentMenu.children.map((childMenu, childIndex) => (
-                  <Col key={childIndex} xs={6} sm={4} md={3} lg={2} className="mb-3"> {/* Adjusted column size */}
-                    <Button
-                      variant="outline-primary"
-                      className="menu-tile-btn w-100"
-                      onClick={() => handleTileClick(childMenu.menu_url)} // Handle child tile click
-                      //style={{ textTransform: 'capitalize', fontSize: '0.8rem' }}
-                    >
-                      {childMenu.menu_name}
-                    </Button>
-                  </Col>
-                ))}
-              </Row>
-            </div>
-          )
-        ))}
-      </Container>
+    <div className="bfcl-dashboard">
+      <section className="bfcl-dashboard-heading">
+        <div>
+          <div className="bfcl-eyebrow">BFCL PEOPLE OPERATIONS</div>
+          <h1>Welcome back, {user?.Name || "Demo Developer"}</h1>
+          <p>Use this local workspace to manage synthetic records and review feature readiness.</p>
+        </div>
+        <div className="bfcl-dashboard-actions">
+          <Link className="bfcl-button bfcl-button-primary" to="/development/features">View feature status <FaArrowRight aria-hidden="true" /></Link>
+        </div>
+      </section>
+
+      <div className="bfcl-dashboard-notice" role="note">
+        <span className="bfcl-notice-icon">i</span>
+        <div><strong>Local synthetic workspace</strong><span>Records are fictional and saved only in this development replica. Payroll calculations and statutory formats require verified BFCL rules.</span></div>
+      </div>
+
+      <section className="bfcl-dashboard-layout" aria-label="Workspace summary">
+        <div className="bfcl-dashboard-main">
+          <div className="bfcl-section-heading"><div><h2>Start with a task</h2><p>Common actions for the current local workspace</p></div></div>
+          <div className="bfcl-task-grid">
+            {taskCards.map((task) => { const Icon = task.icon; return <Link to={task.path} key={task.path} className="bfcl-task-card"><span className="bfcl-task-icon"><Icon aria-hidden="true" /></span><span><strong>{task.label}</strong><small>{task.description}</small></span><FaArrowRight className="bfcl-task-arrow" aria-hidden="true" /></Link>; })}
+            {!taskCards.length && <div className="bfcl-empty-card">{menuLoading ? "Loading permitted tasks…" : "No permitted tasks are available for this account."}</div>}
+          </div>
+          <div className="bfcl-panel bfcl-module-panel">
+            <div className="bfcl-panel-heading"><div><h2>Modules</h2><p>Every permitted destination remains available through the navigation rail.</p></div><span className="bfcl-status-pill">{items.length} screens</span></div>
+            <div className="bfcl-module-grid">{groups.map((group, index) => { const Icon = ICONS[index % ICONS.length]; const links = (group.children || []).filter((item) => item.menu_url); return <div className="bfcl-module-card" key={group.menu_id}><div className="bfcl-module-title"><span className="bfcl-module-icon"><Icon aria-hidden="true" /></span><strong>{group.menu_name}</strong></div><div className="bfcl-module-links">{links.slice(0, 4).map((item) => <Link key={item.menu_id} to={item.menu_url}>{item.menu_name}</Link>)}{links.length > 4 && <span className="bfcl-module-more">+{links.length - 4} more in navigation</span>}</div></div>; })}</div>
+          </div>
+        </div>
+
+        <aside className="bfcl-dashboard-side">
+          <div className="bfcl-panel bfcl-summary-panel"><div className="bfcl-panel-heading"><div><h2>Workspace status</h2><p>Current local capability view</p></div></div><dl className="bfcl-summary-list"><div><dt>Environment</dt><dd><span className="bfcl-status-pill bfcl-status-info">Local replica</span></dd></div><div><dt>State profile</dt><dd>Jharkhand draft</dd></div><div><dt>Available areas</dt><dd>{completeCount || "—"}</dd></div><div><dt>Gated areas</dt><dd>{gatedCount || "—"}</dd></div></dl><Link className="bfcl-panel-link" to="/development/features">Open capability details <FaArrowRight aria-hidden="true" /></Link></div>
+          <div className="bfcl-panel bfcl-recent-panel"><div className="bfcl-panel-heading"><div><h2>What needs rules</h2><p>Keep these boundaries visible while developing.</p></div></div><ul className="bfcl-boundary-list"><li><span className="bfcl-boundary-dot bfcl-dot-warning" />Payroll and wage calculation</li><li><span className="bfcl-boundary-dot bfcl-dot-warning" />Paid attendance and overtime</li><li><span className="bfcl-boundary-dot bfcl-dot-warning" />Approved statutory layouts</li><li><span className="bfcl-boundary-dot bfcl-dot-muted" />Biometric device integration</li></ul><Link className="bfcl-panel-link" to="/development/features">Review pending intake <FaArrowRight aria-hidden="true" /></Link></div>
+        </aside>
+      </section>
     </div>
   );
-};
-
-export default Dashboard;
+}

@@ -1,6 +1,18 @@
 # UI redesign acceptance checklist
 
-This checklist is for future implementation. **All implementation checks below are pending.** The planning task has not marked the current app as redesigned or accessible. Follow the authoritative W0–W6 waves in [UI_REDESIGN_PLAN.md](UI_REDESIGN_PLAN.md); audit documents supply supporting detail, not a competing schedule.
+The first W1 implementation is complete on `ui/modern-bfcl-shell-dashboard`; later route-family work remains pending. The statuses below are limited to the evidence actually collected for this wave and do not imply whole-app redesign completion. Follow the authoritative W0–W6 waves in [UI_REDESIGN_PLAN.md](UI_REDESIGN_PLAN.md); audit documents supply supporting detail, not a competing schedule.
+
+## First-wave evidence
+
+| Gate | Current status | Evidence |
+| --- | --- | --- |
+| A01 | Passed for the preserved route/menu inventory | Existing route inventory retained; normalized menu tree renders 72 permitted destinations from the local menu API. |
+| A05 | Passed for local demo navigation | Sidebar active state, legacy route casing alias, deep-link worker navigation and permitted screen search were verified in the local browser. |
+| A06 | Partial | Search is derived from the permitted menu response; non-admin account scoping still requires later role-specific browser coverage. |
+| A07 | Partial | Desktop account menu and keyboard semantics are implemented; mobile viewport evidence remains pending with the W6 responsive review. |
+| A08 | Passed for the local demo dashboard | Task cards, module links and capability counts render from accessible menu/capability data; rules-gated areas remain labeled. |
+| A09 | Passed | Sign-out returned to the public login shell with the local development notice and no operational sidebar. |
+| A41 | Passed for this wave | `npm.cmd test` (56 tests), `npm.cmd run check`, and `npm.cmd run build` passed; no backend or persisted demo-state changes were made. |
 
 ## Coverage and evidence recording
 
