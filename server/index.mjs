@@ -8,6 +8,7 @@ import { registerAttendanceRoutes, applyAttendanceOverrides } from './modules/at
 import { registerPayrollRoutes } from './modules/payroll.mjs';
 import { registerAdministrationRoutes, authorizeLocalRequest, scopeLocalResult } from './modules/administration.mjs';
 import { registerWorkspaceRoutes } from './modules/workspace.mjs';
+import { readServerConfig } from './config.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const MAX_BODY = 1024 * 1024;
@@ -336,8 +337,19 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  const server = createServer();
+  let config;
+  try {
+    config = readServerConfig();
+    if (!config.isDemo) {
+      throw new Error(`The ${config.mode} server adapter is not implemented yet. Configure the SQL repository and authentication adapter before enabling server mode; synthetic data is blocked outside demo mode.`);
+    }
+  } catch (error) {
+    console.error(`CLMS server configuration error: ${error.message}`);
+    process.exitCode = 1;
+    process.exit();
+  }
+  const server = createServer({ dataDir: config.dataDir, persist: config.persist });
   server.on('error', error => { console.error('Local demo API could not start:', error.message); process.exitCode = 1; });
-  server.listen(5001, '127.0.0.1', () => console.log('CLMS synthetic demo API: http://127.0.0.1:5001 (demo / demo123). No production connection.'));
+  server.listen(config.port, config.host, () => console.log(`CLMS synthetic demo API listening on ${config.host}:${config.port} (demo / demo123). No production connection.`));
   for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => server.close(() => process.exit(0)));
 }

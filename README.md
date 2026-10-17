@@ -49,6 +49,12 @@ Workbook imports use fictional test rows only. Download the relevant template, v
 
 See [DEVELOPMENT.md](DEVELOPMENT.md) for the architecture, recovery provenance, coverage boundaries, and extension guidance.
 
+## Server deployment foundation
+
+The approved Windows and Docker implementation plan is documented in [docs/SERVER_IMPLEMENTATION_PLAN.md](docs/SERVER_IMPLEMENTATION_PLAN.md). The repository now includes a validated environment schema, a web/API container split, a Compose deployment skeleton and a production safety gate. Demo mode remains the only runnable mode until the SQL repository and production authentication adapter are implemented; server modes deliberately refuse to start with the synthetic adapter.
+
+Copy `.env.example` to a secret-managed server configuration when preparing an environment. Do not commit `.env.server` or put database credentials into frontend variables. The Compose files are packaging foundations for staging and production, not evidence that the missing original database schema or payroll rules have been recovered.
+
 The [whole-app UI redesign plan](docs/ui-redesign/UI_REDESIGN_PLAN.md) defines the selected Modern BFCL direction, complete route coverage, delivery waves and acceptance checks. Its visual proposal is a planning artifact; the application has not yet been migrated to that design.
 
 ## Commands

@@ -1,0 +1,35 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    restart: unless-stopped
+    env_file: .env.server
+    environment:
+      CLMS_MODE: production
+      CLMS_BIND_HOST: 0.0.0.0
+      CLMS_API_PORT: 5001
+    volumes:
+      - clms-storage:/var/lib/clms
+    expose:
+      - "5001"
+    networks: [clms]
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "${CLMS_HTTP_PORT:-8080}:80"
+    networks: [clms]
+
+volumes:
+  clms-storage:
+
+networks:
+  clms:
+    driver: bridge
