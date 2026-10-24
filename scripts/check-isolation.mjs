@@ -20,6 +20,10 @@ function walk(directory) {
         // Vendor notices, XML namespaces, documentation and schema identifiers are not request targets.
         if (/^(?:\/\/|\/\*|\*|\*\/)/.test(line) || /xmlns|schema\.org|\$schema/.test(line)) continue;
         for (const rule of forbidden) {
+          // The API's install lock records registry tarballs and upstream funding
+          // URLs; it is dependency metadata, not a runtime request target. Keep
+          // checking it for the live CLMS address and copied configuration.
+          if (path.relative(root, file) === path.join('server', 'package-lock.json') && rule.reason.startsWith('remote URL')) continue;
           rule.pattern.lastIndex = 0;
           if (rule.pattern.test(line)) issues.push(`${path.relative(root, file)}:${index + 1}: ${rule.reason}`);
         }

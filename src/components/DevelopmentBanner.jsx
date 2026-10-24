@@ -1,7 +1,10 @@
 import React from "react";
 import "./DevelopmentBanner.css";
+import { useRuntime } from './RuntimeEnvironment';
 
 export default function DevelopmentBanner() {
+  const runtime = useRuntime();
+  if (!runtime.demo) return <aside className="development-replica-banner" aria-label="Server environment"><strong>{runtime.mode.toUpperCase()} · SERVER WORKSPACE</strong><span>SQL records, attendance inputs and leave ledger · paid-attendance and payroll rules pending</span></aside>;
   return (
     <aside className="development-replica-banner" aria-label="Development environment">
       <strong>DEVELOPMENT REPLICA</strong>

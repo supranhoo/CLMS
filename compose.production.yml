@@ -1,0 +1,51 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    restart: unless-stopped
+    env_file: ${CLMS_SERVER_ENV_FILE:-.env.server}
+    environment:
+      CLMS_MODE: production
+      CLMS_BIND_HOST: 0.0.0.0
+      CLMS_API_PORT: 5001
+      CLMS_API_ADAPTER: sql
+      CLMS_DATABASE_URL_FILE: /run/secrets/clms_sql
+    secrets:
+      - clms_sql
+    volumes:
+      - clms-storage:/var/lib/clms
+    expose:
+      - "5001"
+    networks: [clms]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "${CLMS_HTTP_BIND:-127.0.0.1}:${CLMS_HTTP_PORT:-8080}:80"
+    networks: [clms]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+
+volumes:
+  clms-storage:
+
+networks:
+  clms:
+    driver: bridge
+
+secrets:
+  clms_sql:
+    file: ${CLMS_SQL_SECRET_FILE:?Set CLMS_SQL_SECRET_FILE to a restricted connection-string file}

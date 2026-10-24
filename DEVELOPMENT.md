@@ -106,6 +106,16 @@ The authenticated local `POST /api/dev/reset` operation restores fictional fixtu
 
 Keep this sandbox isolated. A future integration should add an explicit test adapter and separate test configuration, with a non-production database and verified API contracts. The replica currently has no production connection switch.
 
+### Approved standalone server adapter
+
+The approved server conversion now adds a separate `server/production/` SQL adapter and `deploy/SERVER_RUNBOOK.md`. The default demo remains isolated and uses its existing fixtures. Explicit staging/production configuration selects the new SQL API, verifies pre-applied migrations and never loads `.local-demo` or synthetic record generators. This is a new transitional schema, not compatibility with the installed backend. Core accounts, workers, contractors and masters have server screens; remaining route migrations and calculation engines are still pending. The earlier statements above describing absent SQL support refer to demo mode and recovery provenance.
+
+### SQL attendance and leave inputs
+
+Migration `002_attendance_leave.sql` and `OperationsRepository` add immutable punch imports, leased durable processing jobs, reviewed attendance declarations, configurable leave input types, explicit credits and charged-day requests, reversals and contractor/month locks. `start.mjs` runs the worker alongside the API. Server routes `/server/attendance` and `/server/leave` use the shared session/CSRF client and permission-filtered menus. Approval is a separate assignment and the maker cannot review their own request. Worker scope transfers with operational history are blocked until a safe transfer workflow exists.
+
+The server calculates recorded elapsed seconds and ledger balances only. No shift/holiday interpretation, paid-attendance engine, automatic entitlement/accrual, payroll or statutory rules are enabled. Seed CL/EL/SL labels have no entitlement amounts. See `deploy/ATTENDANCE_LEAVE.md` for contracts and limits. `npm run qa:operations` creates a disposable SQL fixture with a strictly loopback HTTP browser-test proxy; that helper is excluded from the API runtime image and does not verify HTTPS deployment.
+
 ## Dependency maintenance
 
 Dependencies were reconstructed from imports rather than an original lockfile. PDF and routing libraries were updated after an npm audit. SheetJS is vendored as the official `xlsx-0.20.3.tgz` distribution because the public npm package is outdated; see the [official installation guidance](https://docs.sheetjs.com/docs/getting-started/installation/nodejs/). The tarball is a build dependency, not an external browser script. The lockfile records its integrity. ExcelJS uses a compatible patched UUID dependency override.

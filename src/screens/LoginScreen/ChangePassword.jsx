@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "../../api/axios.js";
 import Loading from "../../components/Loading";
 import ErrorMessage from "../../components/ErrorMessage";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logoutUser } from '../../features/userSlice';
 import "./ChangePassword.css"; // Link to external CSS for styling
 
 const ChangePassword = () => {
@@ -13,6 +14,7 @@ const ChangePassword = () => {
   const emp_id = user?.emp_id;
   const token = user?.token;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -62,6 +64,7 @@ const ChangePassword = () => {
 
       // Wait for 3-4 seconds before logging out and redirecting to login page
       setTimeout(() => {
+        dispatch(logoutUser());
         navigate("/login"); // Redirect to login page after success
       }, 3000); // 3 seconds
     } catch (error) {

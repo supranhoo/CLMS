@@ -2,6 +2,8 @@ const yn = [{value:"Y",label:"Yes"},{value:"N",label:"No"}];
 const field = (name,label,extra={}) => ({name,label,...extra});
 
 export const MASTER_DEFINITIONS = {
+  entities: {title:'Entities',subtitle:'Legal entities for this server',keyFields:['entity_code'],columns:['entity_code','entity_name'],fields:[field('entity_code','Entity Code',{required:true,maxLength:40}),field('entity_name','Entity Name',{required:true,maxLength:200})]},
+  departments: {title:'Departments',subtitle:'Department codes used for worker assignments',keyFields:['dept_code'],columns:['dept_code','dept_name'],fields:[field('dept_code','Department Code',{required:true,maxLength:40}),field('dept_name','Department Name',{required:true,maxLength:200})]},
   "shift-groups": {
     title:"Shift Groups", subtitle:"Define fixed or flexi attendance rules", keyFields:["sh_group"],
     columns:["sh_group","sh_group_desc","sh_group_type","sh_shift_hours","ot_eligible"],

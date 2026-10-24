@@ -11,7 +11,14 @@
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1 --port 5173 --strictPort",
     "test": "node --test",
-    "check": "node scripts/check-isolation.mjs"
+    "check": "node scripts/check-isolation.mjs",
+    "start": "node server/index.mjs",
+    "db:migrate": "node scripts/database.mjs migrate",
+    "db:bootstrap": "node scripts/database.mjs bootstrap",
+    "db:verify": "node scripts/database.mjs verify",
+    "test:sql": "node scripts/verify-sql-container.mjs",
+    "test:containers": "node scripts/verify-sql-container.mjs --verify-images",
+    "qa:operations": "node scripts/verify-sql-container.mjs --preview-ui"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
@@ -21,6 +28,7 @@
     "file-saver": "^2.0.5",
     "jspdf": "^4.2.1",
     "moment": "^2.30.1",
+    "mssql": "^12.7.9",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.10",
@@ -37,6 +45,10 @@
     "@vitejs/plugin-react": "^4.7.0",
     "vite": "^6.3.5"
   },
-  "engines": { "node": ">=22.12.0" },
-  "overrides": { "uuid": "^11.1.1" }
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
+  }
 }

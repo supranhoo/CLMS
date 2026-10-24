@@ -1,0 +1,6 @@
+# Apply after compose.production.yml for a separately configured staging stack.
+# Use a different project name, database, secret file, origin and host port.
+services:
+  api:
+    environment:
+      CLMS_MODE: staging

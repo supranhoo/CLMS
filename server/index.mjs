@@ -8,6 +8,7 @@ import { registerAttendanceRoutes, applyAttendanceOverrides } from './modules/at
 import { registerPayrollRoutes } from './modules/payroll.mjs';
 import { registerAdministrationRoutes, authorizeLocalRequest, scopeLocalResult } from './modules/administration.mjs';
 import { registerWorkspaceRoutes } from './modules/workspace.mjs';
+import { readServerConfig } from './config.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const MAX_BODY = 1024 * 1024;
@@ -111,6 +112,8 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
   }
   const both = (path, handler, options) => { route('GET', path, handler, options); route('POST', path, handler, options); };
   const success = message => ({ success: true, demo: true, message: message || 'Saved in the local synthetic demo only.' });
+
+  route('GET', '/api/runtime', () => ({ mode: 'demo', demo: true }));
 
   route('GET', '/api/dev/health', () => ({ ok: true, environment: 'LOCAL_SYNTHETIC_DEMO', productionConnected: false, persistence: persist, version: 1 }));
   route('GET', '/api/dev/capabilities', () => ({ environment: 'LOCAL_SYNTHETIC_DEMO', productionConnected: false, payrollEngine: 'unavailable', statutoryCalculations: 'unavailable', endpoints: capabilities, unknownEndpoints: '501 - explicit unsupported response' }));
@@ -336,8 +339,21 @@ export function createServer({ dataDir = resolve(here, '../.local-demo'), persis
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  const server = createServer();
+  let config;
+  try {
+    config = readServerConfig();
+  } catch (error) {
+    console.error(`CLMS server configuration error: ${error.message}`);
+    process.exitCode = 1;
+    process.exit();
+  }
+  if (!config.isDemo) {
+    try { const { startProduction } = await import('./production/start.mjs'); await startProduction(config); }
+    catch { console.error('CLMS SQL server startup failed. Verify database access, migrations, adapter and HTTPS origin configuration. No synthetic fallback was started.'); process.exitCode = 1; }
+  } else {
+  const server = createServer({ dataDir: config.dataDir, persist: config.persist });
   server.on('error', error => { console.error('Local demo API could not start:', error.message); process.exitCode = 1; });
-  server.listen(5001, '127.0.0.1', () => console.log('CLMS synthetic demo API: http://127.0.0.1:5001 (demo / demo123). No production connection.'));
+  server.listen(config.port, config.host, () => console.log(`CLMS synthetic demo API listening on ${config.host}:${config.port} (demo / demo123). No production connection.`));
   for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => server.close(() => process.exit(0)));
+  }
 }

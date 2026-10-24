@@ -1,5 +1,35 @@
 # Replica verification
 
+## 24 October 2026: publication recheck
+
+The saved attendance/leave implementation was resumed without further runtime changes. The default suite, isolation check and production build were rerun before publication (results below). Docker Desktop's engine was stopped, so the real SQL/container and browser observations remain dated 17 October; they were not repeated on 24 October. No target-server deployment or production data access was performed.
+
+## 17 October 2026: SQL attendance and leave inputs
+
+- `npm test`: 74 passed, zero failures, one dedicated SQL test skipped by default. HTTP tests check attendance/leave menus, separate approval rights and mutation denials. Calendar, explicit-offset timestamp and charged-day validation tests pass.
+- Real SQL tests pass (two tests including nested operational scenarios) against disposable SQL Server 2022 Developer databases with READ_COMMITTED_SNAPSHOT enabled. Covered atomic/idempotent punch import, conflicting business dates, overnight/single punches, job leases/recovery/stale publication, scope/history guards, revoked job-owner access and locks; independent attendance review; explicit leave credits, overlap and overdraft checks, concurrent approval, backdated future deficits, transactional multi-day rollback, cancellation reversals and editable unit steps. No live data or installed credentials used.
+- API/web image builds and isolated API/Nginx/SQL smoke tests pass. Isolation check and frontend build pass; the existing large-bundle warning remains. No production deployment was performed.
+- Browser QA used `npm run qa:operations`: fictional SQL fixtures through a strictly loopback HTTP test proxy, visibly labelled disposable. Signed in as two operators; created/reviewed attendance and verified its approved OD mark; created explicit 0.5-day leave dated 11 October, reviewed with another user, saw the -0.5 ledger entry and balance 9.5 from opening 10. Logout and subsequent sign-in worked. This proxy does not test TLS or production Secure-cookie transport.
+- Browser testing caught a component-state reuse crash on attendance-to-leave navigation. Distinct route keys now reset each module; loaded leave-to-attendance-to-leave transitions passed after the fix. At 390px, page content width was 375px (scrollbar accounted for), with no horizontal page overflow; mobile navigation opened and closed on destination selection. Desktop balance and mobile route screenshots are in ignored `qa-artifacts/`.
+- Browser import/queue actions, administrator settings/locks and all negative paths were not exercised through the browser; their data behavior is SQL/API-tested. Full staging UAT, realistic load, least-privilege runtime grants, backup/restore/rollback and actual target HTTPS remain required. Paid-attendance interpretation, automatic leave policies, payroll and statutory calculations remain pending. See `deploy/ATTENDANCE_LEAVE.md` for scope.
+
+## 17 October 2026: standalone SQL core
+
+The approved server conversion adds a separate SQL adapter. The checks below cover its current core scope; historical demo verification follows further down.
+
+- `npm test`: 70 passed, zero failures, one dedicated-SQL test skipped by default. New HTTP/security cases use an explicit test repository; they do not substitute for database tests.
+- `npm run test:sql`: passed against a fresh official SQL Server 2022 Developer container. Verified repeatable/checksummed migrations, one-time bootstrap, hashed credentials, session persistence/revocation, initial-password changes, administrator resets, account disablement, missing-reference rollback, scope filtering, paging, stale/concurrent edits, audit writes, final-administrator protection and durable lockout. No installed application database or credentials were used.
+- `npm run test:containers`: passed with API, Nginx and SQL on an isolated Docker network. Verified database readiness, same-origin Host routing, non-demo runtime metadata, rejection of unauthenticated record access, SPA deep-link fallback, CSP presence and blocked source-map requests. The HTTP connection was an internal smoke-test endpoint; this does not verify the target server's HTTPS certificate or browser cookie behavior under its final domain.
+- API and web Docker images built successfully after retrying initial registry connection resets. API runtime dependencies have a separate lockfile; frontend packages are not installed in the API image.
+- `npm run check` passed. Only the known server dependency lockfile is excluded from the remote-request-URL rule because it contains registry/funding metadata; live-address and copied-configuration checks still apply to it. Runtime source scanning remains enabled.
+- Frontend production build passed, with the existing large-bundle warning. Production dependency audit reported zero known vulnerabilities at this check.
+- Local demo browser regression: runtime detection, public login, demo sign-in and permission-filtered dashboard rendered. At an explicit 390px viewport there was one main landmark and no horizontal page overflow; drawer open/close and Escape focus return worked. These are demo observations, not a SQL-browser UAT claim.
+- The local demo service was restarted to enable `/api/runtime`; persisted `.local-demo` data was retained. The test databases, containers and test network were removed after verification.
+
+Pending acceptance: target Windows/VM installation, actual HTTPS origin and certificates, production runtime identity permissions, SQL browser end-to-end UAT, realistic-volume/security assessment, backup/restore and rollback rehearsal. Attendance, leave, payroll, rule publishing and statutory outputs remain outside this SQL core release. See `deploy/SERVER_RUNBOOK.md`.
+
+## Earlier local replica evidence
+
 Updated on 16 October 2026 on this Windows computer. These checks apply to the local development replica, not the live CLMS application. Automated coverage and browser observations are recorded separately.
 
 ## Automated checks

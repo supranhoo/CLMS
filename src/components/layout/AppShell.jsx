@@ -8,6 +8,7 @@ import Footer from "../Footer/Footer";
 import { logoutUser, selectUser } from "../../features/userSlice";
 import { flattenMenu, normalizePath, organizeMenu, routeLabel, routeMatches } from "./navigation";
 import "./AppShell.css";
+import { useRuntime } from '../RuntimeEnvironment';
 
 const ICONS = ["◈", "▦", "◌", "₹", "▱", "⚙", "✓", "▤", "◴"];
 const NavigationContext = createContext({ groups: [], items: [], loading: false, error: null });
@@ -40,6 +41,7 @@ function useMenuData(user) {
 }
 
 function ShellNavigation({ groups, onNavigate, onClose, mobile }) {
+  const runtime = useRuntime();
   const location = useLocation();
   const activeGroup = groups.find((group) => (group.children || []).some((item) => routeMatches(location.pathname, item.menu_url)));
   const [expanded, setExpanded] = useState(() => new Set(activeGroup ? [String(activeGroup.menu_id)] : []));
@@ -86,7 +88,7 @@ function ShellNavigation({ groups, onNavigate, onClose, mobile }) {
           </div>
         );
       })}
-      {mobile && <div className="bfcl-nav-note">Local synthetic data only. Payroll and statutory calculations remain gated by verified BFCL rules.</div>}
+      {mobile && <div className="bfcl-nav-note">{runtime.demo ? 'Local synthetic data only. Payroll and statutory calculations remain gated by verified BFCL rules.' : 'SQL attendance inputs and leave ledger. Paid-attendance and payroll rules pending.'}</div>}
     </nav>
   );
 }
@@ -130,6 +132,8 @@ function SearchBox({ items, onNavigate }) {
 }
 
 export default function AppShell({ children }) {
+  const runtime = useRuntime();
+  const [logoutError, setLogoutError] = useState('');
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -160,7 +164,18 @@ export default function AppShell({ children }) {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [drawerOpen, closeDrawer]);
 
-  const signOut = () => { dispatch(logoutUser()); navigate("/"); };
+  const signOut = async () => {
+    try {
+      if (user?.sessionAuth === 'cookie') await api.post('/api/users/logout', {});
+      dispatch(logoutUser()); navigate('/');
+    } catch (error) {
+      if (error.response?.status === 401) { dispatch(logoutUser()); navigate('/login'); }
+      else setLogoutError('Sign-out could not be confirmed. Retry when the server is available.');
+    }
+  };
+  useEffect(() => {
+    if (user?.mustChangePassword && location.pathname !== '/change-password') navigate('/change-password');
+  }, [user?.mustChangePassword, location.pathname, navigate]);
   const currentItem = items.find((item) => routeMatches(location.pathname, item.menu_url));
   const currentGroup = groups.find((group) => (group.children || []).some((item) => item.menu_id === currentItem?.menu_id));
   const initials = String(user?.Name || user?.emp_id || "D").split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
@@ -177,7 +192,7 @@ export default function AppShell({ children }) {
           <button ref={closeButtonRef} type="button" className="bfcl-drawer-close" onClick={closeDrawer} aria-label="Close navigation"><FaTimes /></button>
         </div>
         <ShellNavigation groups={groups} onClose={closeDrawer} mobile={drawerOpen} />
-        <div className="bfcl-sidebar-footer"><strong>LOCAL REPLICA</strong><span>Fictional data · BFCL rules pending</span><Link to="/development/features" onClick={closeDrawer}>View feature status <FaChevronRight aria-hidden="true" /></Link></div>
+        <div className="bfcl-sidebar-footer"><strong>{runtime.demo ? 'LOCAL REPLICA' : `${runtime.mode.toUpperCase()} SERVER`}</strong><span>{runtime.demo ? 'Fictional data · BFCL rules pending' : 'Database records · server core release'}</span>{runtime.demo && <Link to="/development/features" onClick={closeDrawer}>View feature status <FaChevronRight aria-hidden="true" /></Link>}</div>
       </aside>
       {drawerOpen && <button type="button" className="bfcl-drawer-backdrop" aria-label="Close navigation" onClick={closeDrawer} />}
       <div className="bfcl-workspace">
@@ -191,7 +206,8 @@ export default function AppShell({ children }) {
             {userOpen && <div className="bfcl-user-menu" role="menu"><strong>{user?.Name || "Demo Developer"}</strong><span>{user?.role || "LOCAL_DEMO_ADMIN"}</span><button type="button" role="menuitem" onClick={() => navigate("/change-password")}>Change password</button><button type="button" role="menuitem" onClick={signOut}>Sign out</button></div>}
           </div>
         </header>
-        <div className="bfcl-context-strip"><span className="bfcl-context-dot" aria-hidden="true" /> <strong>Development replica</strong><span>Synthetic local data · no production connection</span><Link to="/development/features">State profiles &amp; feature status</Link></div>
+        {runtime.demo ? <div className="bfcl-context-strip"><span className="bfcl-context-dot" aria-hidden="true" /> <strong>Development replica</strong><span>Synthetic local data · no production connection</span><Link to="/development/features">State profiles &amp; feature status</Link></div> : <div className="bfcl-context-strip"><strong>{runtime.mode.toUpperCase()} · Server workspace</strong><span>Core records, attendance inputs and leave ledger · payroll remains gated</span></div>}
+        {logoutError && <p role="alert" className="alert alert-danger">{logoutError}</p>}
         <main id="main-content" className="bfcl-content">{children}</main>
         <Footer />
       </div>

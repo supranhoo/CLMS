@@ -11,3 +11,7 @@ Work in this directory for replica features. The parent directory contains the i
 - `.local-demo/` contains disposable local sample state and must stay out of version control.
 
 See `README.md`, `DEVELOPMENT.md`, and `VERIFICATION.md` before extending a module.
+
+## Approved server conversion
+
+The user approved `docs/SERVER_IMPLEMENTATION_PLAN.md` on 17 October 2026. Server conversion code under `server/production/` and deployment tooling are now in scope. Preserve the loopback demo and fictional fixtures. Server modes use explicitly configured SQL connections and a separate schema; never load demo state or fall back to production installation files. Parent credentials and live-data access remain outside scope. Use temporary test data or an explicitly supplied dedicated staging/test database for verification.
