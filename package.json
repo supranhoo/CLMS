@@ -17,7 +17,8 @@
     "db:bootstrap": "node scripts/database.mjs bootstrap",
     "db:verify": "node scripts/database.mjs verify",
     "test:sql": "node scripts/verify-sql-container.mjs",
-    "test:containers": "node scripts/verify-sql-container.mjs --verify-images"
+    "test:containers": "node scripts/verify-sql-container.mjs --verify-images",
+    "qa:operations": "node scripts/verify-sql-container.mjs --preview-ui"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",

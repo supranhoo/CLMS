@@ -88,7 +88,7 @@ function ShellNavigation({ groups, onNavigate, onClose, mobile }) {
           </div>
         );
       })}
-      {mobile && <div className="bfcl-nav-note">{runtime.demo ? 'Local synthetic data only. Payroll and statutory calculations remain gated by verified BFCL rules.' : 'SQL server core. Payroll and attendance migration pending.'}</div>}
+      {mobile && <div className="bfcl-nav-note">{runtime.demo ? 'Local synthetic data only. Payroll and statutory calculations remain gated by verified BFCL rules.' : 'SQL attendance inputs and leave ledger. Paid-attendance and payroll rules pending.'}</div>}
     </nav>
   );
 }
@@ -206,7 +206,7 @@ export default function AppShell({ children }) {
             {userOpen && <div className="bfcl-user-menu" role="menu"><strong>{user?.Name || "Demo Developer"}</strong><span>{user?.role || "LOCAL_DEMO_ADMIN"}</span><button type="button" role="menuitem" onClick={() => navigate("/change-password")}>Change password</button><button type="button" role="menuitem" onClick={signOut}>Sign out</button></div>}
           </div>
         </header>
-        {runtime.demo ? <div className="bfcl-context-strip"><span className="bfcl-context-dot" aria-hidden="true" /> <strong>Development replica</strong><span>Synthetic local data · no production connection</span><Link to="/development/features">State profiles &amp; feature status</Link></div> : <div className="bfcl-context-strip"><strong>{runtime.mode.toUpperCase()} · Server core</strong><span>Accounts, workers, contractors and masters · other modules pending migration</span></div>}
+        {runtime.demo ? <div className="bfcl-context-strip"><span className="bfcl-context-dot" aria-hidden="true" /> <strong>Development replica</strong><span>Synthetic local data · no production connection</span><Link to="/development/features">State profiles &amp; feature status</Link></div> : <div className="bfcl-context-strip"><strong>{runtime.mode.toUpperCase()} · Server workspace</strong><span>Core records, attendance inputs and leave ledger · payroll remains gated</span></div>}
         {logoutError && <p role="alert" className="alert alert-danger">{logoutError}</p>}
         <main id="main-content" className="bfcl-content">{children}</main>
         <Footer />

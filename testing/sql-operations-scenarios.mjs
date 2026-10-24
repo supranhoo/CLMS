@@ -1,0 +1,121 @@
+import assert from 'node:assert/strict';
+import { randomUUID } from 'node:crypto';
+import { OperationsRepository } from '../server/production/operations-repository.mjs';
+import { hashPassword } from '../server/production/security.mjs';
+
+export async function operationalScenarios(pool) {
+  const repo = new OperationsRepository(pool); const correlation = randomUUID();
+  const admin = await repo.findUser('test_admin');
+  const assignments = { contractors: ['OPS_T1'], departments: ['OPS_D1'], businessUnits: ['OPS_B1'], locations: ['OPS_L1'], read: ['attendance','leave'], write: ['attendance','leave'], approve: ['attendance','leave'] };
+  const passwordHash = await hashPassword('Fictional-Operator-12345');
+  for (const id of ['ops_maker','ops_reviewer']) await repo.createUser({ emp_id: id, Name: id, role: 'OPERATOR', assignments, passwordHash, mustChangePassword: false }, admin, correlation);
+  const maker = await repo.findUser('ops_maker'); const reviewer = await repo.findUser('ops_reviewer');
+  await repo.saveRecord('contractor', { Contractor_ID: 'OPS_T1', Contractor_Name: 'Fictional operations contractor' }, null, admin, correlation);
+  for (const code of ['OPS_1','OPS_2','OPS_3']) await repo.saveRecord('worker', { Employee_Code: code, display_name: 'Fictional operations worker', contractor_id: 'OPS_T1', dept: 'OPS_D1', bu: 'OPS_B1', loc_code: 'OPS_L1' }, null, admin, correlation);
+  const query = { from_date: '2026-10-01', to_date: '2026-10-31', employee_code: 'OPS_1' };
+  assert.equal((await repo.operationalList('attendance', query, maker)).length, 0, 'No synthetic attendance rows may be invented.');
+  const batch = { batch_id: 'OPS_BATCH_1', rows: [
+    { employee_code: 'OPS_1', business_date: '2026-10-05', punched_at: '2026-10-05T22:00:00+05:30' },
+    { employee_code: 'OPS_1', business_date: '2026-10-05', punched_at: '2026-10-06T06:00:00+05:30' },
+    { employee_code: 'OPS_1', business_date: '2026-10-06', punched_at: '2026-10-06T22:00:00+05:30' },
+  ] };
+  assert.equal((await repo.importPunches(batch, maker, correlation)).replay, false);
+  assert.equal((await repo.importPunches(batch, maker, correlation)).replay, true);
+  await assert.rejects(repo.importPunches({ ...batch, rows: batch.rows.slice(0,1) }, maker, correlation), /Batch ID/);
+  await assert.rejects(repo.importPunches({ batch_id: 'OPS_BAD', rows: [batch.rows[0], { ...batch.rows[1], employee_code: 'MISSING' }] }, maker, correlation), /outside/);
+  const bad = (await pool.request().query("SELECT COUNT(*) AS total FROM dbo.clms_punch_batches WHERE batch_id='OPS_BAD'")).recordset[0].total;
+  assert.equal(bad, 0, 'A late invalid import row cannot leave a saved batch.');
+  await assert.rejects(repo.importPunches({ batch_id: 'OPS_CONFLICTING_DAY', rows: [{ ...batch.rows[0], business_date: '2026-10-06' }] }, maker, correlation), /another business date/);
+  await assert.rejects(repo.importPunches({ batch_id: 'OPS_SPAN', rows: [
+    { employee_code: 'OPS_1', business_date: '2026-10-05', punched_at: '2026-10-03T02:00:00Z' },
+    { employee_code: 'OPS_1', business_date: '2026-10-05', punched_at: '2026-10-06T22:00:00Z' },
+  ] }, maker, correlation), /longer than 48 hours/);
+  const queued = await repo.queueAttendance({ ...query, employee_codes: ['OPS_1'] }, maker, correlation);
+  const restarted = new OperationsRepository(pool);
+  const claimed = await restarted.claimAttendanceJob(); assert.equal(claimed.job_id, queued.job_id);
+  assert.equal(await repo.claimAttendanceJob(), undefined, 'An active lease cannot be claimed twice.');
+  await pool.request().input('id', queued.job_id).query('UPDATE dbo.clms_attendance_jobs SET lease_until=DATEADD(minute,-1,SYSUTCDATETIME()) WHERE job_id=@id');
+  const recovered = await repo.claimAttendanceJob(); assert.notEqual(recovered.lease_token, claimed.lease_token);
+  await restarted.processAttendanceJob(claimed);
+  assert.equal((await repo.operationalList('attendance', query, maker)).length, 0, 'A stale lease cannot publish summaries.');
+  await restarted.processAttendanceJob(recovered);
+  let report = await repo.operationalList('attendance', query, maker);
+  assert.equal(report.length, 2); assert.equal(report[0].elapsed_seconds, 8*3600); assert.equal(report[0].mark, null);
+  assert.equal(report[1].elapsed_seconds, null, 'A single punch cannot claim a worked duration.');
+  assert.equal((await repo.listJobs(maker))[0].status, 'COMPLETE');
+  assert.equal((await repo.listJobs(reviewer)).length, 0);
+  const otherScope = { ...reviewer, assignments: { ...assignments, departments: ['OTHER'] } };
+  assert.equal((await repo.operationalList('attendance', query, otherScope)).length, 0);
+  await assert.rejects(repo.queueAttendance({ ...query, employee_codes: ['OPS_1'] }, otherScope, correlation), /outside/);
+  const adjustment = await repo.requestAttendance({ employee_code: 'OPS_1', business_date: '2026-10-05', mark: 'P', reason: 'Fictional manual declaration' }, maker, correlation);
+  await assert.rejects(repo.reviewAttendance(adjustment.adjustment_id, { status: 'APPROVED', version: 1, reason: 'Self' }, maker, correlation), /different authorised/);
+  assert.equal((await repo.operationalList('attendance', query, maker))[0].mark, null);
+  await repo.reviewAttendance(adjustment.adjustment_id, { status: 'APPROVED', version: 1, reason: 'Checked source records' }, reviewer, correlation);
+  await assert.rejects(repo.reviewAttendance(adjustment.adjustment_id, { status: 'APPROVED', version: 1, reason: 'Repeat' }, reviewer, correlation), /already reviewed/);
+  report = await repo.operationalList('attendance', query, maker); assert.equal(report[0].mark, 'P');
+  assert.equal(report[0].paid_days, undefined); assert.equal(report[0].ot_hours, undefined);
+  const worker = (await repo.list('worker', admin, { employeeCode: 'OPS_1' }))[0];
+  await assert.rejects(repo.saveRecord('worker', { ...worker, dept: 'OTHER' }, worker.version, admin, correlation), /operational history/);
+  await repo.setPeriodLock({ module: 'attendance', contractor_id: 'OPS_T1', period: '2026-10-01', locked: true, reason: 'Test closing' }, admin, correlation);
+  await assert.rejects(repo.importPunches({ batch_id: 'OPS_LOCKED', rows: [{ ...batch.rows[0], punched_at: '2026-10-05T23:00:00+05:30' }] }, maker, correlation), /locked/);
+  await assert.rejects(repo.queueAttendance({ ...query, employee_codes: ['OPS_1'] }, maker, correlation), /locked/);
+  await repo.setPeriodLock({ module: 'attendance', contractor_id: 'OPS_T1', period: '2026-10-01', locked: false, version: 1, reason: 'Reopen for test' }, admin, correlation);
+  const queuedAgain = await repo.queueAttendance({ ...query, employee_codes: ['OPS_1'] }, maker, correlation);
+  const jobAgain = await repo.claimAttendanceJob(); assert.equal(jobAgain.job_id, queuedAgain.job_id);
+  await repo.processAttendanceJob(jobAgain);
+  assert.equal((await repo.operationalList('attendance', query, maker)).length, 2, 'Reprocessing replaces derived summaries without duplication.');
+  const lockedJob = await repo.queueAttendance({ ...query, employee_codes: ['OPS_1'] }, maker, correlation);
+  await repo.setPeriodLock({ module: 'attendance', contractor_id: 'OPS_T1', period: '2026-10-01', locked: true, version: 2, reason: 'Close after queueing' }, admin, correlation);
+  await repo.processAttendanceJob(await repo.claimAttendanceJob());
+  assert.equal((await repo.listJobs(maker)).find(job => job.job_id === lockedJob.job_id).error_code, 'PERIOD_LOCKED');
+  await repo.setPeriodLock({ module: 'attendance', contractor_id: 'OPS_T1', period: '2026-10-01', locked: false, version: 3, reason: 'Reopen after job rejection' }, admin, correlation);
+  const revokedJob = await repo.queueAttendance({ ...query, employee_codes: ['OPS_1'] }, maker, correlation);
+  await repo.updateUser(maker.emp_id, { ...maker, assignments: { ...assignments, write: [] } }, admin, correlation);
+  await repo.processAttendanceJob(await repo.claimAttendanceJob());
+  assert.equal((await repo.listJobs(maker)).find(job => job.job_id === revokedJob.job_id).error_code, 'ACCESS_CHANGED');
+  const revisedMaker = await repo.findUser(maker.emp_id);
+  await repo.updateUser(maker.emp_id, { ...revisedMaker, assignments }, admin, correlation);
+
+  const credit = { employee_code: 'OPS_1', leave_code: 'CL', business_date: '2026-10-01', units: 10, reference: 'OPS_OPENING', reason: 'Fictional approved opening balance, not statutory entitlement' };
+  await assert.rejects(repo.creditLeave(credit, maker, correlation), /administrators/);
+  assert.equal((await repo.creditLeave(credit, admin, correlation)).replay, false);
+  assert.equal((await repo.creditLeave(credit, admin, correlation)).replay, true);
+  const leave = await repo.requestLeave({ employee_code: 'OPS_1', leave_code: 'CL', days: [{ date: '2026-10-05', units: 0.5 }, { date: '2026-10-06', units: 0.5 }], reason: 'Explicit fictional charged dates' }, maker, correlation);
+  await assert.rejects(repo.reviewLeave(leave.request_id, { status: 'APPROVED', version: 1, reason: 'Self' }, maker, correlation), /different authorised/);
+  await repo.reviewLeave(leave.request_id, { status: 'APPROVED', version: 1, reason: 'Verified explicitly supplied dates' }, reviewer, correlation);
+  assert.equal((await repo.balances({ employee_code: 'OPS_1', as_of: '2026-10-31' }, maker)).find(row => row.leave_code === 'CL').balance, 9);
+  await assert.rejects(repo.reviewLeave(leave.request_id, { status: 'APPROVED', version: 1, reason: 'Repeat' }, reviewer, correlation), /transition/);
+  const overlap = await repo.requestLeave({ employee_code: 'OPS_1', leave_code: 'CL', days: [{ date: '2026-10-05', units: 1 }], reason: 'Overlap example' }, maker, correlation);
+  await assert.rejects(repo.reviewLeave(overlap.request_id, { status: 'APPROVED', version: 1, reason: 'Invalid overlap' }, reviewer, correlation), /exceed one day/);
+  await repo.reviewLeave(overlap.request_id, { status: 'REJECTED', version: 1, reason: 'Overlaps approved request' }, reviewer, correlation);
+  await repo.reviewLeave(leave.request_id, { status: 'CANCELLED', version: 2, reason: 'Approved cancellation example' }, reviewer, correlation);
+  assert.equal((await repo.balances({ employee_code: 'OPS_1', as_of: '2026-10-31' }, maker)).find(row => row.leave_code === 'CL').balance, 10);
+  const ledger = await repo.operationalList('ledger', query, maker);
+  assert.equal(ledger.length, 5, 'Original debit entries remain alongside two reversal credits and opening balance.');
+  await assert.rejects(repo.reviewLeave(leave.request_id, { status: 'CANCELLED', version: 2, reason: 'Repeat cancellation' }, reviewer, correlation), /transition/);
+  await repo.creditLeave({ ...credit, employee_code: 'OPS_2', units: 1, reference: 'OPS2_OPENING' }, admin, correlation);
+  const insufficient = await repo.requestLeave({ employee_code: 'OPS_2', leave_code: 'CL', days: [{ date: '2026-10-07', units: 1 }, { date: '2026-10-08', units: 1 }], reason: 'Atomic overdraw example' }, maker, correlation);
+  await assert.rejects(repo.reviewLeave(insufficient.request_id, { status: 'APPROVED', version: 1, reason: 'Insufficient example' }, reviewer, correlation), /Insufficient/);
+  assert.equal((await repo.operationalList('ledger', { ...query, employee_code: 'OPS_2' }, maker)).length, 1, 'No first-day debit survives failure on the second day.');
+  const raceA = await repo.requestLeave({ employee_code: 'OPS_2', leave_code: 'CL', days: [{ date: '2026-10-11', units: 1 }], reason: 'Concurrent candidate A' }, maker, correlation);
+  const raceB = await repo.requestLeave({ employee_code: 'OPS_2', leave_code: 'CL', days: [{ date: '2026-10-12', units: 1 }], reason: 'Concurrent candidate B' }, maker, correlation);
+  const races = await Promise.allSettled([raceA, raceB].map(row => repo.reviewLeave(row.request_id, { status: 'APPROVED', version: 1, reason: 'Concurrent review' }, reviewer, correlation)));
+  assert.equal(races.filter(row => row.status === 'fulfilled').length, 1, 'Concurrent approvals cannot spend the same leave balance twice.');
+  assert.equal((await repo.balances({ employee_code: 'OPS_2', as_of: '2026-10-31' }, maker)).find(row => row.leave_code === 'CL').balance, 0);
+  await repo.creditLeave({ ...credit, employee_code: 'OPS_3', units: 1, reference: 'OPS3_OPENING' }, admin, correlation);
+  const later = await repo.requestLeave({ employee_code: 'OPS_3', leave_code: 'CL', days: [{ date: '2026-10-20', units: 1 }], reason: 'Existing later debit' }, maker, correlation);
+  await repo.reviewLeave(later.request_id, { status: 'APPROVED', version: 1, reason: 'Approved later debit' }, reviewer, correlation);
+  const earlier = await repo.requestLeave({ employee_code: 'OPS_3', leave_code: 'CL', days: [{ date: '2026-10-10', units: 1 }], reason: 'Backdated overdraw example' }, maker, correlation);
+  await assert.rejects(repo.reviewLeave(earlier.request_id, { status: 'APPROVED', version: 1, reason: 'Backdated test' }, reviewer, correlation), /Backdated/);
+  await assert.rejects(repo.balances({ employee_code: 'OPS_1', as_of: '2026-10-31' }, otherScope), /outside/);
+  await repo.setPeriodLock({ module: 'leave', contractor_id: 'OPS_T1', period: '2026-11-01', locked: true, reason: 'Freeze future closing balance' }, admin, correlation);
+  await assert.rejects(repo.creditLeave({ ...credit, reference: 'OPS_FUTURE_LOCK' }, admin, correlation), /locked/);
+  await assert.rejects(repo.setPeriodLock({ module: 'leave', contractor_id: 'OPS_T1', period: '2026-11-01', locked: false, version: 999, reason: 'Stale unlock' }, admin, correlation), /changed/);
+  await repo.setPeriodLock({ module: 'leave', contractor_id: 'OPS_T1', period: '2026-11-01', locked: false, version: 1, reason: 'Explicit test reopen' }, admin, correlation);
+  const cl = (await repo.leaveTypes()).find(row => row.leave_code === 'CL');
+  await repo.saveLeaveType({ ...cl, active: true, allow_negative: false, unit_step: 0.25 }, admin, correlation);
+  await repo.requestLeave({ employee_code: 'OPS_1', leave_code: 'CL', days: [{ date: '2026-10-09', units: 0.25 }], reason: 'Updated input step' }, maker, correlation);
+  const audits = await repo.listAudit();
+  assert.ok(audits.some(row => row.action === 'ATTENDANCE_PROCESSED'));
+  assert.ok(audits.some(row => row.action === 'LEAVE_CANCELLED'));
+}

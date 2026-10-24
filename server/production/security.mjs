@@ -36,21 +36,23 @@ export function readSessionCookie(header = '') {
   return /^[a-f0-9]{64}$/.test(value) ? value : '';
 }
 export const ROLES = ['ADMIN', 'OPERATOR', 'AUDITOR'];
-const modules = ['workers', 'contractors', 'masters'];
+const modules = ['workers', 'contractors', 'masters', 'attendance', 'leave'];
 export function validateAssignments(value = {}) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw problem(400, 'Assignments must be an object.');
   const result = {};
-  for (const key of ['contractors', 'departments', 'businessUnits', 'locations', 'read', 'write']) {
+  for (const key of ['contractors', 'departments', 'businessUnits', 'locations', 'read', 'write', 'approve']) {
     const items = value[key] ?? [];
     if (!Array.isArray(items) || items.length > 500 || items.some(item => typeof item !== 'string' || !item.trim() || item.length > 80)) throw problem(400, `Invalid ${key} assignment.`);
     result[key] = [...new Set(items)];
   }
   if ([...result.read, ...result.write].some(item => !modules.includes(item))) throw problem(400, 'Unknown permission module.');
+  if (result.approve.some(item => !['attendance', 'leave'].includes(item))) throw problem(400, 'Unknown approval module.');
   return result;
 }
 export function canAccess(user, module, write = false) {
   return user.role === 'ADMIN' || (!write || user.role !== 'AUDITOR') && (user.assignments?.[write ? 'write' : 'read'] || []).includes(module);
 }
+export const canApprove = (user, module) => user.role === 'ADMIN' || user.role === 'OPERATOR' && (user.assignments?.approve || []).includes(module);
 export function inScope(user, record, kind) {
   if (user.role === 'ADMIN') return true;
   const assignments = user.assignments || {};

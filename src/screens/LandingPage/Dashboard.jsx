@@ -38,7 +38,7 @@ export default function Dashboard() {
   }, [user?.token]);
 
   const permitted = useMemo(() => new Set(items.map((item) => item.menu_url.toLowerCase())), [items]);
-  const tasks = runtime.demo ? TASKS : [{ label: 'Manage workers', description: 'Maintain core worker records and assignments.', path: '/server/workers', icon: FaUsers }, { label: 'Manage contractors', description: 'Maintain contractor records.', path: '/server/contractors', icon: FaClipboardList }, { label: 'Manage accounts', description: 'Provision accounts and review access.', path: '/administration/server', icon: FaCogs }];
+  const tasks = runtime.demo ? TASKS : [{ label: 'Manage workers', description: 'Maintain core worker records and assignments.', path: '/server/workers', icon: FaUsers }, { label: 'Manage contractors', description: 'Maintain contractor records.', path: '/server/contractors', icon: FaClipboardList }, { label: 'Attendance inputs', description: 'Import punches, process elapsed time and review declared attendance.', path: '/server/attendance', icon: FaCalendarCheck }, { label: 'Leave requests & ledger', description: 'Review explicit credits, requests, approvals and reversals.', path: '/server/leave', icon: FaClipboardList }, { label: 'Manage accounts', description: 'Provision accounts and review access.', path: '/administration/server', icon: FaCogs }];
   const taskCards = tasks.filter((task) => permitted.has(task.path.toLowerCase()));
   const completeCount = features.filter((feature) => feature.status === "complete").length;
   const gatedCount = features.filter((feature) => feature.status !== "complete").length;
@@ -58,7 +58,7 @@ export default function Dashboard() {
 
       <div className="bfcl-dashboard-notice" role="note">
         <span className="bfcl-notice-icon">i</span>
-        <div><strong>{runtime.demo ? 'Local synthetic workspace' : `${runtime.mode.toUpperCase()} · Server core release`}</strong><span>{runtime.demo ? 'Records are fictional and saved only in this development replica. Payroll calculations and statutory formats require verified BFCL rules.' : 'Accounts, workers, contractors and masters use the SQL database. Attendance, leave, payroll and statutory reports are pending migration and validation.'}</span></div>
+        <div><strong>{runtime.demo ? 'Local synthetic workspace' : `${runtime.mode.toUpperCase()} · Server workspace`}</strong><span>{runtime.demo ? 'Records are fictional and saved only in this development replica. Payroll calculations and statutory formats require verified BFCL rules.' : 'Core records, attendance inputs and leave ledgers use SQL. Paid attendance, automatic leave policies, payroll and statutory calculations remain pending.'}</span></div>
       </div>
 
       <section className="bfcl-dashboard-layout" aria-label="Workspace summary">

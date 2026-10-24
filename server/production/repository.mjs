@@ -97,6 +97,7 @@ export class SqlRepository {
     const where = scoped ? 'AND contractor_id IN (SELECT value FROM OPENJSON(@contractors)) AND department IN (SELECT value FROM OPENJSON(@departments)) AND business_unit IN (SELECT value FROM OPENJSON(@businessUnits)) AND location_code IN (SELECT value FROM OPENJSON(@locations))' : '';
     return (await query.query(`SELECT payload,version FROM dbo.clms_workers WHERE (@search='' OR CHARINDEX(@search,employee_code+' '+display_name)>0) AND (@code='' OR employee_code=@code) AND (@adhar='' OR JSON_VALUE(payload,'$.Adhar_No')=@adhar) AND (@pan='' OR JSON_VALUE(payload,'$.panno')=@pan) ${where} ORDER BY employee_code OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY`)).recordset.map(record);
   }
+  async validateWorkerChange() {}
   async saveRecord(kind, data, expectedVersion, actor, correlation) {
     return this.transaction(async tx => {
       const contractor = kind === 'contractor';
@@ -110,6 +111,7 @@ export class SqlRepository {
       if (expectedVersion !== null && (!row || row.version !== expectedVersion)) throw problem(409, 'Record changed. Reload before saving.');
       const saved = { ...(row ? JSON.parse(row.payload) : {}), ...data }; delete saved.version;
       if (!inScope(actor, saved, kind)) throw problem(403, 'Record is outside your assigned scope.');
+      if (row && !contractor) await this.validateWorkerChange(tx, JSON.parse(row.payload), saved);
       const query = this.request(tx).input('id', sql.NVarChar(80), id).input('name', sql.NVarChar(200), contractor ? saved.Contractor_Name : saved.display_name).input('payload', sql.NVarChar(sql.MAX), JSON.stringify(saved));
       if (!contractor) query.input('contractor', sql.NVarChar(80), saved.contractor_id).input('dept', sql.NVarChar(80), saved.dept || '').input('bu', sql.NVarChar(80), saved.bu || '').input('loc', sql.NVarChar(80), saved.loc_code || '');
       const updateWorker = contractor ? '' : ',contractor_id=@contractor,department=@dept,business_unit=@bu,location_code=@loc';

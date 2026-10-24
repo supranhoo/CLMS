@@ -1,5 +1,6 @@
 import { connectDatabase, verifySchema } from './database.mjs';
-import { SqlRepository } from './repository.mjs';
+import { OperationsRepository } from './operations-repository.mjs';
+import { startAttendanceWorker } from './attendance-worker.mjs';
 import { createProductionServer } from './http.mjs';
 
 export async function startProduction(config) {
@@ -7,16 +8,17 @@ export async function startProduction(config) {
   const pool = await connectDatabase(config);
   try {
     await verifySchema(pool);
-    const repository = new SqlRepository(pool);
+    const repository = new OperationsRepository(pool);
     const server = createProductionServer({ repository, config });
     await new Promise((resolve, reject) => { server.once('error', reject); server.listen(config.port, config.host, resolve); });
     console.log(`CLMS ${config.mode} SQL API listening on ${config.host}:${config.port}.`);
+    const stopWorker = startAttendanceWorker(repository);
     let stopping = false;
     const stop = () => {
       if (stopping) return;
       stopping = true;
       const deadline = setTimeout(() => process.exit(1), 15000); deadline.unref();
-      server.close(async () => { await pool.close(); clearTimeout(deadline); });
+      server.close(async () => { await stopWorker(); await pool.close(); clearTimeout(deadline); });
     };
     for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, stop);
     return { server, pool };

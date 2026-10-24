@@ -6,8 +6,9 @@ import { SqlRepository } from '../server/production/repository.mjs';
 import { hashPassword, digest } from '../server/production/security.mjs';
 import { createProductionServer } from '../server/production/http.mjs';
 import http from 'node:http';
+import { operationalScenarios } from '../testing/sql-operations-scenarios.mjs';
 
-test('SQL migrations, bootstrap, durable sessions, audited transactions and concurrent updates', { skip: !process.env.CLMS_TEST_DATABASE_CONNECTION }, async () => {
+test('SQL migrations, bootstrap, durable sessions, audited transactions and concurrent updates', { skip: !process.env.CLMS_TEST_DATABASE_CONNECTION }, async context => {
   const connection = process.env.CLMS_TEST_DATABASE_CONNECTION;
   if (!/Database=clms_test_[a-f0-9]+;/i.test(connection)) throw new Error('Integration tests require a dedicated clms_test_<hex> database.');
   const pool = await connectDatabase({ databaseUrl: connection, trustServerCertificate: true });
@@ -81,5 +82,6 @@ test('SQL migrations, bootstrap, durable sessions, audited transactions and conc
     for (let n = 0; n < 5; n++) await repo.failedLogin(admin.emp_id);
     assert.ok((await repo.findUser(admin.emp_id)).lockedUntil > new Date());
     assert.equal(await repo.login(admin.emp_id, admin.passwordHash, digest('locked'), 3600, correlation), false);
+    await context.test('SQL attendance jobs, approvals, leave ledger, reversals, balance invariants and locks', async () => operationalScenarios(pool));
   } finally { await pool.close(); }
 });

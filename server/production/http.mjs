@@ -1,7 +1,8 @@
 import http from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { MENUS, MASTER_KEYS } from '../seed.mjs';
-import { problem, publicUser, hashPassword, verifyPassword, validatePassword, validateAssignments, ROLES, digest, newToken, csrfFor, sessionCookie, readSessionCookie, canAccess } from './security.mjs';
+import { problem, publicUser, hashPassword, verifyPassword, validatePassword, validateAssignments, ROLES, digest, newToken, csrfFor, sessionCookie, readSessionCookie, canAccess, canApprove } from './security.mjs';
+import { registerOperationsRoutes } from './operations-routes.mjs';
 
 const dummyHash = hashPassword('Dummy-not-an-account-8675309');
 const id = value => typeof value === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(value);
@@ -30,6 +31,7 @@ export function createProductionServer({ repository, config, log = event => cons
     for (const method of methods) routes.push({ method, path: canonical(path), handler, ...access });
   };
   const both = (path, handler, access) => register(['GET', 'POST'], path, handler, access);
+  registerOperationsRoutes(register, repository);
   const attempts = new Map();
   function throttle(key, limit) {
     const now = Date.now();
@@ -39,7 +41,7 @@ export function createProductionServer({ repository, config, log = event => cons
     current.count++; attempts.set(key, current);
     if (current.count > limit) throw problem(429, 'Too many sign-in requests. Retry after 15 minutes.');
   }
-  const accountResponse = (user, token) => ({ ...publicUser(user), token: 'cookie-session', sessionAuth: 'cookie', csrfToken: csrfFor(token), demo: false, environment: config.mode.toUpperCase() });
+  const accountResponse = (user, token) => ({ ...publicUser(user), assignments: validateAssignments(user.assignments), token: 'cookie-session', sessionAuth: 'cookie', csrfToken: csrfFor(token), demo: false, environment: config.mode.toUpperCase() });
   register(['GET'], '/api/runtime', () => ({ mode: config.mode, demo: false }), { public: true });
   register(['POST'], '/api/users/login', async ({ body, req, res, correlation }) => {
     // Trust the socket address, never a caller-supplied forwarding header.
@@ -102,6 +104,8 @@ export function createProductionServer({ repository, config, log = event => cons
       ...(user.role === 'ADMIN' ? [{ menu_id: 9000, parent_menu_id: MENUS[0].menu_id, menu_name: 'Server accounts & access', menu_url: '/administration/server' }] : []),
       ...(canAccess(user, 'workers') ? [{ menu_id: 9001, parent_menu_id: parent, menu_name: 'Worker records', menu_url: '/server/workers' }] : []),
       ...(canAccess(user, 'contractors') ? [{ menu_id: 9002, parent_menu_id: parent, menu_name: 'Contractor records', menu_url: '/server/contractors' }] : []),
+      ...(canAccess(user, 'attendance') ? [{ menu_id: 9010, parent_menu_id: MENUS.find(row => row.menu_name === 'Attendance Module').menu_id, menu_name: 'Recorded attendance & approvals', menu_url: '/server/attendance' }] : []),
+      ...(canAccess(user, 'leave') ? [{ menu_id: 9011, parent_menu_id: MENUS.find(row => row.menu_name === 'Leave Module').menu_id, menu_name: 'Leave requests & ledger', menu_url: '/server/leave' }] : []),
       ...(canAccess(user, 'masters') ? [{ menu_id: 9003, parent_menu_id: parent, menu_name: 'Entities', menu_url: '/masters/entities' }, { menu_id: 9004, parent_menu_id: parent, menu_name: 'Departments', menu_url: '/masters/departments' }, { menu_id: 9005, parent_menu_id: parent, menu_name: 'Shifts', menu_url: '/masters/shifts' }] : []),
     ];
     const parents = new Set([...children, ...extra].map(row => row.parent_menu_id));
@@ -145,8 +149,8 @@ export function createProductionServer({ repository, config, log = event => cons
     for (const method of ['POST', 'PUT', 'DELETE']) register([method], '/api/master-data/' + kind, ({ body, user, correlation }) => repository.saveMaster(kind, masterKinds[kind], method, body, user, correlation), { admin: true });
   }
   register(['GET'], '/api/admin/audit', async () => ({ data: await repository.listAudit() }), { admin: true });
-  register(['GET'], '/api/dev/capabilities', () => ({ demo: false, environment: config.mode.toUpperCase(), productionConnected: true, payrollEngine: 'unavailable', statutoryCalculations: 'unavailable', endpoints: [], unknownEndpoints: '501 - explicitly unavailable' }));
-  register(['GET'], '/api/dev/features', () => ({ demo: false, environment: config.mode.toUpperCase(), features: [], message: 'Server core: accounts, scoped workers, contractors and masters. Attendance, leave and payroll migration pending.' }));
+  register(['GET'], '/api/dev/capabilities', () => ({ demo: false, environment: config.mode.toUpperCase(), productionConnected: true, payrollEngine: 'unavailable', statutoryCalculations: 'unavailable', attendanceProcessing: 'RECORDED_PUNCH_ELAPSED_TIME_ONLY', leaveProcessing: 'EXPLICIT_CREDITS_REQUESTS_AND_REVERSALS', endpoints: routes.map(row => ({ method: row.method, path: row.path })), unknownEndpoints: '501 - explicitly unavailable' }));
+  register(['GET'], '/api/dev/features', () => ({ demo: false, environment: config.mode.toUpperCase(), data: [{ id: 'core_records', status: 'complete', name: 'Core SQL records' }, { id: 'attendance_inputs', status: 'complete', name: 'Punch imports, processing, declared attendance approvals and locks' }, { id: 'leave_ledger', status: 'complete', name: 'Explicit leave credits, requests, approvals and reversals' }, { id: 'payroll_policies', status: 'rules_required', name: 'Paid attendance, automatic leave policies, payroll and statutory outputs' }] }));
 
   const server = http.createServer(async (req, res) => {
     const correlation = randomUUID();
@@ -184,6 +188,7 @@ export function createProductionServer({ repository, config, log = event => cons
       if (!matched) throw problem(501, 'This operation is not yet available in the SQL server release.');
       if (matched.admin && user.role !== 'ADMIN') throw problem(403, 'Administrator access required.');
       if (matched.module && !canAccess(user, matched.module, matched.write)) throw problem(403, 'This operation is not assigned to your account.');
+      if (matched.approve && !canApprove(user, matched.module)) throw problem(403, 'Approval permission is not assigned to your account.');
       const payload = await jsonBody(req);
       const body = { ...Object.fromEntries(url.searchParams), ...payload };
       if (matched.write && matched.module === 'workers' && user.role !== 'ADMIN') {

@@ -1,6 +1,6 @@
 # SQL server core: deployment and verification
 
-Status: first database-backed release, not a full payroll/attendance replacement. Use a separate staging installation first. Never point these new migrations at the installed application's database.
+Status: SQL core records, attendance inputs and leave ledger; policy/payroll execution remains pending. Use a separate staging installation first. Never point these new migrations at the installed application's database.
 
 ## Implemented scope
 
@@ -11,7 +11,9 @@ Status: first database-backed release, not a full payroll/attendance replacement
 - SQL worker/contractor records, core entity/department/reference masters, optimistic versions, transactional audit and server-side read/write/scope enforcement.
 - Server-specific core record/account screens; runtime environment labelling; demo login is hidden outside demo mode. Legacy routes remain present, but unsupported SQL operations return explicit 501 responses.
 
-Not implemented here: original-backend adapter, original SQL schema compatibility, migration of live records, complete worker details/onboarding approvals, payroll/rule execution, attendance/leave engines, background jobs, statutory forms, SSO/MFA, external recovery delivery, backup automation, or a full production security/load assessment. Existing synthetic workflows remain in demo mode only.
+Migration 002 adds immutable punch imports, durable leased attendance jobs, independent review of attendance declarations, explicit leave credits/requests/reversals, balances and period locks. See [the attendance/leave guide](ATTENDANCE_LEAVE.md) before enabling these inputs.
+
+Not implemented here: original-backend adapter/schema compatibility, live-record migration, full onboarding, shift/holiday and paid-attendance rules, automatic leave accrual/entitlement, payroll/statutory execution, device collection, SSO/MFA, external recovery delivery, backup automation or a full production security/load assessment. Synthetic workflows remain in demo mode only.
 
 The SQL payload column preserves additional recovered form fields alongside typed identifiers, names and scope columns. This is a transitional core schema, not a claim that the original application schema was recovered. Worker/contractor lists support scoped server-side search and paging (default 200, maximum 500 per API request; the UI uses 100). Full exports remain explicitly unavailable rather than exporting only one page. Full input-field validation and realistic-volume testing must precede a large-data rollout.
 
@@ -19,7 +21,7 @@ The SQL payload column preserves additional recovered form fields alongside type
 
 Use a supported SQL Server with TCP access from the application container and a dedicated empty CLMS database at compatibility level 130 or newer (OPENJSON is used for scope filters). Back up any existing target before migrations. Use separate runtime and migration identities. System databases are rejected.
 
-Runtime permissions: SELECT/INSERT/UPDATE on the required `dbo.clms_*` application tables; DELETE on sessions and editable master rows. Grant INSERT/SELECT on `clms_audit` but no UPDATE/DELETE. Grant SELECT on `clms_migrations`, not schema changes. Migration identity requires appropriate DDL permissions. Bootstrap/account management uses application write permissions; the runtime login must not be `sa` or `db_owner`.
+Runtime permissions: SELECT/INSERT/UPDATE on the required `dbo.clms_*` application tables; DELETE on sessions and editable master rows. For immutable punches, punch batches, leave ledger and audit, grant only INSERT/SELECT, with no UPDATE/DELETE. Verify least-privilege grants with the DBA in staging; disposable tests use an elevated test identity and do not prove deployment grants. Grant SELECT on `clms_migrations`, not schema changes. Migration identity requires appropriate DDL permissions. Bootstrap/account management uses application write permissions; the runtime login must not be `sa` or `db_owner`.
 
 Production enforces database encryption and trusted certificates. Self-signed SQL certificates can be explicitly accepted only in staging with `CLMS_SQL_TRUST_CERTIFICATE=true`. This switch is rejected in production.
 
@@ -124,6 +126,6 @@ Verify HTTPS sign-in, forced password change, logout, core saves/reload, scope d
 
 ## 7. Before operational use
 
-Complete full domain validation, realistic-volume and penetration testing, SQL/file backup automation, actual restore and rollback rehearsal, permission review, admin training and staging user acceptance. Enable subsequent attendance/leave/payroll modules only after their persistence, policies, expected-result tests and approvals are delivered. Keep the existing accepted operational process in use for those pending modules.
+Complete full domain validation, realistic-volume and penetration testing, SQL/file backup automation, actual restore and rollback rehearsal, permission review, admin training and staging user acceptance. Enable calculated attendance/leave/payroll policies only after their persistence, policies, expected-result tests and approvals are delivered. Keep the existing accepted operational process in use for those pending modules.
 
 Driver reference: [node-mssql documentation](https://tediousjs.github.io/node-mssql/) covers parameterized requests, connection strings and single-connection transactions used by this adapter.

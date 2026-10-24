@@ -131,3 +131,26 @@ test('write assignments still reject cross-scope worker submissions and preserve
   assert.equal((await call('/api/employee/addEmployee', { ...auth, method: 'POST', body })).status, 200);
   assert.equal((await call('/api/employee/updateEmployee/MixedCase001', { ...auth, method: 'PUT', body: { ...body, version: 1 } })).status, 200);
 }));
+
+test('attendance and leave routes enforce separate read, write and approval rights', () => fixture(async ({ call, login, repository }) => {
+  let reviewedBy;
+  repository.reviewLeave = async (id, body, actor) => { reviewedBy = actor.emp_id; return { success: true }; };
+  repository.requestLeave = async () => ({ success: true, status: 'PENDING' });
+  repository.users.set('operator', { ...repository.users.get('admin'), emp_id: 'operator', role: 'OPERATOR', assignments: { read: ['attendance','leave'], write: ['attendance','leave'], approve: [] } });
+  const auth = await login('operator');
+  assert.ok(auth.body.assignments.write.includes('leave'));
+  const menu = (await call('/api/menu/getMenuUserData', { ...auth, method: 'POST', body: {} })).body;
+  assert.ok(menu.some(row => row.menu_url === '/server/attendance'));
+  assert.ok(menu.some(row => row.menu_url === '/server/leave'));
+  assert.equal((await call('/api/server/leave/requests', { ...auth, method: 'POST', body: {} })).status, 200);
+  assert.equal((await call('/api/server/leave/requests/00000000-0000-0000-0000-000000000001/review', { ...auth, method: 'POST', body: { emp_id: 'admin', version: 1, status: 'APPROVED' } })).status, 403);
+  assert.equal(reviewedBy, undefined);
+  repository.users.get('operator').assignments.approve = ['leave'];
+  assert.equal((await call('/api/server/leave/requests/00000000-0000-0000-0000-000000000001/review', { ...auth, method: 'POST', body: { emp_id: 'admin', version: 1, status: 'APPROVED' } })).status, 200);
+  assert.equal(reviewedBy, 'operator');
+  repository.users.get('operator').role = 'AUDITOR';
+  assert.equal((await call('/api/server/leave/requests', { ...auth, method: 'POST', body: {} })).status, 403);
+  assert.equal((await call('/api/server/leave/requests/00000000-0000-0000-0000-000000000001/review', { ...auth, method: 'POST', body: {} })).status, 403);
+  assert.equal((await call('/api/server/period-locks', auth)).status, 403);
+  assert.equal((await call('/api/server/leave/credits', { ...auth, method: 'POST', body: {} })).status, 403);
+}));

@@ -8,7 +8,7 @@ RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev --prefer-offline --no
 
 WORKDIR /app
 COPY server ./server
-COPY scripts ./scripts
+COPY scripts/database.mjs ./scripts/database.mjs
 
 RUN mkdir -p /var/lib/clms && chown node:node /var/lib/clms
 USER node

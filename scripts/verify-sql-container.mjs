@@ -36,6 +36,7 @@ try {
   }
   if (!pool) throw new Error('Disposable SQL Server did not become ready.');
   await pool.request().query(`CREATE DATABASE [${database}]`);
+  await pool.request().query(`ALTER DATABASE [${database}] SET READ_COMMITTED_SNAPSHOT ON`);
   await pool.close(); pool = null;
   const connection = `Server=127.0.0.1,${port};Database=${database};User Id=sa;Password=${password};Encrypt=true;`;
   console.log('Disposable database ready. Running real SQL integration tests.');
@@ -44,6 +45,10 @@ try {
     child.once('error', reject); child.once('exit', resolve);
   });
   if (code !== 0) process.exitCode = 1;
+  if (code === 0 && process.argv.includes('--preview-ui')) {
+    const { operationsUiPreview } = await import('../testing/operations-ui-preview.mjs');
+    await operationsUiPreview(connection);
+  }
   if (code === 0 && verifyImages) {
     const apiName = `clms-api-test-${suffix}`; const webName = `clms-web-test-${suffix}`;
     await docker(['run', '--rm', '-d', '--name', apiName, '--label', `clms.test=${suffix}`, '--network', network, '--network-alias', 'api', '-e', 'CLMS_DATABASE_URL', '-e', 'CLMS_MODE=staging', '-e', 'CLMS_API_ADAPTER=sql', '-e', 'CLMS_BIND_HOST=0.0.0.0', '-e', 'CLMS_SQL_TRUST_CERTIFICATE=true', '-e', 'PUBLIC_ORIGIN=https://clms.test', 'clms-api:verification'], { CLMS_DATABASE_URL: `Server=sql,1433;Database=${database};User Id=sa;Password=${password};Encrypt=true;` });

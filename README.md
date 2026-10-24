@@ -51,7 +51,7 @@ See [DEVELOPMENT.md](DEVELOPMENT.md) for the architecture, recovery provenance, 
 
 ## Server deployment foundation
 
-The approved Windows and Docker implementation plan is documented in [docs/SERVER_IMPLEMENTATION_PLAN.md](docs/SERVER_IMPLEMENTATION_PLAN.md). A separate SQL Server adapter now supplies migrations, secure persistent accounts/sessions and core worker, contractor and master operations for staging/production. Server modes require explicit SQL configuration and never fall back to fictional data. This is a core server release; attendance, leave, payroll and statutory workflows still run only in the demo or remain pending. Follow [the server runbook](deploy/SERVER_RUNBOOK.md) for separate database provisioning, migrations, bootstrap, HTTPS and verification.
+The approved Windows and Docker implementation plan is documented in [docs/SERVER_IMPLEMENTATION_PLAN.md](docs/SERVER_IMPLEMENTATION_PLAN.md). A separate SQL Server adapter now supplies migrations, secure persistent accounts/sessions and core worker, contractor and master operations for staging/production. Server modes require explicit SQL configuration and never fall back to fictional data. SQL recorded attendance and an append-only leave ledger are now available; paid attendance, automatic leave policies, payroll and statutory calculations remain pending. See [the attendance/leave guide](deploy/ATTENDANCE_LEAVE.md) for exact scope. Follow [the server runbook](deploy/SERVER_RUNBOOK.md) for separate database provisioning, migrations, bootstrap, HTTPS and verification.
 
 Use `deploy/server.env.example` and a restricted connection-string secret file when preparing a server. Do not commit `.env.server` or put database credentials into frontend variables. The original database schema and payroll rules have not been recovered; these new migrations target a separate database.
 
@@ -70,4 +70,4 @@ The [whole-app UI redesign plan](docs/ui-redesign/UI_REDESIGN_PLAN.md) defines t
 
 The `.local-demo/` directory contains only local sample state and is excluded from version control. Original deployment files outside this replica directory are not edited.
 
-Current automated verification: **70 tests pass**, with the dedicated SQL case skipped by default; separate real SQL and Docker-stack checks pass. The isolation check and frontend build pass. See [VERIFICATION.md](VERIFICATION.md) for scope and remaining staging acceptance, and [the server runbook](deploy/SERVER_RUNBOOK.md) for reproducible SQL/container commands.
+Current automated verification: **74 tests pass**, with the dedicated SQL case skipped by default; separate real SQL and Docker-stack checks pass. The isolation check and frontend build pass. See [VERIFICATION.md](VERIFICATION.md) for scope and remaining staging acceptance, and [the server runbook](deploy/SERVER_RUNBOOK.md) for reproducible SQL/container commands.

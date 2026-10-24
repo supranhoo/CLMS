@@ -2,7 +2,7 @@
 
 Prepared: 17 October 2026. Status: proposed implementation plan, not a deployed release.
 
-Implementation update (17 October 2026): approved. The repository now contains the first standalone SQL adapter, core migrations, account/session lifecycle, scoped and paged core records, runtime-aware UI and deployment runbook. Real SQL repository tests and an API/Nginx/SQL container smoke test pass. This advances P1/P2 but does not complete them: full domain validation, target infrastructure, HTTPS browser UAT and staging acceptance are still required. P3–P7 and remaining UI waves remain pending. See `deploy/SERVER_RUNBOOK.md` and `VERIFICATION.md` for exact scope and evidence; this is not a production deployment claim.
+Implementation update (17 October 2026): approved. The standalone SQL adapter includes core accounts/records plus durable punch jobs, attendance input approvals, explicit leave credits/requests/reversals, balances and period locks. Real SQL and API/Nginx/SQL container checks pass. This advances P1/P2 and the input-persistence portion of P3. P3 remains partial: shift/holiday interpretation, paid attendance, accrual and approved policy execution are pending. P4-P7, remaining UI waves, target infrastructure, HTTPS staging UAT, load/security assessment and recovery acceptance remain pending. See `deploy/SERVER_RUNBOOK.md`, `deploy/ATTENDANCE_LEAVE.md` and `VERIFICATION.md`; this is not a production deployment claim.
 
 ## 1. Intended outcome and agreed direction
 

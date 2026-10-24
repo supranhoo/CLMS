@@ -35,10 +35,11 @@ export async function migrate(pool) {
 }
 
 export async function verifySchema(pool) {
-  const result = await pool.request().query("SELECT name,checksum FROM dbo.clms_migrations WHERE name='001_core.sql'");
-  const content = readFileSync(new URL('./migrations/001_core.sql', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
-  const checksum = createHash('sha256').update(content).digest('hex');
-  if (result.recordset[0]?.checksum !== checksum) throw new Error('Required CLMS schema is missing or differs. Run the migration command using a migration account.');
+  const result = await pool.request().query('SELECT name,checksum FROM dbo.clms_migrations');
+  for (const name of readdirSync(fileURLToPath(new URL('./migrations/', import.meta.url))).filter(name => /^\d+.*\.sql$/.test(name))) {
+    const content = readFileSync(new URL(`./migrations/${name}`, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
+    if (result.recordset.find(row => row.name === name)?.checksum !== createHash('sha256').update(content).digest('hex')) throw new Error('Required CLMS schema is missing or differs. Run migrations using a migration account.');
+  }
 }
 
 export { sql };
